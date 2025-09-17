@@ -1,0 +1,7 @@
+{
+  "name": "playgrouping",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
