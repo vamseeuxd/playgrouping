@@ -4,7 +4,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
-import { Firestore, collection, collectionData, addDoc, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, IonModal, IonInput, IonButtons, IonBackButton]
 })
 export class SportsPage {
-  private firestore = inject(Firestore);
+  private firestoreService = inject(FirestoreService);
   
   sports$: Observable<any[]>;
   showSportModal = false;
@@ -23,8 +23,7 @@ export class SportsPage {
 
   constructor() {
     addIcons({ addOutline, createOutline, trashOutline });
-    const sportsCollection = collection(this.firestore, 'sports');
-    this.sports$ = collectionData(sportsCollection, { idField: 'id' });
+    this.sports$ = this.firestoreService.getSports();
   }
 
   addSport() {
@@ -44,10 +43,9 @@ export class SportsPage {
 
     try {
       if (this.editingSport) {
-        const sportDoc = doc(this.firestore, 'sports', this.currentSport.id);
-        await updateDoc(sportDoc, { name: this.currentSport.name });
+        await this.firestoreService.updateSport(this.currentSport.id, { name: this.currentSport.name });
       } else {
-        await addDoc(collection(this.firestore, 'sports'), { name: this.currentSport.name });
+        await this.firestoreService.createSport({ name: this.currentSport.name });
       }
       this.showSportModal = false;
     } catch (error) {
@@ -58,7 +56,7 @@ export class SportsPage {
   async deleteSport(id: string, name: string) {
     if (confirm(`Delete sport "${name}"?`)) {
       try {
-        await deleteDoc(doc(this.firestore, 'sports', id));
+        await this.firestoreService.deleteSport(id);
       } catch (error) {
         console.error('Error deleting sport:', error);
       }

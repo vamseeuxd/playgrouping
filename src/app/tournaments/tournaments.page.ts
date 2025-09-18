@@ -4,7 +4,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline } from 'ionicons/icons';
-import { Firestore, collection, collectionData, addDoc, doc, setDoc, deleteDoc, getDocs } from '@angular/fire/firestore';
+import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -15,15 +15,14 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton]
 })
 export class TournamentsPage {
-  private firestore = inject(Firestore);
+  private firestoreService = inject(FirestoreService);
   private router = inject(Router);
   
   tournaments$: Observable<any[]>;
 
   constructor() {
     addIcons({ trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline });
-    const tournamentsCollection = collection(this.firestore, 'tournaments');
-    this.tournaments$ = collectionData(tournamentsCollection, { idField: 'id' });
+    this.tournaments$ = this.firestoreService.getTournaments();
   }
 
   async createMockData() {
@@ -31,13 +30,11 @@ export class TournamentsPage {
     
     try {
       // Create tournament
-      const tournamentRef = await addDoc(collection(this.firestore, 'tournaments'), {
+      const tournamentId = await this.firestoreService.createTournament({
         name: 'Mock Championship 2024',
         sport: 'football',
         startDate: new Date().toISOString()
       });
-      
-      const tournamentId = tournamentRef.id;
       
       // Create players
       const players = [
@@ -52,7 +49,7 @@ export class TournamentsPage {
       ];
       
       for (const player of players) {
-        await addDoc(collection(this.firestore, `tournaments/${tournamentId}/players`), player);
+        await this.firestoreService.createPlayer(tournamentId, player);
       }
       
       // Create teams
@@ -64,7 +61,7 @@ export class TournamentsPage {
       ];
       
       for (const team of teams) {
-        await addDoc(collection(this.firestore, `tournaments/${tournamentId}/teams`), team);
+        await this.firestoreService.createTeam(tournamentId, team);
       }
       
       // Create matches
@@ -76,7 +73,7 @@ export class TournamentsPage {
       ];
       
       for (const match of matches) {
-        await addDoc(collection(this.firestore, `tournaments/${tournamentId}/matches`), {
+        await this.firestoreService.createMatch(tournamentId, {
           ...match,
           startTime: match.status !== 'pending' ? new Date() : null,
           endTime: match.status === 'finished' ? new Date() : null,
@@ -103,21 +100,7 @@ export class TournamentsPage {
     if (!confirm(`Are you sure you want to delete "${name}"? This will delete all players, teams, and matches.`)) return;
     
     try {
-      // Delete subcollections
-      const subcollections = ['players', 'teams', 'matches'];
-      
-      for (const subcollection of subcollections) {
-        const subCollection = collection(this.firestore, `tournaments/${id}/${subcollection}`);
-        const snapshot = await getDocs(subCollection);
-        
-        for (const docSnap of snapshot.docs) {
-          await deleteDoc(docSnap.ref);
-        }
-      }
-      
-      // Delete tournament
-      await deleteDoc(doc(this.firestore, 'tournaments', id));
-      
+      await this.firestoreService.deleteTournament(id);
       alert('Tournament deleted successfully!');
     } catch (error) {
       console.error('Error deleting tournament:', error);

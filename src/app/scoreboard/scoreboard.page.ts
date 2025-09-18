@@ -18,7 +18,7 @@ import {
   IonCol,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-scoreboard',
@@ -42,7 +42,7 @@ import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 })
 export class ScoreboardPage {
   private route = inject(ActivatedRoute);
-  private firestore = inject(Firestore);
+  private firestoreService = inject(FirestoreService);
   tournamentId = '';
 
   teams: any[] = [];
@@ -57,26 +57,16 @@ export class ScoreboardPage {
   loadData() {
     if (this.tournamentId) {
       // Load teams
-      const teamsCollection = collection(
-        this.firestore,
-        `tournaments/${this.tournamentId}/teams`
-      );
-      collectionData(teamsCollection, { idField: 'id' }).subscribe((teams) => {
+      this.firestoreService.getTeams(this.tournamentId).subscribe((teams) => {
         this.teams = teams;
         this.calculateStats();
       });
 
       // Load matches
-      const matchesCollection = collection(
-        this.firestore,
-        `tournaments/${this.tournamentId}/matches`
-      );
-      collectionData(matchesCollection, { idField: 'id' }).subscribe(
-        (matches) => {
-          this.matches = matches;
-          this.calculateStats();
-        }
-      );
+      this.firestoreService.getMatches(this.tournamentId).subscribe((matches) => {
+        this.matches = matches;
+        this.calculateStats();
+      });
     }
   }
 
