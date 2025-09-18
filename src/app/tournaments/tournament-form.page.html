@@ -8,102 +8,218 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form #tournamentForm="ngForm" (ngSubmit)="onSubmit()">
-    <ion-input
-      label="Tournament Name"
-      class="ion-margin-bottom"
-      label-placement="floating"
-      fill="outline"
-      [(ngModel)]="tournament.name"
-      name="name"
-      required
-    ></ion-input>
+  <!-- Stepper Progress -->
+  <ion-segment mode="ios" [(ngModel)]="currentStep">
+    <ion-segment-button value="1">
+      <ion-label>Basic</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="2">
+      <ion-label>Players</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="3">
+      <ion-label>Teams</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="4">
+      <ion-label>Matches</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="5">
+      <ion-label>Review</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
-    <ion-select
-      label="Sport"
-      class="ion-margin-bottom"
-      label-placement="floating"
-      fill="outline"
-      [(ngModel)]="tournament.sport"
-      name="sport"
-      required
-    >
-      <ion-select-option value="football">Football</ion-select-option>
-      <ion-select-option value="basketball">Basketball</ion-select-option>
-      <ion-select-option value="tennis">Tennis</ion-select-option>
-      <ion-select-option value="cricket">Cricket</ion-select-option>
-    </ion-select>
+  <!-- Step 1: Basic Details -->
+  @if (currentStep === '1') {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Basic Details</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form #basicForm="ngForm">
+        <ion-input
+          label="Tournament Name"
+          class="ion-margin-bottom"
+          label-placement="floating"
+          fill="outline"
+          [(ngModel)]="tournament.name"
+          name="name"
+          required
+        ></ion-input>
 
-    <ion-input
-      label="Start Date"
-      class="ion-margin-bottom"
-      label-placement="floating"
-      fill="outline"
-      type="datetime-local"
-      [(ngModel)]="tournament.startDate"
-      name="startDate"
-      required
-    ></ion-input>
+        <ion-select
+          label="Sport"
+          class="ion-margin-bottom"
+          label-placement="floating"
+          fill="outline"
+          [(ngModel)]="tournament.sport"
+          name="sport"
+          required
+        >
+          <ion-select-option value="football">Football</ion-select-option>
+          <ion-select-option value="basketball">Basketball</ion-select-option>
+          <ion-select-option value="tennis">Tennis</ion-select-option>
+          <ion-select-option value="cricket">Cricket</ion-select-option>
+        </ion-select>
 
-    @if (isEdit) {
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Players</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        @for (player of players; track player.id) {
-        <ion-item>
-          <ion-label>
-            <h3>{{ player.name }}</h3>
-            <p>{{ player.gender }} - {{ player.remarks }}</p>
-          </ion-label>
-          <ion-button fill="clear" color="primary" (click)="editPlayer(player)">
-            <ion-icon name="create-outline"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" color="danger" (click)="removePlayer(player.id)">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-button>
-        </ion-item>
-        }
-        <ion-button expand="block" fill="outline" (click)="addPlayer()">
-          <ion-icon name="add-outline" slot="start"></ion-icon>
-          Add Player
+        <ion-input
+          label="Start Date"
+          class="ion-margin-bottom"
+          label-placement="floating"
+          fill="outline"
+          type="datetime-local"
+          [(ngModel)]="tournament.startDate"
+          name="startDate"
+          required
+        ></ion-input>
+      </form>
+    </ion-card-content>
+  </ion-card>
+  }
+
+  <!-- Step 2: Players -->
+  @if (currentStep === '2') {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Players</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for (player of players; track player.id) {
+      <ion-item>
+        <ion-label>
+          <h3>{{ player.name }}</h3>
+          <p>{{ player.gender }} - {{ player.remarks }}</p>
+        </ion-label>
+        <ion-button fill="clear" color="primary" (click)="editPlayer(player)">
+          <ion-icon name="create-outline"></ion-icon>
         </ion-button>
-      </ion-card-content>
-    </ion-card>
-    }
-
-    <div style="display: flex; gap: 10px; margin: 20px;">
-      <ion-button
-        expand="block"
-        type="submit"
-        [disabled]="!tournamentForm.valid"
-      >
-        {{ isEdit ? 'Update' : 'Create' }} Tournament
+        <ion-button fill="clear" color="danger" (click)="removePlayer(player.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+      }
+      <ion-button expand="block" fill="outline" (click)="addPlayer()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Add Player
       </ion-button>
-      <ion-button
-        expand="block"
-        fill="outline"
-        color="medium"
-        (click)="cancel()"
-      >
-        Cancel
-      </ion-button>
-    </div>
+    </ion-card-content>
+  </ion-card>
+  }
 
-    @if (isEdit) {
-    <ion-button
-      expand="block"
-      color="danger"
-      fill="outline"
-      (click)="deleteTournament()"
-      style="margin: 20px"
-    >
-      Delete Tournament
+  <!-- Step 3: Teams -->
+  @if (currentStep === '3') {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Teams</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for (team of teams; track team.id) {
+      <ion-item>
+        <ion-label>
+          <h3>{{ team.name }}</h3>
+          <p>Players: {{ team.players?.length || 0 }}</p>
+        </ion-label>
+        <ion-button fill="clear" color="primary" (click)="editTeam(team)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" color="danger" (click)="removeTeam(team.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+      }
+      <ion-button expand="block" fill="outline" (click)="addTeam()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Add Team
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+  }
+
+  <!-- Step 4: Matches -->
+  @if (currentStep === '4') {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Schedule Matches</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for (match of matches; track match.id) {
+      <ion-item>
+        <ion-label>
+          <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
+          <p>{{ match.date | date:'short' }}</p>
+          @if (match.court) { <p>Court: {{ match.court }}</p> }
+          @if (match.umpire) { <p>Umpire: {{ match.umpire }}</p> }
+        </ion-label>
+        <ion-button fill="clear" color="primary" (click)="editMatch(match)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" color="danger" (click)="removeMatch(match.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+      }
+      <ion-button expand="block" fill="outline" (click)="generateMatches()">
+        Generate Matches
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="addMatch()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Add Match
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+  }
+
+  <!-- Step 5: Review -->
+  @if (currentStep === '5') {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Review & Submit</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>
+          <h3>Tournament: {{ tournament.name }}</h3>
+          <p>Sport: {{ tournament.sport }}</p>
+          <p>Start Date: {{ tournament.startDate | date:'short' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h3>Players: {{ players.length }}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h3>Teams: {{ teams.length }}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h3>Matches: {{ matches.length }}</h3>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+  }
+
+  <!-- Navigation Buttons -->
+  <div class="step-navigation">
+    <ion-button fill="outline" [disabled]="currentStep === '1'" (click)="previousStep()">
+      Previous
+    </ion-button>
+    @if (currentStep !== '5') {
+    <ion-button [disabled]="!canProceed()" (click)="nextStep()">
+      Next
+    </ion-button>
+    } @else {
+    <ion-button color="success" (click)="submitTournament()">
+      Submit
     </ion-button>
     }
-  </form>
+    <ion-button fill="outline" color="medium" (click)="cancel()">
+      Cancel
+    </ion-button>
+  </div>
 
+  <!-- Modals -->
   <ion-modal [isOpen]="showPlayerModal" (didDismiss)="showPlayerModal = false">
     <ng-template>
       <ion-header>
@@ -125,7 +241,7 @@
             name="playerName"
             required
           ></ion-input>
-          
+
           <ion-select
             label="Gender"
             class="ion-margin-bottom"
@@ -138,7 +254,7 @@
             <ion-select-option value="Male">Male</ion-select-option>
             <ion-select-option value="Female">Female</ion-select-option>
           </ion-select>
-          
+
           <ion-textarea
             label="Remarks"
             class="ion-margin-bottom"
@@ -148,9 +264,131 @@
             name="playerRemarks"
             rows="3"
           ></ion-textarea>
-          
+
           <ion-button expand="block" type="submit" [disabled]="!playerForm.valid">
             {{ editingPlayer ? 'Update' : 'Add' }} Player
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal [isOpen]="showTeamModal" (didDismiss)="showTeamModal = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ editingTeam ? 'Edit' : 'Add' }} Team</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showTeamModal = false">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #teamForm="ngForm" (ngSubmit)="saveTeam()">
+          <ion-input
+            label="Team Name"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentTeam.name"
+            name="teamName"
+            required
+          ></ion-input>
+
+          <ion-item>
+            <ion-label>Select Players</ion-label>
+          </ion-item>
+          @for (player of getAvailablePlayers(); track player.id) {
+          <ion-item>
+            <ion-checkbox
+              [(ngModel)]="player.selected"
+              name="player_{{ player.id }}"
+            ></ion-checkbox>
+            <ion-label class="ion-margin-start">{{ player.name }}</ion-label>
+          </ion-item>
+          }
+
+          <ion-button expand="block" type="submit" [disabled]="!teamForm.valid">
+            {{ editingTeam ? 'Update' : 'Add' }} Team
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal [isOpen]="showMatchModal" (didDismiss)="showMatchModal = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ editingMatch ? 'Edit' : 'Add' }} Match</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showMatchModal = false">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #matchForm="ngForm" (ngSubmit)="saveMatch()">
+          <ion-select
+            label="Team 1"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentMatch.team1"
+            name="team1"
+            required
+          >
+            @for (team of teams; track team.id) {
+            <ion-select-option [value]="team.name">{{ team.name }}</ion-select-option>
+            }
+          </ion-select>
+
+          <ion-select
+            label="Team 2"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentMatch.team2"
+            name="team2"
+            required
+          >
+            @for (team of teams; track team.id) {
+            <ion-select-option [value]="team.name">{{ team.name }}</ion-select-option>
+            }
+          </ion-select>
+
+          <ion-input
+            label="Match Date"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            type="datetime-local"
+            [(ngModel)]="currentMatch.date"
+            name="matchDate"
+            required
+          ></ion-input>
+
+          <ion-input
+            label="Court/Ground Name"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentMatch.court"
+            name="court"
+            placeholder="e.g. Court A, Ground 1"
+          ></ion-input>
+
+          <ion-input
+            label="Umpire/Referee Name"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentMatch.umpire"
+            name="umpire"
+            placeholder="e.g. John Doe"
+          ></ion-input>
+
+          <ion-button expand="block" type="submit" [disabled]="!matchForm.valid">
+            {{ editingMatch ? 'Update' : 'Add' }} Match
           </ion-button>
         </form>
       </ion-content>

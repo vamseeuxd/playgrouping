@@ -3,3 +3,21 @@ ion-item {
   --padding-end: 16px;
   margin-bottom: 8px;
 }
+
+.step-navigation {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  justify-content: space-between;
+}
+
+ion-segment {
+  margin-bottom: 20px;
+  ion-label {
+    font-size: 11px;
+  }
+}
+
+ion-card {
+  margin-bottom: 20px;
+}
