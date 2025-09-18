@@ -112,6 +112,15 @@
           <p>Winner: {{ match.score1 > match.score2 ? match.team1 : match.team2 }}</p>
         </ion-label>
       </ion-item>
+      <ion-button expand="block" color="warning" (click)="resetMatch()">
+        Reset Match
+      </ion-button>
+      }
+      
+      @if (match.status !== 'pending' && match.status !== 'finished') {
+      <ion-button expand="block" color="warning" fill="outline" (click)="resetMatch()">
+        Reset Match
+      </ion-button>
       }
     </ion-card-content>
   </ion-card>

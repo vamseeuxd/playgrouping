@@ -178,6 +178,20 @@ export class MatchControlPage {
     }
   }
 
+  async resetMatch() {
+    if (confirm('Are you sure you want to reset this match? All progress will be lost.')) {
+      this.stopTimer();
+      this.match.status = 'pending';
+      this.match.score1 = 0;
+      this.match.score2 = 0;
+      this.match.startTime = null;
+      this.match.endTime = null;
+      this.match.duration = 0;
+      this.elapsedTime = 0;
+      await this.updateMatchInFirestore();
+    }
+  }
+
   formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
