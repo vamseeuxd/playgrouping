@@ -30,13 +30,7 @@ import {
   addOutline,
   removeOutline,
 } from 'ionicons/icons';
-import {
-  Firestore,
-  doc,
-  updateDoc,
-  getDoc,
-  setDoc,
-} from '@angular/fire/firestore';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-match-control',
@@ -67,7 +61,7 @@ import {
 })
 export class MatchControlPage {
   private route = inject(ActivatedRoute);
-  private firestore = inject(Firestore);
+  private firestoreService = inject(FirestoreService);
   matchId = '';
   tournamentId = '';
 
@@ -101,10 +95,9 @@ export class MatchControlPage {
 
   async loadMatch() {
     try {
-      const matchDoc = doc(this.firestore, `tournaments/${this.tournamentId}/matches`, this.matchId);
-      const matchSnap = await getDoc(matchDoc);
-      if (matchSnap.exists()) {
-        this.match = { ...matchSnap.data(), id: this.matchId } as any;
+      const match = await this.firestoreService.getMatch(this.tournamentId, this.matchId);
+      if (match) {
+        this.match = match;
         if (this.match.status === 'started') {
           this.startTimer();
         }
@@ -160,7 +153,6 @@ export class MatchControlPage {
 
   async updateMatchInFirestore() {
     try {
-      const matchDoc = doc(this.firestore, `tournaments/${this.tournamentId}/matches`, this.matchId);
       const matchData = {
         id: this.matchId,
         team1: this.match.team1,
@@ -172,7 +164,7 @@ export class MatchControlPage {
         endTime: this.match.endTime,
         duration: this.match.duration,
       };
-      await setDoc(matchDoc, matchData, { merge: true });
+      await this.firestoreService.updateMatch(this.tournamentId, this.matchId, matchData);
     } catch (error) {
       console.error('Error updating match:', error);
     }
