@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
   async signInWithGoogle() {
     try {
       await this.authService.signInWithGoogle();
-      this.router.navigate(['/login']);
+      this.router.navigate(['/tournaments']);
     } catch (error) {
       console.error('Google sign-in error:', error);
     }
