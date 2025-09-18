@@ -22,6 +22,12 @@
         Generate Matches from Teams
       </ion-button>
       }
+      @if (canAdvanceToNextRound()) {
+      <ion-button expand="block" color="success" (click)="advanceToNextRound()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Advance to Next Round
+      </ion-button>
+      }
     </ion-card-content>
   </ion-card>
 
