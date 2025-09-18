@@ -27,17 +27,7 @@ import {
   IonSegmentButton,
   IonCheckbox,
 } from '@ionic/angular/standalone';
-import {
-  Firestore,
-  collection,
-  addDoc,
-  doc,
-  updateDoc,
-  getDoc,
-  deleteDoc,
-  collectionData,
-  setDoc,
-} from '@angular/fire/firestore';
+import { FirestoreService } from '../services/firestore.service';
 import { inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -76,7 +66,7 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
 ],
 })
 export class TournamentFormPage {
-  private firestore = inject(Firestore);
+  private firestoreService = inject(FirestoreService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -112,10 +102,9 @@ export class TournamentFormPage {
     this.isEdit = !!this.tournamentId;
 
     if (this.isEdit) {
-      const docRef = doc(this.firestore, 'tournaments', this.tournamentId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        this.tournament = docSnap.data() as any;
+      const tournament = await this.firestoreService.getTournament(this.tournamentId);
+      if (tournament) {
+        this.tournament = tournament;
       }
       this.loadPlayers();
       this.loadTeams();
@@ -125,16 +114,14 @@ export class TournamentFormPage {
   }
 
   loadSports() {
-    const sportsCollection = collection(this.firestore, 'sports');
-    collectionData(sportsCollection, { idField: 'id' }).subscribe(sports => {
+    this.firestoreService.getSports().subscribe(sports => {
       this.sports = sports;
     });
   }
 
   loadPlayers() {
     if (this.tournamentId) {
-      const playersCollection = collection(this.firestore, `tournaments/${this.tournamentId}/players`);
-      collectionData(playersCollection, { idField: 'id' }).subscribe(players => {
+      this.firestoreService.getPlayers(this.tournamentId).subscribe(players => {
         this.players = players;
       });
     }
@@ -143,14 +130,9 @@ export class TournamentFormPage {
   async onSubmit() {
     try {
       if (this.isEdit) {
-        const docRef = doc(this.firestore, 'tournaments', this.tournamentId);
-        await updateDoc(docRef, this.tournament);
+        await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
       } else {
-        const docRef = await addDoc(
-          collection(this.firestore, 'tournaments'),
-          this.tournament
-        );
-        this.tournamentId = docRef.id;
+        this.tournamentId = await this.firestoreService.createTournament(this.tournament);
         this.isEdit = true;
         return; // Stay on form to add players
       }
@@ -163,8 +145,7 @@ export class TournamentFormPage {
   async deleteTournament() {
     if (confirm('Are you sure you want to delete this tournament?')) {
       try {
-        const docRef = doc(this.firestore, 'tournaments', this.tournamentId);
-        await deleteDoc(docRef);
+        await this.firestoreService.deleteTournament(this.tournamentId);
         this.router.navigate(['/tournaments']);
       } catch (error) {
         console.error('Error deleting tournament:', error);
@@ -201,21 +182,16 @@ export class TournamentFormPage {
     }
 
     try {
-      const playersCollection = collection(this.firestore, `tournaments/${this.tournamentId}/players`);
+      const playerData = {
+        name: this.currentPlayer.name,
+        gender: this.currentPlayer.gender,
+        remarks: this.currentPlayer.remarks
+      };
 
       if (this.editingPlayer) {
-        const playerDoc = doc(this.firestore, `tournaments/${this.tournamentId}/players`, this.currentPlayer.id);
-        await updateDoc(playerDoc, {
-          name: this.currentPlayer.name,
-          gender: this.currentPlayer.gender,
-          remarks: this.currentPlayer.remarks
-        });
+        await this.firestoreService.updatePlayer(this.tournamentId, this.currentPlayer.id, playerData);
       } else {
-        await addDoc(playersCollection, {
-          name: this.currentPlayer.name,
-          gender: this.currentPlayer.gender,
-          remarks: this.currentPlayer.remarks
-        });
+        await this.firestoreService.createPlayer(this.tournamentId, playerData);
       }
 
       this.showPlayerModal = false;
@@ -228,8 +204,7 @@ export class TournamentFormPage {
   async removePlayer(playerId: string) {
     if (confirm('Remove this player?')) {
       try {
-        const playerDoc = doc(this.firestore, `tournaments/${this.tournamentId}/players`, playerId);
-        await deleteDoc(playerDoc);
+        await this.firestoreService.deletePlayer(this.tournamentId, playerId);
         this.loadPlayers();
       } catch (error) {
         console.error('Error removing player:', error);
@@ -276,12 +251,10 @@ export class TournamentFormPage {
   async saveTournament() {
     try {
       if (!this.tournamentId) {
-        const docRef = await addDoc(collection(this.firestore, 'tournaments'), this.tournament);
-        this.tournamentId = docRef.id;
+        this.tournamentId = await this.firestoreService.createTournament(this.tournament);
         this.isEdit = true;
       } else {
-        const docRef = doc(this.firestore, 'tournaments', this.tournamentId);
-        await updateDoc(docRef, this.tournament);
+        await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
       }
     } catch (error) {
       console.error('Error saving tournament:', error);
@@ -313,13 +286,10 @@ export class TournamentFormPage {
     this.currentTeam.players = selectedPlayers;
 
     try {
-      const teamsCollection = collection(this.firestore, `tournaments/${this.tournamentId}/teams`);
-
       if (this.editingTeam) {
-        const teamDoc = doc(this.firestore, `tournaments/${this.tournamentId}/teams`, this.currentTeam.id);
-        await updateDoc(teamDoc, this.currentTeam);
+        await this.firestoreService.updateTeam(this.tournamentId, this.currentTeam.id, this.currentTeam);
       } else {
-        await addDoc(teamsCollection, this.currentTeam);
+        await this.firestoreService.createTeam(this.tournamentId, this.currentTeam);
       }
 
       this.showTeamModal = false;
@@ -333,8 +303,7 @@ export class TournamentFormPage {
   async removeTeam(teamId: string) {
     if (confirm('Remove this team?')) {
       try {
-        const teamDoc = doc(this.firestore, `tournaments/${this.tournamentId}/teams`, teamId);
-        await deleteDoc(teamDoc);
+        await this.firestoreService.deleteTeam(this.tournamentId, teamId);
         this.loadTeams();
       } catch (error) {
         console.error('Error removing team:', error);
@@ -344,8 +313,7 @@ export class TournamentFormPage {
 
   loadTeams() {
     if (this.tournamentId) {
-      const teamsCollection = collection(this.firestore, `tournaments/${this.tournamentId}/teams`);
-      collectionData(teamsCollection, { idField: 'id' }).subscribe(teams => {
+      this.firestoreService.getTeams(this.tournamentId).subscribe(teams => {
         this.teams = teams;
       });
     }
@@ -353,8 +321,7 @@ export class TournamentFormPage {
 
   loadMatches() {
     if (this.tournamentId) {
-      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
-      collectionData(matchesCollection, { idField: 'id' }).subscribe(matches => {
+      this.firestoreService.getMatches(this.tournamentId).subscribe(matches => {
         this.matches = matches;
       });
     }
@@ -393,18 +360,14 @@ export class TournamentFormPage {
     }
 
     try {
-      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
-      
       if (this.editingMatch) {
-        const matchDoc = doc(this.firestore, `tournaments/${this.tournamentId}/matches`, this.currentMatch.id);
-        await setDoc(matchDoc, this.currentMatch, { merge: true });
+        await this.firestoreService.updateMatch(this.tournamentId, this.currentMatch.id, this.currentMatch);
         const index = this.matches.findIndex(m => m.id === this.currentMatch.id);
         if (index !== -1) {
           this.matches[index] = { ...this.currentMatch };
         }
       } else {
-        this.currentMatch.id = Date.now().toString();
-        await addDoc(matchesCollection, this.currentMatch);
+        await this.firestoreService.createMatch(this.tournamentId, this.currentMatch);
         this.matches.push({ ...this.currentMatch });
       }
       
@@ -419,8 +382,16 @@ export class TournamentFormPage {
   }
 
   async submitTournament() {
-    await this.saveTournament();
-    this.router.navigate(['/tournaments']);
+    try {
+      if (this.isEdit) {
+        await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
+      } else {
+        await this.firestoreService.createTournament(this.tournament);
+      }
+      this.router.navigate(['/tournaments']);
+    } catch (error) {
+      console.error('Error saving tournament:', error);
+    }
   }
 
   getAvailablePlayers() {
