@@ -54,11 +54,13 @@
           name="sport"
           required
         >
-          <ion-select-option value="football">Football</ion-select-option>
-          <ion-select-option value="basketball">Basketball</ion-select-option>
-          <ion-select-option value="tennis">Tennis</ion-select-option>
-          <ion-select-option value="cricket">Cricket</ion-select-option>
+          @for (sport of sports; track sport.id) {
+          <ion-select-option [value]="sport.name">{{ sport.name }}</ion-select-option>
+          }
         </ion-select>
+        <ion-button fill="clear" size="small" routerLink="/sports">
+          Manage Sports
+        </ion-button>
 
         <ion-input
           label="Start Date"

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
@@ -49,6 +49,7 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
   styleUrls: ['./tournament-form.page.scss'],
   imports: [
     CommonModule,
+    RouterLink,
     IonModal,
     FormsModule,
     IonHeader,
@@ -93,6 +94,7 @@ export class TournamentFormPage {
   players: any[] = [];
   teams: any[] = [];
   matches: any[] = [];
+  sports: any[] = [];
   showPlayerModal = false;
   showTeamModal = false;
   showMatchModal = false;
@@ -119,6 +121,14 @@ export class TournamentFormPage {
       this.loadTeams();
       this.loadMatches();
     }
+    this.loadSports();
+  }
+
+  loadSports() {
+    const sportsCollection = collection(this.firestore, 'sports');
+    collectionData(sportsCollection, { idField: 'id' }).subscribe(sports => {
+      this.sports = sports;
+    });
   }
 
   loadPlayers() {

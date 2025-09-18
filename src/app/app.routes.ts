@@ -33,6 +33,11 @@ export const routes: Routes = [
       import('./tournaments/match-control.page').then((m) => m.MatchControlPage),
   },
   {
+    path: 'sports',
+    loadComponent: () =>
+      import('./sports/sports.page').then((m) => m.SportsPage),
+  },
+  {
     path: 'folder/:id',
     canActivate: [authGuard],
     loadComponent: () =>

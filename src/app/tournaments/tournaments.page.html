@@ -20,6 +20,9 @@
       <ion-button fill="clear" slot="end" (click)="editTournament(tournament.id)">
         <ion-icon name="settings-outline"></ion-icon>
       </ion-button>
+      <ion-button fill="clear" slot="end" color="danger" (click)="deleteTournament(tournament.id, tournament.name)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
     </ion-item>
     }
   </ion-list>
@@ -27,6 +30,12 @@
   <ion-fab vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addTournament()">
       <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  
+  <ion-fab vertical="bottom" horizontal="start">
+    <ion-fab-button color="secondary" (click)="createMockData()">
+      <ion-icon name="flask-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>
