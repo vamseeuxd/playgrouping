@@ -36,6 +36,7 @@ import {
   getDoc,
   deleteDoc,
   collectionData,
+  setDoc,
 } from '@angular/fire/firestore';
 import { inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -116,6 +117,7 @@ export class TournamentFormPage {
       }
       this.loadPlayers();
       this.loadTeams();
+      this.loadMatches();
     }
   }
 
@@ -339,6 +341,15 @@ export class TournamentFormPage {
     }
   }
 
+  loadMatches() {
+    if (this.tournamentId) {
+      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
+      collectionData(matchesCollection, { idField: 'id' }).subscribe(matches => {
+        this.matches = matches;
+      });
+    }
+  }
+
   generateMatches() {
     this.matches = [];
     for (let i = 0; i < this.teams.length; i++) {
@@ -365,23 +376,32 @@ export class TournamentFormPage {
     this.showMatchModal = true;
   }
 
-  saveMatch() {
+  async saveMatch() {
     if (!this.currentMatch.team1 || !this.currentMatch.team2 || this.currentMatch.team1 === this.currentMatch.team2) {
       alert('Please select different teams');
       return;
     }
 
-    if (this.editingMatch) {
-      const index = this.matches.findIndex(m => m.id === this.currentMatch.id);
-      if (index !== -1) {
-        this.matches[index] = { ...this.currentMatch };
+    try {
+      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
+      
+      if (this.editingMatch) {
+        const matchDoc = doc(this.firestore, `tournaments/${this.tournamentId}/matches`, this.currentMatch.id);
+        await setDoc(matchDoc, this.currentMatch, { merge: true });
+        const index = this.matches.findIndex(m => m.id === this.currentMatch.id);
+        if (index !== -1) {
+          this.matches[index] = { ...this.currentMatch };
+        }
+      } else {
+        this.currentMatch.id = Date.now().toString();
+        await addDoc(matchesCollection, this.currentMatch);
+        this.matches.push({ ...this.currentMatch });
       }
-    } else {
-      this.currentMatch.id = Date.now().toString();
-      this.matches.push({ ...this.currentMatch });
+      
+      this.showMatchModal = false;
+    } catch (error) {
+      console.error('Error saving match:', error);
     }
-    
-    this.showMatchModal = false;
   }
 
   removeMatch(matchId: string) {

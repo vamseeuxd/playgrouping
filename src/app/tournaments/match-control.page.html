@@ -1,0 +1,118 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Match Control</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Match Info -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ match.team1 }} vs {{ match.team2 }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>
+          <h2>Status: {{ match.status | titlecase }}</h2>
+          <p>Duration: {{ formatTime(elapsedTime) }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Score Board -->
+  @if (match.status !== 'pending') {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Score Board</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="5" class="ion-text-center">
+            <h2>{{ match.team1 }}</h2>
+            <h1>{{ match.score1 }}</h1>
+            @if (match.status !== 'finished') {
+            <div>
+              <ion-button fill="clear" (click)="updateScore(1, false)">
+                <ion-icon name="remove-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" (click)="updateScore(1, true)">
+                <ion-icon name="add-outline"></ion-icon>
+              </ion-button>
+            </div>
+            }
+          </ion-col>
+          <ion-col size="2" class="ion-text-center">
+            <h2>VS</h2>
+          </ion-col>
+          <ion-col size="5" class="ion-text-center">
+            <h2>{{ match.team2 }}</h2>
+            <h1>{{ match.score2 }}</h1>
+            @if (match.status !== 'finished') {
+            <div>
+              <ion-button fill="clear" (click)="updateScore(2, false)">
+                <ion-icon name="remove-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" (click)="updateScore(2, true)">
+                <ion-icon name="add-outline"></ion-icon>
+              </ion-button>
+            </div>
+            }
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  }
+
+  <!-- Match Controls -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Match Controls</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @if (match.status === 'pending') {
+      <ion-button expand="block" color="success" (click)="startMatch()">
+        <ion-icon name="play-outline" slot="start"></ion-icon>
+        Start Match
+      </ion-button>
+      }
+      
+      @if (match.status === 'started') {
+      <ion-button expand="block" color="warning" (click)="pauseMatch()">
+        <ion-icon name="pause-outline" slot="start"></ion-icon>
+        Pause Match
+      </ion-button>
+      <ion-button expand="block" color="danger" (click)="stopMatch()">
+        <ion-icon name="stop-outline" slot="start"></ion-icon>
+        End Match
+      </ion-button>
+      }
+      
+      @if (match.status === 'paused') {
+      <ion-button expand="block" color="success" (click)="startMatch()">
+        <ion-icon name="play-outline" slot="start"></ion-icon>
+        Resume Match
+      </ion-button>
+      <ion-button expand="block" color="danger" (click)="stopMatch()">
+        <ion-icon name="stop-outline" slot="start"></ion-icon>
+        End Match
+      </ion-button>
+      }
+      
+      @if (match.status === 'finished') {
+      <ion-item>
+        <ion-label>
+          <h2>Match Completed</h2>
+          <p>Duration: {{ formatTime(match.duration) }}</p>
+          <p>Winner: {{ match.score1 > match.score2 ? match.team1 : match.team2 }}</p>
+        </ion-label>
+      </ion-item>
+      }
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { trophyOutline, addOutline, settingsOutline } from 'ionicons/icons';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
@@ -11,7 +12,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-tournaments',
   templateUrl: './tournaments.page.html',
   styleUrls: ['./tournaments.page.scss'],
-  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton]
+  imports: [CommonModule, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton]
 })
 export class TournamentsPage {
   private firestore = inject(Firestore);

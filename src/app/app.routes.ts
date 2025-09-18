@@ -23,6 +23,16 @@ export const routes: Routes = [
       import('./tournaments/tournament-form.page').then((m) => m.TournamentFormPage),
   },
   {
+    path: 'knockout/:id',
+    loadComponent: () =>
+      import('./tournaments/knockout.page').then((m) => m.KnockoutPage),
+  },
+  {
+    path: 'match-control/:id',
+    loadComponent: () =>
+      import('./tournaments/match-control.page').then((m) => m.MatchControlPage),
+  },
+  {
     path: 'folder/:id',
     canActivate: [authGuard],
     loadComponent: () =>

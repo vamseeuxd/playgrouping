@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Knockout Tournament</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Debug Info -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tournament Info</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Tournament ID: {{ tournamentId }}</p>
+      <p>Teams: {{ teams.length }}</p>
+      <p>Matches: {{ knockoutStages[0].matches.length }}</p>
+      @if (teams.length >= 2 && knockoutStages[0].matches.length === 0) {
+      <ion-button expand="block" color="primary" (click)="generateMatches()">
+        Generate Matches from Teams
+      </ion-button>
+      }
+    </ion-card-content>
+  </ion-card>
+
+  @for (stage of knockoutStages; track stage.name) {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ stage.name }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for (match of stage.matches; track match.id) {
+      <ion-item>
+        <ion-label>
+          <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
+          @if (match.status === 'finished') {
+          <p>Status: {{ match.status | titlecase }}</p>
+          <p>Score: {{ match.score1 }} - {{ match.score2 }}</p>
+          <p><strong>Winner: {{ match.score1 > match.score2 ? match.team1 : (match.score2 > match.score1 ? match.team2 : 'Draw') }}</strong></p>
+          } @else if (match.status && match.status !== 'pending') {
+          <p>Status: {{ match.status | titlecase }}</p>
+          <p>Score: {{ match.score1 || 0 }} - {{ match.score2 || 0 }}</p>
+          } @else {
+          <p>Status: Pending</p>
+          }
+        </ion-label>
+        <ion-button fill="clear" color="primary" [routerLink]="['/match-control', match.id]" [queryParams]="{tournamentId: tournamentId}">
+          <ion-icon name="play-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+      }
+    </ion-card-content>
+  </ion-card>
+  }
+</ion-content>
