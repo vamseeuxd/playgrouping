@@ -30,6 +30,8 @@ import {
   warningSharp,
   bookmarkOutline,
   bookmarkSharp,
+  trophyOutline,
+  trophySharp,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -42,7 +44,7 @@ import { UserProfileComponent } from './components/user-profile.component';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonText, IonAvatar, IonButton,
+  imports: [
     CommonModule,
     RouterLink,
     RouterLinkActive,
@@ -52,20 +54,19 @@ import { UserProfileComponent } from './components/user-profile.component';
     IonContent,
     IonList,
     IonListHeader,
-    IonNote,
     IonMenuToggle,
     IonItem,
     IonIcon,
     IonLabel,
     IonRouterLink,
     IonRouterOutlet,
-    UserProfileComponent,
-  ],
+    UserProfileComponent],
 })
 export class AppComponent {
   private authService: AuthService = inject(AuthService);
   user$: Observable<any> = this.authService.user$;
   public appPages = [
+    { title: 'Tournaments', url: '/tournaments', icon: 'trophy' },
     { title: 'Inbox', url: '/folder/inbox', icon: 'mail' },
     { title: 'Outbox', url: '/folder/outbox', icon: 'paper-plane' },
     { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
@@ -93,6 +94,8 @@ export class AppComponent {
       warningSharp,
       bookmarkOutline,
       bookmarkSharp,
+      trophyOutline,
+      trophySharp,
     });
   }
 

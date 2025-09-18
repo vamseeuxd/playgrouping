@@ -4,8 +4,23 @@ import { authGuard } from './guards/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'folder/inbox',
+    redirectTo: 'tournaments',
     pathMatch: 'full',
+  },
+  {
+    path: 'tournaments',
+    loadComponent: () =>
+      import('./tournaments/tournaments.page').then((m) => m.TournamentsPage),
+  },
+  {
+    path: 'tournaments/add',
+    loadComponent: () =>
+      import('./tournaments/tournament-form.page').then((m) => m.TournamentFormPage),
+  },
+  {
+    path: 'tournaments/edit/:id',
+    loadComponent: () =>
+      import('./tournaments/tournament-form.page').then((m) => m.TournamentFormPage),
   },
   {
     path: 'folder/:id',

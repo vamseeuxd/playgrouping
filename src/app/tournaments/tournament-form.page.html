@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEdit ? 'Edit' : 'Add' }} Tournament</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form #tournamentForm="ngForm" (ngSubmit)="onSubmit()">
+    <ion-input
+      label="Tournament Name"
+      class="ion-margin-bottom"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="tournament.name"
+      name="name"
+      required
+    ></ion-input>
+
+    <ion-select
+      label="Sport"
+      class="ion-margin-bottom"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="tournament.sport"
+      name="sport"
+      required
+    >
+      <ion-select-option value="football">Football</ion-select-option>
+      <ion-select-option value="basketball">Basketball</ion-select-option>
+      <ion-select-option value="tennis">Tennis</ion-select-option>
+      <ion-select-option value="cricket">Cricket</ion-select-option>
+    </ion-select>
+
+    <ion-input
+      label="Start Date"
+      class="ion-margin-bottom"
+      label-placement="floating"
+      fill="outline"
+      type="datetime-local"
+      [(ngModel)]="tournament.startDate"
+      name="startDate"
+      required
+    ></ion-input>
+
+    <ion-textarea
+      class="ion-margin-bottom"
+      label="Players (comma separated)"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="tournament.players"
+      name="players"
+      rows="4"
+      placeholder="Player1, Player2, Player3..."
+    ></ion-textarea>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      [disabled]="!tournamentForm.valid"
+      style="margin: 20px"
+    >
+      {{ isEdit ? 'Update' : 'Create' }} Tournament
+    </ion-button>
+
+    @if (isEdit) {
+    <ion-button
+      expand="block"
+      color="danger"
+      fill="outline"
+      (click)="deleteTournament()"
+      style="margin: 20px"
+    >
+      Delete Tournament
+    </ion-button>
+    }
+  </form>
+</ion-content>

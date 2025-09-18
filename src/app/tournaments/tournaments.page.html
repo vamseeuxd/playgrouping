@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Manage Tournaments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    @for (tournament of tournaments$ | async; track tournament.id) {
+    <ion-item>
+      <ion-icon name="trophy-outline" slot="start"></ion-icon>
+      <ion-label>
+        <h2>{{ tournament.name }}</h2>
+        <p>Sport: {{ tournament.sport }}</p>
+        <p>Start Date: {{ tournament.startDate | date:'short' }}</p>
+      </ion-label>
+      <ion-button fill="clear" slot="end" (click)="editTournament(tournament.id)">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="addTournament()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
