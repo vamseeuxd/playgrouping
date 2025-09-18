@@ -45,25 +45,51 @@
       required
     ></ion-input>
 
-    <ion-textarea
-      class="ion-margin-bottom"
-      label="Players (comma separated)"
-      label-placement="floating"
-      fill="outline"
-      [(ngModel)]="tournament.players"
-      name="players"
-      rows="4"
-      placeholder="Player1, Player2, Player3..."
-    ></ion-textarea>
+    @if (isEdit) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Players</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        @for (player of players; track player.id) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ player.name }}</h3>
+            <p>{{ player.gender }} - {{ player.remarks }}</p>
+          </ion-label>
+          <ion-button fill="clear" color="primary" (click)="editPlayer(player)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="removePlayer(player.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+        }
+        <ion-button expand="block" fill="outline" (click)="addPlayer()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Add Player
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+    }
 
-    <ion-button
-      expand="block"
-      type="submit"
-      [disabled]="!tournamentForm.valid"
-      style="margin: 20px"
-    >
-      {{ isEdit ? 'Update' : 'Create' }} Tournament
-    </ion-button>
+    <div style="display: flex; gap: 10px; margin: 20px;">
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="!tournamentForm.valid"
+      >
+        {{ isEdit ? 'Update' : 'Create' }} Tournament
+      </ion-button>
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="medium"
+        (click)="cancel()"
+      >
+        Cancel
+      </ion-button>
+    </div>
 
     @if (isEdit) {
     <ion-button
@@ -77,4 +103,57 @@
     </ion-button>
     }
   </form>
+
+  <ion-modal [isOpen]="showPlayerModal" (didDismiss)="showPlayerModal = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ editingPlayer ? 'Edit' : 'Add' }} Player</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showPlayerModal = false">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #playerForm="ngForm" (ngSubmit)="savePlayer()">
+          <ion-input
+            label="Player Name"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentPlayer.name"
+            name="playerName"
+            required
+          ></ion-input>
+          
+          <ion-select
+            label="Gender"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentPlayer.gender"
+            name="playerGender"
+            required
+          >
+            <ion-select-option value="Male">Male</ion-select-option>
+            <ion-select-option value="Female">Female</ion-select-option>
+          </ion-select>
+          
+          <ion-textarea
+            label="Remarks"
+            class="ion-margin-bottom"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentPlayer.remarks"
+            name="playerRemarks"
+            rows="3"
+          ></ion-textarea>
+          
+          <ion-button expand="block" type="submit" [disabled]="!playerForm.valid">
+            {{ editingPlayer ? 'Update' : 'Add' }} Player
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
