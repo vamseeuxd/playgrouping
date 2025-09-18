@@ -43,12 +43,6 @@ export const routes: Routes = [
       import('./scoreboard/scoreboard.page').then((m) => m.ScoreboardPage),
   },
   {
-    path: 'folder/:id',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./folder/folder.page').then((m) => m.FolderPage),
-  },
-  {
     path: 'login',
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),

@@ -4,8 +4,12 @@
       <ion-content>
         <ion-list id="inbox-list">
           <ion-list-header>
-            <app-user-profile [user]="user$ | async" (logoutClick)="logout()"></app-user-profile>
-          </ion-list-header> @for (p of appPages; track p; let i = $index) {
+            <app-user-profile
+              [user]="user$ | async"
+              (logoutClick)="logout()"
+            ></app-user-profile>
+          </ion-list-header>
+          @for (p of appPages; track p; let i = $index) {
           <ion-menu-toggle auto-hide="false">
             <ion-item
               routerDirection="root"
@@ -23,22 +27,6 @@
               <ion-label>{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          }
-        </ion-list>
-
-        <ion-list id="labels-list">
-          <ion-list-header>Labels</ion-list-header>
-
-          @for (label of labels; track label) {
-          <ion-item lines="none">
-            <ion-icon
-              aria-hidden="true"
-              slot="start"
-              ios="bookmark-outline"
-              md="bookmark-sharp"
-            ></ion-icon>
-            <ion-label>{{ label }}</ion-label>
-          </ion-item>
           }
         </ion-list>
       </ion-content>
