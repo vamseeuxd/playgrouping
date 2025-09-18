@@ -10,6 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
+    "page": "ionic generate component pages/login",
     "deploy": "npm run build && firebase deploy",
     "firebase:deploy": "firebase deploy"
   },

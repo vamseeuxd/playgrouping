@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-input
+    label="Email"
+    label-placement="floating"
+    fill="outline"
+    class="ion-margin-bottom"
+    placeholder="Enter text"
+  ></ion-input>
+  <ion-input
+    label="Password"
+    label-placement="floating"
+    fill="outline"
+    class="ion-margin-bottom"
+    placeholder="Enter text"
+  ></ion-input>
+
+  <ion-button class="ion-margin-bottom" expand="block">Login</ion-button>
+  <ion-button color="danger" expand="block" (click)="signInWithGoogle()"
+    >Login with Google</ion-button
+  >
+</ion-content>
