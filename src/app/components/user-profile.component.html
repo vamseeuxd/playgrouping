@@ -1,0 +1,22 @@
+@if (user) {
+<div class="profile-container">
+  @if (user.photoURL) {
+  <ion-avatar class="ion-margin-end">
+    <img [src]="user.photoURL" alt="Profile" />
+  </ion-avatar>
+  }
+  <ion-text class="ion-no-margin">
+    <h2 class="ion-no-margin">{{ user.displayName | titlecase }}</h2>
+  </ion-text>
+  <ion-note color="tertiary" class="user-email">{{ user.email }}</ion-note>
+  <ion-button fill="clear" (click)="logout()">Logout</ion-button>
+</div>
+} @else {
+<div class="profile-container">
+  <ion-text class="ion-no-margin">
+    <h2 class="ion-no-margin">Welcome, Guest!</h2>
+  </ion-text>
+  <ion-note class="user-email">Please log in to access more features.</ion-note>
+  <ion-button fill="clear" routerLink="/login">Login</ion-button>
+</div>
+}

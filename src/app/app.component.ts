@@ -36,6 +36,7 @@ import { InstallPromptService } from './services/install-prompt.service';
 import { Observable } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { CommonModule } from '@angular/common';
+import { UserProfileComponent } from './components/user-profile.component';
 
 @Component({
   selector: 'app-root',
@@ -58,6 +59,7 @@ import { CommonModule } from '@angular/common';
     IonLabel,
     IonRouterLink,
     IonRouterOutlet,
+    UserProfileComponent,
   ],
 })
 export class AppComponent {
