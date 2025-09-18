@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -11,7 +11,7 @@ import { Firestore, collection, collectionData, addDoc, doc, setDoc } from '@ang
   selector: 'app-knockout',
   templateUrl: './knockout.page.html',
   styleUrls: ['./knockout.page.scss'],
-  imports: [CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons]
+  imports: [CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip]
 })
 export class KnockoutPage {
   private route = inject(ActivatedRoute);
@@ -92,53 +92,50 @@ export class KnockoutPage {
 
   async advanceToNextRound() {
     try {
-      const groupMatches = this.knockoutStages[0].matches.filter((m: any) => m.status === 'finished');
+      const currentStageIndex = this.getCurrentStageIndex();
+      const currentStage = this.knockoutStages[currentStageIndex];
+      const nextStageIndex = currentStageIndex + 1;
       
-      if (groupMatches.length === 0) {
-        alert('No completed group matches to advance from');
+      if (nextStageIndex >= this.knockoutStages.length) {
+        alert('Tournament is already complete!');
         return;
       }
 
-      // Get winners from group stage
-      const winners = groupMatches.map((match: any) => {
-        return match.score1 > match.score2 ? match.team1 : match.team2;
-      });
-
-      if (winners.length < 2) {
-        alert('Need at least 2 winners to create next round');
-        return;
-      }
-
-      // Determine next stage
-      let nextStage = '';
-      let stageIndex = 1;
+      let qualifiedTeams: string[] = [];
       
-      if (winners.length >= 16) {
-        nextStage = 'round16';
-        stageIndex = 1;
-      } else if (winners.length >= 8) {
-        nextStage = 'quarter';
-        stageIndex = 2;
-      } else if (winners.length >= 4) {
-        nextStage = 'semi';
-        stageIndex = 3;
+      if (currentStageIndex === 0) {
+        // Group Stage: Get all teams that participated (for simplicity, all teams advance)
+        // In real tournaments, you'd rank teams by points/wins
+        qualifiedTeams = this.getUniqueTeamsFromMatches(currentStage.matches);
       } else {
-        nextStage = 'final';
-        stageIndex = 4;
+        // Knockout rounds: Get winners only
+        qualifiedTeams = this.getWinnersFromStage(currentStage.matches);
+      }
+      
+      if (qualifiedTeams.length < 2) {
+        alert(`Need at least 2 teams to advance from ${currentStage.name}`);
+        return;
       }
 
-      // Create matches for next round
+      // Determine correct number of teams for next stage
+      const nextStageTeams = this.getTeamsForStage(nextStageIndex, qualifiedTeams.length);
+      const teamsToAdvance = qualifiedTeams.slice(0, nextStageTeams);
+      
+      // Create matches for next stage
+      const nextStage = this.knockoutStages[nextStageIndex];
+      const nextStageKey = this.getStageKey(nextStageIndex);
       const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
       
-      for (let i = 0; i < winners.length; i += 2) {
-        if (i + 1 < winners.length) {
+      // Pair teams for next round matches
+      for (let i = 0; i < teamsToAdvance.length; i += 2) {
+        if (i + 1 < teamsToAdvance.length) {
           await addDoc(matchesCollection, {
-            team1: winners[i],
-            team2: winners[i + 1],
+            team1: teamsToAdvance[i],
+            team2: teamsToAdvance[i + 1],
             status: 'pending',
             score1: 0,
             score2: 0,
-            stage: nextStage,
+            stage: nextStageKey,
             startTime: null,
             endTime: null,
             duration: 0
@@ -146,21 +143,112 @@ export class KnockoutPage {
         }
       }
       
-      alert(`${this.knockoutStages[stageIndex].name} matches created!`);
+      alert(`${nextStage.name} created with ${Math.floor(teamsToAdvance.length / 2)} matches!`);
     } catch (error) {
       console.error('Error advancing to next round:', error);
     }
   }
 
+  getCurrentStageIndex(): number {
+    // Find the current active stage (has matches but next stage doesn't)
+    for (let i = 0; i < this.knockoutStages.length - 1; i++) {
+      const currentStageHasMatches = this.knockoutStages[i].matches.length > 0;
+      const nextStageHasMatches = this.knockoutStages[i + 1].matches.length > 0;
+      const allCurrentStageFinished = this.knockoutStages[i].matches.every((m: any) => m.status === 'finished');
+      
+      if (currentStageHasMatches && !nextStageHasMatches && allCurrentStageFinished) {
+        return i;
+      }
+    }
+    return 0; // Default to group stage
+  }
+
+  getWinnersFromStage(matches: any[]): string[] {
+    return matches
+      .filter((match: any) => match.status === 'finished')
+      .map((match: any) => {
+        if (match.score1 > match.score2) return match.team1;
+        if (match.score2 > match.score1) return match.team2;
+        // Handle draws - could implement tiebreaker logic here
+        return match.team1; // Default to team1 for draws
+      });
+  }
+
+  getStageKey(stageIndex: number): string {
+    const stageKeys = ['group', 'round16', 'quarter', 'semi', 'final'];
+    return stageKeys[stageIndex] || 'group';
+  }
+
+  getUniqueTeamsFromMatches(matches: any[]): string[] {
+    const teams = new Set<string>();
+    matches.forEach((match: any) => {
+      teams.add(match.team1);
+      teams.add(match.team2);
+    });
+    return Array.from(teams);
+  }
+
+  getTeamsForStage(stageIndex: number, availableTeams: number): number {
+    // Standard knockout tournament progression
+    switch (stageIndex) {
+      case 1: return Math.min(16, availableTeams); // Round of 16
+      case 2: return Math.min(8, availableTeams);  // Quarter Finals
+      case 3: return Math.min(4, availableTeams);  // Semi Finals
+      case 4: return Math.min(2, availableTeams);  // Finals
+      default: return availableTeams;
+    }
+  }
+
+  getStageStatus(matches: any[]): string {
+    if (matches.length === 0) return 'Not Started';
+    if (matches.every((m: any) => m.status === 'finished')) return 'Complete';
+    if (matches.some((m: any) => m.status === 'started' || m.status === 'paused')) return 'In Progress';
+    return 'Pending';
+  }
+
   canAdvanceToNextRound(): boolean {
-    const groupFinished = this.knockoutStages[0].matches.every((m: any) => m.status === 'finished');
-    const round16Finished = this.knockoutStages[1].matches.length === 0 || this.knockoutStages[1].matches.every((m: any) => m.status === 'finished');
-    const quarterFinished = this.knockoutStages[2].matches.length === 0 || this.knockoutStages[2].matches.every((m: any) => m.status === 'finished');
-    const semiFinished = this.knockoutStages[3].matches.length === 0 || this.knockoutStages[3].matches.every((m: any) => m.status === 'finished');
+    const currentStageIndex = this.getCurrentStageIndex();
+    const currentStage = this.knockoutStages[currentStageIndex];
+    const nextStageIndex = currentStageIndex + 1;
     
-    return (groupFinished && this.knockoutStages[1].matches.length === 0) ||
-           (round16Finished && this.knockoutStages[2].matches.length === 0) ||
-           (quarterFinished && this.knockoutStages[3].matches.length === 0) ||
-           (semiFinished && this.knockoutStages[4].matches.length === 0);
+    // Can't advance if we're at the final stage
+    if (nextStageIndex >= this.knockoutStages.length) {
+      return false;
+    }
+    
+    // Can advance if current stage has matches, all are finished, and next stage has no matches
+    const hasMatches = currentStage.matches.length > 0;
+    const allFinished = currentStage.matches.every((m: any) => m.status === 'finished');
+    const nextStageEmpty = this.knockoutStages[nextStageIndex].matches.length === 0;
+    
+    let hasEnoughTeams = false;
+    if (currentStageIndex === 0) {
+      // Group stage: need at least 2 teams total
+      hasEnoughTeams = this.getUniqueTeamsFromMatches(currentStage.matches).length >= 2;
+    } else {
+      // Knockout rounds: need at least 2 winners
+      hasEnoughTeams = this.getWinnersFromStage(currentStage.matches).length >= 2;
+    }
+    
+    return hasMatches && allFinished && nextStageEmpty && hasEnoughTeams;
+  }
+
+  getTournamentStatus(): string {
+    // Check if tournament is complete
+    const finalMatches = this.knockoutStages[4].matches;
+    if (finalMatches.length > 0 && finalMatches.every((m: any) => m.status === 'finished')) {
+      const winner = this.getWinnersFromStage(finalMatches)[0];
+      return `Tournament Complete - Winner: ${winner}`;
+    }
+    
+    // Find current active stage
+    for (let i = this.knockoutStages.length - 1; i >= 0; i--) {
+      if (this.knockoutStages[i].matches.length > 0) {
+        const allFinished = this.knockoutStages[i].matches.every((m: any) => m.status === 'finished');
+        return `${this.knockoutStages[i].name} - ${allFinished ? 'Complete' : 'In Progress'}`;
+      }
+    }
+    
+    return 'Not Started';
   }
 }
