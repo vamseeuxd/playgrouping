@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { playOutline, stopOutline, trophyOutline, refreshOutline } from 'ionicons/icons';
-import { Firestore, collection, collectionData, addDoc, doc, setDoc } from '@angular/fire/firestore';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-knockout',
@@ -15,7 +15,7 @@ import { Firestore, collection, collectionData, addDoc, doc, setDoc } from '@ang
 })
 export class KnockoutPage {
   private route = inject(ActivatedRoute);
-  private firestore = inject(Firestore);
+  private firestoreService = inject(FirestoreService);
   tournamentId = '';
   
   knockoutStages: any[] = [
@@ -26,25 +26,21 @@ export class KnockoutPage {
     { name: 'Finals', matches: [] }
   ];
 
+  teams: any[] = [];
+
   constructor() {
     addIcons({ playOutline, stopOutline, trophyOutline, refreshOutline });
     this.tournamentId = this.route.snapshot.params['id'];
     this.loadMatches();
   }
 
-  teams: any[] = [];
-
   loadMatches() {
     if (this.tournamentId) {
-      // Load teams
-      const teamsCollection = collection(this.firestore, `tournaments/${this.tournamentId}/teams`);
-      collectionData(teamsCollection, { idField: 'id' }).subscribe(teams => {
+      this.firestoreService.getTeams(this.tournamentId).subscribe(teams => {
         this.teams = teams;
       });
       
-      // Load matches
-      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
-      collectionData(matchesCollection, { idField: 'id' }).subscribe(matches => {
+      this.firestoreService.getMatches(this.tournamentId).subscribe(matches => {
         this.organizeMatches(matches);
       });
     }
@@ -57,12 +53,9 @@ export class KnockoutPage {
     }
 
     try {
-      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
-      
-      // Generate round-robin matches
       for (let i = 0; i < this.teams.length; i++) {
         for (let j = i + 1; j < this.teams.length; j++) {
-          await addDoc(matchesCollection, {
+          await this.firestoreService.createMatch(this.tournamentId, {
             team1: this.teams[i].name,
             team2: this.teams[j].name,
             status: 'pending',
@@ -104,11 +97,8 @@ export class KnockoutPage {
       let qualifiedTeams: string[] = [];
       
       if (currentStageIndex === 0) {
-        // Group Stage: Get all teams that participated (for simplicity, all teams advance)
-        // In real tournaments, you'd rank teams by points/wins
         qualifiedTeams = this.getUniqueTeamsFromMatches(currentStage.matches);
       } else {
-        // Knockout rounds: Get winners only
         qualifiedTeams = this.getWinnersFromStage(currentStage.matches);
       }
       
@@ -117,19 +107,15 @@ export class KnockoutPage {
         return;
       }
 
-      // Determine correct number of teams for next stage
       const nextStageTeams = this.getTeamsForStage(nextStageIndex, qualifiedTeams.length);
       const teamsToAdvance = qualifiedTeams.slice(0, nextStageTeams);
       
-      // Create matches for next stage
       const nextStage = this.knockoutStages[nextStageIndex];
       const nextStageKey = this.getStageKey(nextStageIndex);
-      const matchesCollection = collection(this.firestore, `tournaments/${this.tournamentId}/matches`);
       
-      // Pair teams for next round matches
       for (let i = 0; i < teamsToAdvance.length; i += 2) {
         if (i + 1 < teamsToAdvance.length) {
-          await addDoc(matchesCollection, {
+          await this.firestoreService.createMatch(this.tournamentId, {
             team1: teamsToAdvance[i],
             team2: teamsToAdvance[i + 1],
             status: 'pending',
@@ -150,7 +136,6 @@ export class KnockoutPage {
   }
 
   getCurrentStageIndex(): number {
-    // Find the current active stage (has matches but next stage doesn't)
     for (let i = 0; i < this.knockoutStages.length - 1; i++) {
       const currentStageHasMatches = this.knockoutStages[i].matches.length > 0;
       const nextStageHasMatches = this.knockoutStages[i + 1].matches.length > 0;
@@ -160,7 +145,7 @@ export class KnockoutPage {
         return i;
       }
     }
-    return 0; // Default to group stage
+    return 0;
   }
 
   getWinnersFromStage(matches: any[]): string[] {
@@ -169,8 +154,7 @@ export class KnockoutPage {
       .map((match: any) => {
         if (match.score1 > match.score2) return match.team1;
         if (match.score2 > match.score1) return match.team2;
-        // Handle draws - could implement tiebreaker logic here
-        return match.team1; // Default to team1 for draws
+        return match.team1;
       });
   }
 
@@ -189,12 +173,11 @@ export class KnockoutPage {
   }
 
   getTeamsForStage(stageIndex: number, availableTeams: number): number {
-    // Standard knockout tournament progression
     switch (stageIndex) {
-      case 1: return Math.min(16, availableTeams); // Round of 16
-      case 2: return Math.min(8, availableTeams);  // Quarter Finals
-      case 3: return Math.min(4, availableTeams);  // Semi Finals
-      case 4: return Math.min(2, availableTeams);  // Finals
+      case 1: return Math.min(16, availableTeams);
+      case 2: return Math.min(8, availableTeams);
+      case 3: return Math.min(4, availableTeams);
+      case 4: return Math.min(2, availableTeams);
       default: return availableTeams;
     }
   }
@@ -211,22 +194,18 @@ export class KnockoutPage {
     const currentStage = this.knockoutStages[currentStageIndex];
     const nextStageIndex = currentStageIndex + 1;
     
-    // Can't advance if we're at the final stage
     if (nextStageIndex >= this.knockoutStages.length) {
       return false;
     }
     
-    // Can advance if current stage has matches, all are finished, and next stage has no matches
     const hasMatches = currentStage.matches.length > 0;
     const allFinished = currentStage.matches.every((m: any) => m.status === 'finished');
     const nextStageEmpty = this.knockoutStages[nextStageIndex].matches.length === 0;
     
     let hasEnoughTeams = false;
     if (currentStageIndex === 0) {
-      // Group stage: need at least 2 teams total
       hasEnoughTeams = this.getUniqueTeamsFromMatches(currentStage.matches).length >= 2;
     } else {
-      // Knockout rounds: need at least 2 winners
       hasEnoughTeams = this.getWinnersFromStage(currentStage.matches).length >= 2;
     }
     
@@ -234,14 +213,12 @@ export class KnockoutPage {
   }
 
   getTournamentStatus(): string {
-    // Check if tournament is complete
     const finalMatches = this.knockoutStages[4].matches;
     if (finalMatches.length > 0 && finalMatches.every((m: any) => m.status === 'finished')) {
       const winner = this.getWinnersFromStage(finalMatches)[0];
       return `Tournament Complete - Winner: ${winner}`;
     }
     
-    // Find current active stage
     for (let i = this.knockoutStages.length - 1; i >= 0; i--) {
       if (this.knockoutStages[i].matches.length > 0) {
         const allFinished = this.knockoutStages[i].matches.every((m: any) => m.status === 'finished');
