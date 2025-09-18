@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, IonModal, IonInput, IonButtons, IonBackButton } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, IonModal, IonInput, IonButtons, IonBackButton, LoadingController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 })
 export class SportsPage {
   private firestoreService = inject(FirestoreService);
+  private loadingController = inject(LoadingController);
   
   sports$: Observable<any[]>;
   showSportModal = false;
@@ -41,6 +42,9 @@ export class SportsPage {
   async saveSport() {
     if (!this.currentSport.name.trim()) return;
 
+    const loading = await this.loadingController.create({ message: 'Saving sport...' });
+    await loading.present();
+
     try {
       if (this.editingSport) {
         await this.firestoreService.updateSport(this.currentSport.id, { name: this.currentSport.name });
@@ -50,15 +54,22 @@ export class SportsPage {
       this.showSportModal = false;
     } catch (error) {
       console.error('Error saving sport:', error);
+    } finally {
+      await loading.dismiss();
     }
   }
 
   async deleteSport(id: string, name: string) {
     if (confirm(`Delete sport "${name}"?`)) {
+      const loading = await this.loadingController.create({ message: 'Deleting sport...' });
+      await loading.present();
+      
       try {
         await this.firestoreService.deleteSport(id);
       } catch (error) {
         console.error('Error deleting sport:', error);
+      } finally {
+        await loading.dismiss();
       }
     }
   }

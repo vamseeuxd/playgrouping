@@ -20,6 +20,7 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  LoadingController,
 } from '@ionic/angular/standalone';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -62,6 +63,7 @@ import { FirestoreService } from '../services/firestore.service';
 export class MatchControlPage {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
+  private loadingController = inject(LoadingController);
   matchId = '';
   tournamentId = '';
 
@@ -94,6 +96,9 @@ export class MatchControlPage {
   }
 
   async loadMatch() {
+    const loading = await this.loadingController.create({ message: 'Loading match...' });
+    await loading.present();
+    
     try {
       const match = await this.firestoreService.getMatch(this.tournamentId, this.matchId);
       if (match) {
@@ -104,28 +109,51 @@ export class MatchControlPage {
       }
     } catch (error) {
       console.error('Error loading match:', error);
+    } finally {
+      await loading.dismiss();
     }
   }
 
   async startMatch() {
-    this.match.status = 'started';
-    this.match.startTime = new Date();
-    this.startTimer();
-    await this.updateMatchInFirestore();
+    const loading = await this.loadingController.create({ message: 'Starting match...' });
+    await loading.present();
+    
+    try {
+      this.match.status = 'started';
+      this.match.startTime = new Date();
+      this.startTimer();
+      await this.updateMatchInFirestore();
+    } finally {
+      await loading.dismiss();
+    }
   }
 
   async pauseMatch() {
-    this.match.status = 'paused';
-    this.stopTimer();
-    await this.updateMatchInFirestore();
+    const loading = await this.loadingController.create({ message: 'Pausing match...' });
+    await loading.present();
+    
+    try {
+      this.match.status = 'paused';
+      this.stopTimer();
+      await this.updateMatchInFirestore();
+    } finally {
+      await loading.dismiss();
+    }
   }
 
   async stopMatch() {
-    this.match.status = 'finished';
-    this.match.endTime = new Date();
-    this.match.duration = this.elapsedTime;
-    this.stopTimer();
-    await this.updateMatchInFirestore();
+    const loading = await this.loadingController.create({ message: 'Ending match...' });
+    await loading.present();
+    
+    try {
+      this.match.status = 'finished';
+      this.match.endTime = new Date();
+      this.match.duration = this.elapsedTime;
+      this.stopTimer();
+      await this.updateMatchInFirestore();
+    } finally {
+      await loading.dismiss();
+    }
   }
 
   startTimer() {
@@ -141,46 +169,56 @@ export class MatchControlPage {
   }
 
   async updateScore(team: number, increment: boolean) {
-    if (team === 1) {
-      this.match.score1 += increment ? 1 : -1;
-      if (this.match.score1 < 0) this.match.score1 = 0;
-    } else {
-      this.match.score2 += increment ? 1 : -1;
-      if (this.match.score2 < 0) this.match.score2 = 0;
+    const loading = await this.loadingController.create({ message: 'Updating score...' });
+    await loading.present();
+    
+    try {
+      if (team === 1) {
+        this.match.score1 += increment ? 1 : -1;
+        if (this.match.score1 < 0) this.match.score1 = 0;
+      } else {
+        this.match.score2 += increment ? 1 : -1;
+        if (this.match.score2 < 0) this.match.score2 = 0;
+      }
+      await this.updateMatchInFirestore();
+    } finally {
+      await loading.dismiss();
     }
-    await this.updateMatchInFirestore();
   }
 
   async updateMatchInFirestore() {
-    try {
-      const matchData = {
-        id: this.matchId,
-        team1: this.match.team1,
-        team2: this.match.team2,
-        status: this.match.status,
-        score1: this.match.score1,
-        score2: this.match.score2,
-        startTime: this.match.startTime,
-        endTime: this.match.endTime,
-        duration: this.match.duration,
-      };
-      await this.firestoreService.updateMatch(this.tournamentId, this.matchId, matchData);
-    } catch (error) {
-      console.error('Error updating match:', error);
-    }
+    const matchData = {
+      id: this.matchId,
+      team1: this.match.team1,
+      team2: this.match.team2,
+      status: this.match.status,
+      score1: this.match.score1,
+      score2: this.match.score2,
+      startTime: this.match.startTime,
+      endTime: this.match.endTime,
+      duration: this.match.duration,
+    };
+    await this.firestoreService.updateMatch(this.tournamentId, this.matchId, matchData);
   }
 
   async resetMatch() {
     if (confirm('Are you sure you want to reset this match? All progress will be lost.')) {
-      this.stopTimer();
-      this.match.status = 'pending';
-      this.match.score1 = 0;
-      this.match.score2 = 0;
-      this.match.startTime = null;
-      this.match.endTime = null;
-      this.match.duration = 0;
-      this.elapsedTime = 0;
-      await this.updateMatchInFirestore();
+      const loading = await this.loadingController.create({ message: 'Resetting match...' });
+      await loading.present();
+      
+      try {
+        this.stopTimer();
+        this.match.status = 'pending';
+        this.match.score1 = 0;
+        this.match.score2 = 0;
+        this.match.startTime = null;
+        this.match.endTime = null;
+        this.match.duration = 0;
+        this.elapsedTime = 0;
+        await this.updateMatchInFirestore();
+      } finally {
+        await loading.dismiss();
+      }
     }
   }
 

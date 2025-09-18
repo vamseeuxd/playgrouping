@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -16,6 +16,7 @@ import { FirestoreService } from '../services/firestore.service';
 export class KnockoutPage {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
+  private loadingController = inject(LoadingController);
   tournamentId = '';
   
   knockoutStages: any[] = [
@@ -52,6 +53,9 @@ export class KnockoutPage {
       return;
     }
 
+    const loading = await this.loadingController.create({ message: 'Generating matches...' });
+    await loading.present();
+
     try {
       for (let i = 0; i < this.teams.length; i++) {
         for (let j = i + 1; j < this.teams.length; j++) {
@@ -72,6 +76,8 @@ export class KnockoutPage {
       alert('Matches generated successfully!');
     } catch (error) {
       console.error('Error generating matches:', error);
+    } finally {
+      await loading.dismiss();
     }
   }
 
@@ -84,6 +90,9 @@ export class KnockoutPage {
   }
 
   async advanceToNextRound() {
+    const loading = await this.loadingController.create({ message: 'Advancing to next round...' });
+    await loading.present();
+    
     try {
       const currentStageIndex = this.getCurrentStageIndex();
       const currentStage = this.knockoutStages[currentStageIndex];
@@ -132,6 +141,8 @@ export class KnockoutPage {
       alert(`${nextStage.name} created with ${Math.floor(teamsToAdvance.length / 2)} matches!`);
     } catch (error) {
       console.error('Error advancing to next round:', error);
+    } finally {
+      await loading.dismiss();
     }
   }
 

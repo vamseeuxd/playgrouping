@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { LoadingController } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
@@ -67,6 +68,7 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
 })
 export class TournamentFormPage {
   private firestoreService = inject(FirestoreService);
+  private loadingController = inject(LoadingController);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -382,6 +384,9 @@ export class TournamentFormPage {
   }
 
   async submitTournament() {
+    const loading = await this.loadingController.create({ message: 'Saving tournament...' });
+    await loading.present();
+    
     try {
       if (this.isEdit) {
         await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
@@ -391,6 +396,8 @@ export class TournamentFormPage {
       this.router.navigate(['/tournaments']);
     } catch (error) {
       console.error('Error saving tournament:', error);
+    } finally {
+      await loading.dismiss();
     }
   }
 
