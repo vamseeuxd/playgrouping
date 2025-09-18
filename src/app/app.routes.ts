@@ -38,6 +38,11 @@ export const routes: Routes = [
       import('./sports/sports.page').then((m) => m.SportsPage),
   },
   {
+    path: 'scoreboard/:id',
+    loadComponent: () =>
+      import('./scoreboard/scoreboard.page').then((m) => m.ScoreboardPage),
+  },
+  {
     path: 'folder/:id',
     canActivate: [authGuard],
     loadComponent: () =>

@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tournament Scoreboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Team Standings -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Team Standings</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for (stat of teamStats; track stat.team; let i = $index) {
+      <ion-item class="team-item">
+        <ion-label>
+          <div class="team-header">
+            <span class="position">{{ i + 1 }}</span>
+            <h2>{{ stat.team }}</h2>
+            <span class="points">{{ stat.points }} pts</span>
+          </div>
+          <div class="team-stats">
+            <div class="stat-item">
+              <span class="stat-label">Played</span>
+              <span class="stat-value">{{ stat.played }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Won</span>
+              <span class="stat-value">{{ stat.won }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Drawn</span>
+              <span class="stat-value">{{ stat.drawn }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Lost</span>
+              <span class="stat-value">{{ stat.lost }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Goals For</span>
+              <span class="stat-value">{{ stat.goalsFor }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Goals Against</span>
+              <span class="stat-value">{{ stat.goalsAgainst }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Goal Diff</span>
+              <span class="stat-value">{{ stat.goalDifference >= 0 ? '+' : '' }}{{ stat.goalDifference }}</span>
+            </div>
+          </div>
+        </ion-label>
+      </ion-item>
+      }
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Recent Matches -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Recent Matches</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for (match of matches.slice(0, 5); track match.id) {
+      @if (match.status === 'finished') {
+      <ion-item>
+        <ion-label>
+          <div class="match-result">
+            <span class="team-name">{{ match.team1 }}</span>
+            <span class="score">{{ match.score1 }} - {{ match.score2 }}</span>
+            <span class="team-name">{{ match.team2 }}</span>
+          </div>
+          <p class="match-date">{{ getMatchDate(match.endTime) | date:'MMM d, HH:mm' }}</p>
+        </ion-label>
+      </ion-item>
+      }
+      }
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Legend -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Legend</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>P</strong> = Played, <strong>W</strong> = Won, <strong>D</strong> = Drawn, <strong>L</strong> = Lost</p>
+      <p><strong>GF</strong> = Goals For, <strong>GA</strong> = Goals Against, <strong>GD</strong> = Goal Difference</p>
+      <p><strong>Pts</strong> = Points (3 for win, 1 for draw, 0 for loss)</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

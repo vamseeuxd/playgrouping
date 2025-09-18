@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline } from 'ionicons/icons';
+import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline } from 'ionicons/icons';
 import { Firestore, collection, collectionData, addDoc, doc, setDoc, deleteDoc, getDocs } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,7 @@ export class TournamentsPage {
   tournaments$: Observable<any[]>;
 
   constructor() {
-    addIcons({ trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline });
+    addIcons({ trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline });
     const tournamentsCollection = collection(this.firestore, 'tournaments');
     this.tournaments$ = collectionData(tournamentsCollection, { idField: 'id' });
   }
