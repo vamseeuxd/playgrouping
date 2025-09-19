@@ -7,26 +7,11 @@
 <ion-content>
   <ion-list>
     @for (tournament of tournaments$ | async; track tournament.id) {
-    <ion-item>
-      <ion-icon name="trophy-outline" slot="start"></ion-icon>
-      <ion-label>
-        <h2>{{ tournament.name }}</h2>
-        <p>Sport: {{ tournament.sport }}</p>
-        <p>Start Date: {{ tournament.startDate | date:'short' }}</p>
-      </ion-label>
-      <ion-button fill="clear" slot="end" routerLink="/scoreboard/{{ tournament.id }}">
-        <ion-icon name="stats-chart-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" routerLink="/knockout/{{ tournament.id }}">
-        <ion-icon name="trophy-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" (click)="editTournament(tournament.id)">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" color="danger" (click)="deleteTournament(tournament.id, tournament.name)">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
+    <app-tournament-card 
+      [tournament]="tournament" 
+      (edit)="editTournament($event)" 
+      (delete)="deleteTournament($event.id, $event.name)">
+    </app-tournament-card>
     }
   </ion-list>
 

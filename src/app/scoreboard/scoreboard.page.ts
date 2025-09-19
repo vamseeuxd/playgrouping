@@ -19,6 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
+import { TeamStandingsComponent } from '../components/scoreboard/team-standings.component';
 
 @Component({
   selector: 'app-scoreboard',
@@ -38,6 +39,7 @@ import { FirestoreService } from '../services/firestore.service';
     IonLabel,
     IonBackButton,
     IonButtons,
+    TeamStandingsComponent,
   ],
 })
 export class ScoreboardPage {

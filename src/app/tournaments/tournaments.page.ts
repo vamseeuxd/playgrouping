@@ -7,12 +7,13 @@ import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline,
 import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { TournamentCardComponent } from '../components/tournament/tournament-card.component';
 
 @Component({
   selector: 'app-tournaments',
   templateUrl: './tournaments.page.html',
   styleUrls: ['./tournaments.page.scss'],
-  imports: [CommonModule, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton]
+  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonFab, IonFabButton, IonIcon, TournamentCardComponent]
 })
 export class TournamentsPage {
   private firestoreService = inject(FirestoreService);

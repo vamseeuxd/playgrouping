@@ -12,18 +12,14 @@ import {
   IonCardContent,
   IonItem,
   IonLabel,
-  IonButton,
-  IonIcon,
   IonBackButton,
   IonButtons,
-  IonInput,
-  IonGrid,
-  IonRow,
-  IonCol,
   LoadingController,
   AlertController,
   ToastController,
 } from '@ionic/angular/standalone';
+import { MatchControlsComponent } from '../components/match/match-controls.component';
+import { ScoreBoardComponent } from '../components/match/score-board.component';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
 import {
@@ -53,13 +49,10 @@ import { FirestoreService } from '../services/firestore.service';
     IonCardContent,
     IonItem,
     IonLabel,
-    IonButton,
-    IonIcon,
     IonBackButton,
     IonButtons,
-    IonGrid,
-    IonRow,
-    IonCol
+    MatchControlsComponent,
+    ScoreBoardComponent
 ],
 })
 export class MatchControlPage {
