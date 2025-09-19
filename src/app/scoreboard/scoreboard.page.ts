@@ -21,6 +21,8 @@ import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { TeamStandingsComponent } from '../components/scoreboard/team-standings.component';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-scoreboard',
@@ -46,6 +48,8 @@ import { TeamStandingsComponent } from '../components/scoreboard/team-standings.
 export class ScoreboardPage {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   tournamentId = '';
 
   teams: any[] = [];
@@ -54,6 +58,14 @@ export class ScoreboardPage {
 
   constructor() {
     this.tournamentId = this.route.snapshot.params['id'];
+    
+    // Check for view access via QR code
+    const accessParam = this.route.snapshot.queryParams['access'];
+    if (accessParam === 'view') {
+      this.authService.setViewAccess(this.tournamentId);
+    }
+    
+    // Allow access to scoreboard for all users (authenticated or not)
     this.loadData();
   }
 

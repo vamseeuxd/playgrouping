@@ -28,6 +28,7 @@ import {
   pauseOutline,
   addOutline,
   removeOutline,
+  qrCodeOutline,
 } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
@@ -87,6 +88,7 @@ export class MatchControlPage {
       pauseOutline,
       addOutline,
       removeOutline,
+      qrCodeOutline,
     });
     this.tournamentId = this.route.snapshot.queryParams['tournamentId'] || 'default';
     this.matchId = this.route.snapshot.params['id'];

@@ -1,7 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { IonItem, IonLabel, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
+import { QrCodeService } from '../../services/qr-code.service';
 
 @Component({
   selector: 'app-tournament-card',
@@ -16,15 +18,22 @@ import { CommonModule } from '@angular/common';
       <ion-button fill="clear" slot="end" [routerLink]="'/scoreboard/' + tournament.id">
         <ion-icon name="stats-chart-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" slot="end" [routerLink]="'/knockout/' + tournament.id">
-        <ion-icon name="trophy-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" (click)="onEdit()">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
+      @if (canManageSports) {
+        <ion-button fill="clear" slot="end" [routerLink]="'/knockout/' + tournament.id">
+          <ion-icon name="trophy-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" slot="end" (click)="onEdit()">
+          <ion-icon name="settings-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" slot="end" color="primary" (click)="onPrintQR()">
+          <ion-icon name="qr-code-outline"></ion-icon>
+        </ion-button>
+      }
+      @if (canDelete) {
       <ion-button fill="clear" slot="end" color="danger" (click)="onDelete()">
         <ion-icon name="trash-outline"></ion-icon>
       </ion-button>
+      }
     </ion-item>
   `,
   imports: [CommonModule, RouterLink, IonItem, IonLabel, IonButton, IonIcon]
@@ -34,11 +43,26 @@ export class TournamentCardComponent {
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<{id: string, name: string}>();
 
+  private authService = inject(AuthService);
+  private qrService = inject(QrCodeService);
+
+  get canDelete() {
+    return this.authService.hasPermission('canDeleteTournament');
+  }
+
+  get canManageSports() {
+    return this.authService.hasPermission('canManageSports');
+  }
+
   onEdit() {
     this.edit.emit(this.tournament.id);
   }
 
   onDelete() {
     this.delete.emit({id: this.tournament.id, name: this.tournament.name});
+  }
+
+  onPrintQR() {
+    this.qrService.printQRCode(this.tournament.id, this.tournament.name);
   }
 }

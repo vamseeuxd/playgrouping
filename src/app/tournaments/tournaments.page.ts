@@ -3,18 +3,20 @@ import { Router } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline } from 'ionicons/icons';
+import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline, qrCodeOutline } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TournamentCardComponent } from '../components/tournament/tournament-card.component';
+import { RoleSelectorComponent } from '../components/shared/role-selector.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-tournaments',
   templateUrl: './tournaments.page.html',
   styleUrls: ['./tournaments.page.scss'],
-  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonFab, IonFabButton, IonIcon, TournamentCardComponent]
+  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonFab, IonFabButton, IonIcon, TournamentCardComponent, RoleSelectorComponent]
 })
 export class TournamentsPage {
   private firestoreService = inject(FirestoreService);
@@ -22,11 +24,20 @@ export class TournamentsPage {
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
   private router = inject(Router);
+  private authService = inject(AuthService);
   
   tournaments$: Observable<any[]>;
+  
+  get canCreateTournament() {
+    return this.authService.hasPermission('canCreateTournament');
+  }
+  
+  get canManageSports() {
+    return this.authService.hasPermission('canManageSports');
+  }
 
   constructor() {
-    addIcons({ trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline });
+    addIcons({ trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline, qrCodeOutline });
     this.tournaments$ = this.firestoreService.getTournaments();
   }
 
@@ -72,10 +83,17 @@ export class TournamentsPage {
       // Create matches
       const matches = APP_CONSTANTS.MOCK_DATA.MATCHES;
       
-      for (const match of matches) {
+      for (let i = 0; i < matches.length; i++) {
+        const match = matches[i];
         await this.firestoreService.createMatch(tournamentId, {
-          ...match,
-          startTime: match.status !== APP_CONSTANTS.MATCH.STATUS.PENDING ? new Date() : null,
+          id: `match-${i}`,
+          team1: match.team1,
+          team2: match.team2,
+          status: match.status || APP_CONSTANTS.MATCH.STATUS.PENDING,
+          score1: match.score1 || 0,
+          score2: match.score2 || 0,
+          stage: match.stage || APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
+          startTime: match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED ? new Date() : null,
           endTime: match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED ? new Date() : null,
           duration: match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED ? APP_CONSTANTS.MATCH.DEFAULT_DURATION : 0
         });

@@ -374,7 +374,16 @@ export class TournamentFormPage {
           id: `${i}-${j}`,
           team1: this.teams[i].name,
           team2: this.teams[j].name,
-          date: new Date().toISOString().slice(0, 16)
+          date: new Date().toISOString().slice(0, 16),
+          court: '',
+          umpire: '',
+          status: APP_CONSTANTS.MATCH.STATUS.PENDING,
+          score1: 0,
+          score2: 0,
+          stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
+          startTime: null,
+          endTime: null,
+          duration: 0
         });
       }
     }
@@ -399,15 +408,31 @@ export class TournamentFormPage {
     }
 
     try {
+      const matchData = {
+        id: this.currentMatch.id || `match-${Date.now()}`,
+        team1: this.currentMatch.team1,
+        team2: this.currentMatch.team2,
+        date: this.currentMatch.date || new Date().toISOString().slice(0, 16),
+        court: this.currentMatch.court || '',
+        umpire: this.currentMatch.umpire || '',
+        status: APP_CONSTANTS.MATCH.STATUS.PENDING,
+        score1: 0,
+        score2: 0,
+        stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
+        startTime: null,
+        endTime: null,
+        duration: 0
+      };
+      
       if (this.editingMatch) {
-        await this.firestoreService.updateMatch(this.tournamentId, this.currentMatch.id, this.currentMatch);
-        const index = this.matches.findIndex(m => m.id === this.currentMatch.id);
+        await this.firestoreService.updateMatch(this.tournamentId, matchData.id, matchData);
+        const index = this.matches.findIndex(m => m.id === matchData.id);
         if (index !== -1) {
-          this.matches[index] = { ...this.currentMatch };
+          this.matches[index] = { ...matchData };
         }
       } else {
-        await this.firestoreService.createMatch(this.tournamentId, this.currentMatch);
-        this.matches.push({ ...this.currentMatch });
+        await this.firestoreService.createMatch(this.tournamentId, matchData);
+        this.matches.push({ ...matchData });
       }
       
       this.showMatchModal = false;

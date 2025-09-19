@@ -5,6 +5,9 @@
 </ion-header>
 
 <ion-content>
+  <!-- Role Selector for Demo -->
+  <app-role-selector></app-role-selector>
+  
   <ion-list>
     @for (tournament of tournaments$ | async; track tournament.id) {
     <app-tournament-card 
@@ -15,15 +18,19 @@
     }
   </ion-list>
 
+  @if (canCreateTournament) {
   <ion-fab vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addTournament()">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+  }
   
+  @if (canManageSports) {
   <ion-fab vertical="bottom" horizontal="start">
     <ion-fab-button color="secondary" (click)="createMockData()">
       <ion-icon name="flask-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+  }
 </ion-content>

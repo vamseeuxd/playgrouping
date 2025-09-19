@@ -51,7 +51,6 @@ export const routes: Routes = [
   },
   {
     path: 'scoreboard/:id',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('./scoreboard/scoreboard.page').then((m) => m.ScoreboardPage),
   },
