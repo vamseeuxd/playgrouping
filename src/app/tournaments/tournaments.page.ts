@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, LoadingController } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, LoadingController, AlertController } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline } from 'ionicons/icons';
@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 export class TournamentsPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
+  private alertController = inject(AlertController);
   private router = inject(Router);
   
   tournaments$: Observable<any[]>;
@@ -27,7 +28,18 @@ export class TournamentsPage {
   }
 
   async createMockData() {
-    if (!confirm('Create mock tournament with players, teams, and matches?')) return;
+    const alert = await this.alertController.create({
+      header: 'Create Mock Data',
+      message: 'Create mock tournament with players, teams, and matches?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes', handler: () => this.performCreateMockData() }
+      ]
+    });
+    await alert.present();
+  }
+
+  async performCreateMockData() {
     
     const loading = await this.loadingController.create({ message: 'Creating mock data...' });
     await loading.present();
@@ -103,7 +115,18 @@ export class TournamentsPage {
   }
 
   async deleteTournament(id: string, name: string) {
-    if (!confirm(`Are you sure you want to delete "${name}"? This will delete all players, teams, and matches.`)) return;
+    const alert = await this.alertController.create({
+      header: 'Delete Tournament',
+      message: `Are you sure you want to delete "${name}"? This will delete all players, teams, and matches.`,
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes', handler: () => this.performDeleteTournament(id, name) }
+      ]
+    });
+    await alert.present();
+  }
+
+  async performDeleteTournament(id: string, name: string) {
     
     const loading = await this.loadingController.create({ message: 'Deleting tournament...' });
     await loading.present();

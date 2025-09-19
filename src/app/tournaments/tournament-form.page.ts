@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { LoadingController } from '@ionic/angular/standalone';
+import { LoadingController, AlertController } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
@@ -69,6 +69,7 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
 export class TournamentFormPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
+  private alertController = inject(AlertController);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -145,14 +146,24 @@ export class TournamentFormPage {
   }
 
   async deleteTournament() {
-    if (confirm('Are you sure you want to delete this tournament?')) {
+    const alert = await this.alertController.create({
+      header: 'Delete Tournament',
+      message: 'Are you sure you want to delete this tournament?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes', handler: () => this.performDeleteTournament() }
+      ]
+    });
+    await alert.present();
+  }
+
+  async performDeleteTournament() {
       try {
         await this.firestoreService.deleteTournament(this.tournamentId);
         this.router.navigate(['/tournaments']);
       } catch (error) {
         console.error('Error deleting tournament:', error);
       }
-    }
   }
 
   addPlayer() {
@@ -204,14 +215,24 @@ export class TournamentFormPage {
   }
 
   async removePlayer(playerId: string) {
-    if (confirm('Remove this player?')) {
+    const alert = await this.alertController.create({
+      header: 'Remove Player',
+      message: 'Remove this player?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes', handler: () => this.performRemovePlayer(playerId) }
+      ]
+    });
+    await alert.present();
+  }
+
+  async performRemovePlayer(playerId: string) {
       try {
         await this.firestoreService.deletePlayer(this.tournamentId, playerId);
         this.loadPlayers();
       } catch (error) {
         console.error('Error removing player:', error);
       }
-    }
   }
 
   cancel() {
@@ -303,14 +324,24 @@ export class TournamentFormPage {
   }
 
   async removeTeam(teamId: string) {
-    if (confirm('Remove this team?')) {
+    const alert = await this.alertController.create({
+      header: 'Remove Team',
+      message: 'Remove this team?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes', handler: () => this.performRemoveTeam(teamId) }
+      ]
+    });
+    await alert.present();
+  }
+
+  async performRemoveTeam(teamId: string) {
       try {
         await this.firestoreService.deleteTeam(this.tournamentId, teamId);
         this.loadTeams();
       } catch (error) {
         console.error('Error removing team:', error);
       }
-    }
   }
 
   loadTeams() {

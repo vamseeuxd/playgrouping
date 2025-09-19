@@ -21,6 +21,7 @@ import {
   IonRow,
   IonCol,
   LoadingController,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -64,6 +65,7 @@ export class MatchControlPage {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
+  private alertController = inject(AlertController);
   matchId = '';
   tournamentId = '';
 
@@ -202,7 +204,18 @@ export class MatchControlPage {
   }
 
   async resetMatch() {
-    if (confirm('Are you sure you want to reset this match? All progress will be lost.')) {
+    const alert = await this.alertController.create({
+      header: 'Reset Match',
+      message: 'Are you sure you want to reset this match? All progress will be lost.',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        { text: 'Yes', handler: () => this.performResetMatch() }
+      ]
+    });
+    await alert.present();
+  }
+
+  async performResetMatch() {
       const loading = await this.loadingController.create({ message: 'Resetting match...' });
       await loading.present();
       
@@ -219,7 +232,6 @@ export class MatchControlPage {
       } finally {
         await loading.dismiss();
       }
-    }
   }
 
   formatTime(seconds: number): string {
