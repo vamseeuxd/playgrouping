@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, LoadingController, AlertController } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline } from 'ionicons/icons';
@@ -18,6 +18,7 @@ export class TournamentsPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
   private router = inject(Router);
   
   tournaments$: Observable<any[]>;
@@ -97,10 +98,20 @@ export class TournamentsPage {
         });
       }
       
-      alert('Mock tournament created successfully!');
+      const toast = await this.toastController.create({
+        message: 'Mock tournament created successfully!',
+        duration: 3000,
+        color: 'success'
+      });
+      await toast.present();
     } catch (error) {
       console.error('Error creating mock data:', error);
-      alert('Error creating mock data');
+      const toast = await this.toastController.create({
+        message: 'Error creating mock data',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }
@@ -133,10 +144,20 @@ export class TournamentsPage {
     
     try {
       await this.firestoreService.deleteTournament(id);
-      alert('Tournament deleted successfully!');
+      const toast = await this.toastController.create({
+        message: 'Tournament deleted successfully!',
+        duration: 3000,
+        color: 'success'
+      });
+      await toast.present();
     } catch (error) {
       console.error('Error deleting tournament:', error);
-      alert('Error deleting tournament');
+      const toast = await this.toastController.create({
+        message: 'Error deleting tournament',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }

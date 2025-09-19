@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { LoadingController, AlertController } from '@ionic/angular/standalone';
+import { LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
@@ -70,6 +70,7 @@ export class TournamentFormPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -424,9 +425,21 @@ export class TournamentFormPage {
       } else {
         await this.firestoreService.createTournament(this.tournament);
       }
+      const toast = await this.toastController.create({
+        message: 'Tournament saved successfully!',
+        duration: 3000,
+        color: 'success'
+      });
+      await toast.present();
       this.router.navigate(['/tournaments']);
     } catch (error) {
       console.error('Error saving tournament:', error);
+      const toast = await this.toastController.create({
+        message: 'Error saving tournament',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }

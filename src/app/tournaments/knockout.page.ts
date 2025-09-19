@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController, ToastController } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -17,6 +17,7 @@ export class KnockoutPage {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
+  private toastController = inject(ToastController);
   tournamentId = '';
   
   knockoutStages: any[] = [
@@ -73,9 +74,20 @@ export class KnockoutPage {
         }
       }
       
-      alert('Matches generated successfully!');
+      const toast = await this.toastController.create({
+        message: 'Matches generated successfully!',
+        duration: 3000,
+        color: 'success'
+      });
+      await toast.present();
     } catch (error) {
       console.error('Error generating matches:', error);
+      const toast = await this.toastController.create({
+        message: 'Error generating matches',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }
@@ -138,9 +150,20 @@ export class KnockoutPage {
         }
       }
       
-      alert(`${nextStage.name} created with ${Math.floor(teamsToAdvance.length / 2)} matches!`);
+      const toast = await this.toastController.create({
+        message: `${nextStage.name} created with ${Math.floor(teamsToAdvance.length / 2)} matches!`,
+        duration: 3000,
+        color: 'success'
+      });
+      await toast.present();
     } catch (error) {
       console.error('Error advancing to next round:', error);
+      const toast = await this.toastController.create({
+        message: 'Error advancing to next round',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }

@@ -22,6 +22,7 @@ import {
   IonCol,
   LoadingController,
   AlertController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -66,6 +67,7 @@ export class MatchControlPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
   matchId = '';
   tournamentId = '';
 
@@ -138,6 +140,19 @@ export class MatchControlPage {
       this.match.status = 'paused';
       this.stopTimer();
       await this.updateMatchInFirestore();
+      const toast = await this.toastController.create({
+        message: 'Match paused successfully!',
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+    } catch (error) {
+      const toast = await this.toastController.create({
+        message: 'Error pausing match',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }
@@ -153,6 +168,19 @@ export class MatchControlPage {
       this.match.duration = this.elapsedTime;
       this.stopTimer();
       await this.updateMatchInFirestore();
+      const toast = await this.toastController.create({
+        message: 'Match ended successfully!',
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+    } catch (error) {
+      const toast = await this.toastController.create({
+        message: 'Error ending match',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, IonModal, IonInput, IonButtons, IonBackButton, LoadingController, AlertController } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, IonModal, IonInput, IonButtons, IonBackButton, LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
@@ -17,6 +17,7 @@ export class SportsPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
   
   sports$: Observable<any[]>;
   showSportModal = false;
@@ -53,8 +54,20 @@ export class SportsPage {
         await this.firestoreService.createSport({ name: this.currentSport.name });
       }
       this.showSportModal = false;
+      const toast = await this.toastController.create({
+        message: 'Sport saved successfully!',
+        duration: 3000,
+        color: 'success'
+      });
+      await toast.present();
     } catch (error) {
       console.error('Error saving sport:', error);
+      const toast = await this.toastController.create({
+        message: 'Error saving sport',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
     } finally {
       await loading.dismiss();
     }
@@ -78,8 +91,20 @@ export class SportsPage {
       
       try {
         await this.firestoreService.deleteSport(id);
+        const toast = await this.toastController.create({
+          message: 'Sport deleted successfully!',
+          duration: 3000,
+          color: 'success'
+        });
+        await toast.present();
       } catch (error) {
         console.error('Error deleting sport:', error);
+        const toast = await this.toastController.create({
+          message: 'Error deleting sport',
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
       } finally {
         await loading.dismiss();
       }
