@@ -40,9 +40,7 @@
   @if (currentStep === '2') {
   <app-players-step
     [players]="players"
-    (addPlayer)="addPlayer()"
-    (editPlayer)="editPlayer($event)"
-    (savePlayer)="savePlayer()"
+    (savePlayer)="savePlayer($event)"
     (removePlayer)="removePlayer($event)">
   </app-players-step>
   }
@@ -109,7 +107,7 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <form #playerForm="ngForm" (ngSubmit)="savePlayer()">
+        <form #playerForm="ngForm" (ngSubmit)="savePlayerFromModal()">
           <ion-input
             label="Player Name"
             class="ion-margin-bottom"

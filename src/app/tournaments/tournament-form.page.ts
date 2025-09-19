@@ -188,7 +188,39 @@ export class TournamentFormPage {
     this.showPlayerModal = true;
   }
 
-  async savePlayer() {
+  async savePlayer(event: any) {
+    const { player, isEditing } = event;
+    if (!player.name.trim()) return;
+
+    const isDuplicate = this.players.some(p =>
+      p.name.toLowerCase() === player.name.toLowerCase() && p.id !== player.id
+    );
+
+    if (isDuplicate) {
+      alert(APP_CONSTANTS.MESSAGES.VALIDATION.DUPLICATE_PLAYER);
+      return;
+    }
+
+    try {
+      const playerData = {
+        name: player.name,
+        gender: player.gender,
+        remarks: player.remarks
+      };
+
+      if (isEditing) {
+        await this.firestoreService.updatePlayer(this.tournamentId, player.id, playerData);
+      } else {
+        await this.firestoreService.createPlayer(this.tournamentId, playerData);
+      }
+
+      this.loadPlayers();
+    } catch (error) {
+      console.error('Error saving player:', error);
+    }
+  }
+
+  async savePlayerFromModal() {
     if (!this.currentPlayer.name.trim()) return;
 
     const isDuplicate = this.players.some(p =>
@@ -310,6 +342,15 @@ export class TournamentFormPage {
 
   async saveTeam() {
     if (!this.currentTeam.name.trim()) return;
+
+    const isDuplicate = this.teams.some(t =>
+      t.name.toLowerCase() === this.currentTeam.name.toLowerCase() && t.id !== this.currentTeam.id
+    );
+
+    if (isDuplicate) {
+      alert('Team name already exists!');
+      return;
+    }
 
     const selectedPlayers = this.players.filter(p => p.selected).map(p => ({ id: p.id, name: p.name }));
     this.currentTeam.players = selectedPlayers;
