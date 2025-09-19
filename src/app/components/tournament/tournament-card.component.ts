@@ -4,6 +4,16 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
+  IonContent,
+  IonAvatar,
+  IonImg,
+  IonList,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonPopover,
 } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -14,46 +24,154 @@ import { QrCodeService } from '../../services/qr-code.service';
   selector: 'app-tournament-card',
   template: `
     <ion-item>
-      <ion-icon name="trophy-outline" slot="start"></ion-icon>
+      <!-- <ion-icon name="trophy-outline" slot="start"></ion-icon> -->
       <ion-label>
         <h2>{{ tournament.name }}</h2>
         <p>Sport: {{ tournament.sport }}</p>
         <p>Start Date: {{ tournament.startDate | date : 'short' }}</p>
       </ion-label>
-      @if (canView) {
       <ion-button
-        fill="clear"
+        id="click-trigger"
+        color="medium"
         slot="end"
-        [routerLink]="'/scoreboard/' + tournament.id"
-      >
-        <ion-icon name="stats-chart-outline"></ion-icon>
-      </ion-button>
-      } @if (canEdit) {
-      <ion-button
         fill="clear"
-        slot="end"
-        [routerLink]="'/knockout/' + tournament.id"
-      >
-        <ion-icon name="trophy-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" (click)="onEdit()">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" slot="end" color="primary" (click)="onPrintQR()">
-        <ion-icon name="qr-code-outline"></ion-icon>
-      </ion-button>
-      } @if (canDelete) {
-      <ion-button fill="clear" slot="end" color="danger" (click)="onDelete()">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-      } @if (canAskEdit) {
-      <ion-button fill="clear" slot="end" color="success" (click)="onAskEdit()">
-        <ion-icon name="albums-outline"></ion-icon>
-      </ion-button>
-      }
+        size="large"
+        ><ion-icon name="grid-outline"></ion-icon
+      ></ion-button>
+      <ion-popover trigger="click-trigger" [dismissOnSelect]="true" mode="ios">
+        <ng-template>
+          <ion-content>
+            <ion-list mode="ios">
+              @if (canView) {
+              <ion-item
+                [button]="true"
+                [routerLink]="'/scoreboard/' + tournament.id"
+              >
+                <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
+                <ion-label> Scoreboard </ion-label>
+              </ion-item>
+              } @if (canEdit) {
+              <ion-item
+                [button]="true"
+                [routerLink]="'/knockout/' + tournament.id"
+              >
+                <ion-icon slot="start" name="trophy-outline"></ion-icon>
+                <ion-label> Knockout </ion-label>
+              </ion-item>
+              <ion-item [button]="true" (click)="onEdit()">
+                <ion-icon slot="start" name="settings-outline"></ion-icon>
+                <ion-label> Edit </ion-label>
+              </ion-item>
+              <ion-item [button]="true" (click)="onPrintQR()">
+                <ion-icon slot="start" name="qr-code-outline"></ion-icon>
+                <ion-label>Print QR </ion-label>
+              </ion-item>
+              } @if (canDelete) {
+              <ion-item [button]="true" (click)="onDelete()">
+                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                <ion-label> Delete </ion-label>
+              </ion-item>
+              <ion-item [button]="true" id="openEditorsListModal">
+                <ion-icon slot="start" name="list-outline"></ion-icon>
+                <ion-label> Editors List </ion-label>
+              </ion-item>
+
+              <ion-modal #editorsListModal trigger="openEditorsListModal" [presentingElement]="presentingElement">
+                <ng-template>
+                  <ion-header>
+                    <ion-toolbar>
+                      <ion-title>Editors List</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="editorsListModal.dismiss()">Close</ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                  <ion-content>
+                    <ion-list>
+                      <ion-item>
+                        <ion-avatar slot="start">
+                          <ion-img
+                            src="https://i.pravatar.cc/300?u=b"
+                          ></ion-img>
+                        </ion-avatar>
+                        <ion-label>
+                          <h2>Connor Smith</h2>
+                          <p>Sales Rep</p>
+                        </ion-label>
+                      </ion-item>
+                      <ion-item>
+                        <ion-avatar slot="start">
+                          <ion-img
+                            src="https://i.pravatar.cc/300?u=a"
+                          ></ion-img>
+                        </ion-avatar>
+                        <ion-label>
+                          <h2>Daniel Smith</h2>
+                          <p>Product Designer</p>
+                        </ion-label>
+                      </ion-item>
+                      <ion-item>
+                        <ion-avatar slot="start">
+                          <ion-img
+                            src="https://i.pravatar.cc/300?u=d"
+                          ></ion-img>
+                        </ion-avatar>
+                        <ion-label>
+                          <h2>Greg Smith</h2>
+                          <p>Director of Operations</p>
+                        </ion-label>
+                      </ion-item>
+                      <ion-item>
+                        <ion-avatar slot="start">
+                          <ion-img
+                            src="https://i.pravatar.cc/300?u=e"
+                          ></ion-img>
+                        </ion-avatar>
+                        <ion-label>
+                          <h2>Zoey Smith</h2>
+                          <p>CEO</p>
+                        </ion-label>
+                      </ion-item>
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+              </ion-modal>
+              } @if (canAskEdit) {
+              <ion-item [button]="true" (click)="onAskEdit()">
+                <ion-icon slot="start" name="albums-outline"></ion-icon>
+                <ion-label> Ask Edit </ion-label>
+              </ion-item>
+              }
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+
+      <!-- <ng-container *ngIf="canView || canEdit || canDelete || canAskEdit"> -->
     </ion-item>
   `,
-  imports: [CommonModule, RouterLink, IonItem, IonLabel, IonButton, IonIcon],
+  imports: [
+    CommonModule,
+    RouterLink,
+    IonItem,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonButton,
+    IonAvatar,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonImg,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonModal,
+    IonTitle,
+    IonToolbar,
+    IonPopover
+  ],
 })
 export class TournamentCardComponent {
   @Input() tournament: any;
@@ -65,6 +183,12 @@ export class TournamentCardComponent {
     email: string;
   }>();
 
+  presentingElement!: HTMLElement | null;
+
+  ngOnInit() {
+    this.presentingElement = document.querySelector('.ion-page');
+  }
+
   private authService = inject(AuthService);
   private qrService = inject(QrCodeService);
 
@@ -73,7 +197,10 @@ export class TournamentCardComponent {
   }
 
   get canAskEdit() {
-    return !!this.authService.user?.email;
+    return (
+      !!this.authService.user?.email &&
+      !this.authService.hasPermission('admin', this.tournament)
+    );
   }
 
   get canEdit() {
@@ -93,7 +220,11 @@ export class TournamentCardComponent {
   }
 
   onAskEdit() {
-    this.askEdit.emit({ id: this.tournament.id, tournament: this.tournament, email: this.authService.user?.email! });
+    this.askEdit.emit({
+      id: this.tournament.id,
+      tournament: this.tournament,
+      email: this.authService.user?.email!,
+    });
   }
 
   onPrintQR() {

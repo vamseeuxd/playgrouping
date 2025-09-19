@@ -185,6 +185,15 @@ export class TournamentsPage {
   }
 
   async askEditTournament(id: string, tournament: any, email: string) {
+    if(tournament.editors.some((obj: any) => obj.email === email)) {
+      const toast = await this.toastController.create({
+        message: APP_CONSTANTS.MESSAGES.ERROR.ASK_EDIT_TOURNAMENT_EXISTS,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.WARNING,
+      });
+      await toast.present();
+      return;
+    }
     const alert = await this.alertController.create({
       header: 'Edit Tournament Request',
       message: APP_CONSTANTS.MESSAGES.CONFIRM.ASK_EDIT_TOURNAMENT.replace(

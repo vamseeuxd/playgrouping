@@ -107,6 +107,7 @@ export const APP_CONSTANTS = {
       TOURNAMENT_UPDATE: 'Error updating tournament',
       TOURNAMENT_DELETE: 'Error deleting tournament',
       ASK_EDIT_TOURNAMENT: 'Error sending edit tournament request',
+      ASK_EDIT_TOURNAMENT_EXISTS: 'You have already requested edit access for this tournament',
       SPORT_SAVE: 'Error saving sport',
       SPORT_DELETE: 'Error deleting sport',
       MATCH_START: 'Error starting match',
