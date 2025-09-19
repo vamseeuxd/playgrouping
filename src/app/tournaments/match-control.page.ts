@@ -30,6 +30,7 @@ import {
   removeOutline,
 } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
+import { APP_CONSTANTS } from '../constants/app.constants';
 
 @Component({
   selector: 'app-match-control',
@@ -70,7 +71,7 @@ export class MatchControlPage {
     team2: 'Team B',
     score1: 0,
     score2: 0,
-    status: 'pending', // pending, started, paused, finished
+    status: APP_CONSTANTS.MATCH.STATUS.PENDING,
     startTime: null as Date | null,
     endTime: null as Date | null,
     duration: 0,
@@ -100,7 +101,7 @@ export class MatchControlPage {
       const match = await this.firestoreService.getMatch(this.tournamentId, this.matchId);
       if (match) {
         this.match = match;
-        if (this.match.status === 'started') {
+        if (this.match.status === APP_CONSTANTS.MATCH.STATUS.STARTED) {
           this.startTimer();
         }
       }
@@ -116,7 +117,7 @@ export class MatchControlPage {
     await loading.present();
     
     try {
-      this.match.status = 'started';
+      this.match.status = APP_CONSTANTS.MATCH.STATUS.STARTED;
       this.match.startTime = new Date();
       this.startTimer();
       await this.updateMatchInFirestore();
@@ -130,7 +131,7 @@ export class MatchControlPage {
     await loading.present();
     
     try {
-      this.match.status = 'paused';
+      this.match.status = APP_CONSTANTS.MATCH.STATUS.PAUSED;
       this.stopTimer();
       await this.updateMatchInFirestore();
       const toast = await this.toastController.create({
@@ -156,7 +157,7 @@ export class MatchControlPage {
     await loading.present();
     
     try {
-      this.match.status = 'finished';
+      this.match.status = APP_CONSTANTS.MATCH.STATUS.FINISHED;
       this.match.endTime = new Date();
       this.match.duration = this.elapsedTime;
       this.stopTimer();
@@ -242,7 +243,7 @@ export class MatchControlPage {
       
       try {
         this.stopTimer();
-        this.match.status = 'pending';
+        this.match.status = APP_CONSTANTS.MATCH.STATUS.PENDING;
         this.match.score1 = 0;
         this.match.score2 = 0;
         this.match.startTime = null;

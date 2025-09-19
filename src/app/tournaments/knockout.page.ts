@@ -6,6 +6,7 @@ import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { playOutline, stopOutline, trophyOutline, refreshOutline } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
+import { APP_CONSTANTS } from '../constants/app.constants';
 
 @Component({
   selector: 'app-knockout',
@@ -20,13 +21,7 @@ export class KnockoutPage {
   private toastController = inject(ToastController);
   tournamentId = '';
   
-  knockoutStages: any[] = [
-    { name: 'Group Stage', matches: [] },
-    { name: 'Round of 16', matches: [] },
-    { name: 'Quarter Finals', matches: [] },
-    { name: 'Semi Finals', matches: [] },
-    { name: 'Finals', matches: [] }
-  ];
+  knockoutStages: any[] = APP_CONSTANTS.TOURNAMENT.STAGE_NAMES.map(name => ({ name, matches: [] }));
 
   teams: any[] = [];
 
@@ -49,12 +44,12 @@ export class KnockoutPage {
   }
 
   async generateMatches() {
-    if (this.teams.length < 2) {
-      alert('Need at least 2 teams to generate matches');
+    if (this.teams.length < APP_CONSTANTS.TOURNAMENT.MIN_TEAMS) {
+      alert(APP_CONSTANTS.MESSAGES.VALIDATION.MIN_TEAMS);
       return;
     }
 
-    const loading = await this.loadingController.create({ message: 'Generating matches...' });
+    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.GENERATING_MATCHES });
     await loading.present();
 
     try {
@@ -66,7 +61,7 @@ export class KnockoutPage {
             status: 'pending',
             score1: 0,
             score2: 0,
-            stage: 'group',
+            stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
             startTime: null,
             endTime: null,
             duration: 0
@@ -75,17 +70,17 @@ export class KnockoutPage {
       }
       
       const toast = await this.toastController.create({
-        message: 'Matches generated successfully!',
-        duration: 3000,
-        color: 'success'
+        message: APP_CONSTANTS.MESSAGES.SUCCESS.MATCHES_GENERATED,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.SUCCESS
       });
       await toast.present();
     } catch (error) {
       console.error('Error generating matches:', error);
       const toast = await this.toastController.create({
-        message: 'Error generating matches',
-        duration: 3000,
-        color: 'danger'
+        message: APP_CONSTANTS.MESSAGES.ERROR.MATCHES_GENERATE,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.DANGER
       });
       await toast.present();
     } finally {
@@ -94,15 +89,15 @@ export class KnockoutPage {
   }
 
   organizeMatches(matches: any[]) {
-    this.knockoutStages[0].matches = matches.filter(m => m.stage === 'group' || !m.stage);
-    this.knockoutStages[1].matches = matches.filter(m => m.stage === 'round16');
-    this.knockoutStages[2].matches = matches.filter(m => m.stage === 'quarter');
-    this.knockoutStages[3].matches = matches.filter(m => m.stage === 'semi');
-    this.knockoutStages[4].matches = matches.filter(m => m.stage === 'final');
+    this.knockoutStages[0].matches = matches.filter(m => m.stage === APP_CONSTANTS.TOURNAMENT.STAGES.GROUP || !m.stage);
+    this.knockoutStages[1].matches = matches.filter(m => m.stage === APP_CONSTANTS.TOURNAMENT.STAGES.ROUND_16);
+    this.knockoutStages[2].matches = matches.filter(m => m.stage === APP_CONSTANTS.TOURNAMENT.STAGES.QUARTER);
+    this.knockoutStages[3].matches = matches.filter(m => m.stage === APP_CONSTANTS.TOURNAMENT.STAGES.SEMI);
+    this.knockoutStages[4].matches = matches.filter(m => m.stage === APP_CONSTANTS.TOURNAMENT.STAGES.FINAL);
   }
 
   async advanceToNextRound() {
-    const loading = await this.loadingController.create({ message: 'Advancing to next round...' });
+    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.ADVANCING_ROUND });
     await loading.present();
     
     try {
@@ -111,7 +106,7 @@ export class KnockoutPage {
       const nextStageIndex = currentStageIndex + 1;
       
       if (nextStageIndex >= this.knockoutStages.length) {
-        alert('Tournament is already complete!');
+        alert(APP_CONSTANTS.MESSAGES.VALIDATION.TOURNAMENT_COMPLETE);
         return;
       }
 
@@ -124,7 +119,7 @@ export class KnockoutPage {
       }
       
       if (qualifiedTeams.length < 2) {
-        alert(`Need at least 2 teams to advance from ${currentStage.name}`);
+        alert(APP_CONSTANTS.MESSAGES.VALIDATION.MIN_TEAMS_ADVANCE.replace('{stage}', currentStage.name));
         return;
       }
 
@@ -173,7 +168,7 @@ export class KnockoutPage {
     for (let i = 0; i < this.knockoutStages.length - 1; i++) {
       const currentStageHasMatches = this.knockoutStages[i].matches.length > 0;
       const nextStageHasMatches = this.knockoutStages[i + 1].matches.length > 0;
-      const allCurrentStageFinished = this.knockoutStages[i].matches.every((m: any) => m.status === 'finished');
+      const allCurrentStageFinished = this.knockoutStages[i].matches.every((m: any) => m.status === APP_CONSTANTS.MATCH.STATUS.FINISHED);
       
       if (currentStageHasMatches && !nextStageHasMatches && allCurrentStageFinished) {
         return i;
@@ -184,7 +179,7 @@ export class KnockoutPage {
 
   getWinnersFromStage(matches: any[]): string[] {
     return matches
-      .filter((match: any) => match.status === 'finished')
+      .filter((match: any) => match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED)
       .map((match: any) => {
         if (match.score1 > match.score2) return match.team1;
         if (match.score2 > match.score1) return match.team2;
@@ -193,8 +188,7 @@ export class KnockoutPage {
   }
 
   getStageKey(stageIndex: number): string {
-    const stageKeys = ['group', 'round16', 'quarter', 'semi', 'final'];
-    return stageKeys[stageIndex] || 'group';
+    return APP_CONSTANTS.TOURNAMENT.STAGE_KEYS[stageIndex] || APP_CONSTANTS.TOURNAMENT.STAGES.GROUP;
   }
 
   getUniqueTeamsFromMatches(matches: any[]): string[] {
@@ -207,13 +201,8 @@ export class KnockoutPage {
   }
 
   getTeamsForStage(stageIndex: number, availableTeams: number): number {
-    switch (stageIndex) {
-      case 1: return Math.min(16, availableTeams);
-      case 2: return Math.min(8, availableTeams);
-      case 3: return Math.min(4, availableTeams);
-      case 4: return Math.min(2, availableTeams);
-      default: return availableTeams;
-    }
+    const capacity = (APP_CONSTANTS.TOURNAMENT.STAGE_CAPACITY as any)[stageIndex];
+    return capacity ? Math.min(capacity, availableTeams) : availableTeams;
   }
 
   getStageStatus(matches: any[]): string {
@@ -233,7 +222,7 @@ export class KnockoutPage {
     }
     
     const hasMatches = currentStage.matches.length > 0;
-    const allFinished = currentStage.matches.every((m: any) => m.status === 'finished');
+    const allFinished = currentStage.matches.every((m: any) => m.status === APP_CONSTANTS.MATCH.STATUS.FINISHED);
     const nextStageEmpty = this.knockoutStages[nextStageIndex].matches.length === 0;
     
     let hasEnoughTeams = false;
@@ -248,14 +237,14 @@ export class KnockoutPage {
 
   getTournamentStatus(): string {
     const finalMatches = this.knockoutStages[4].matches;
-    if (finalMatches.length > 0 && finalMatches.every((m: any) => m.status === 'finished')) {
+    if (finalMatches.length > 0 && finalMatches.every((m: any) => m.status === APP_CONSTANTS.MATCH.STATUS.FINISHED)) {
       const winner = this.getWinnersFromStage(finalMatches)[0];
       return `Tournament Complete - Winner: ${winner}`;
     }
     
     for (let i = this.knockoutStages.length - 1; i >= 0; i--) {
       if (this.knockoutStages[i].matches.length > 0) {
-        const allFinished = this.knockoutStages[i].matches.every((m: any) => m.status === 'finished');
+        const allFinished = this.knockoutStages[i].matches.every((m: any) => m.status === APP_CONSTANTS.MATCH.STATUS.FINISHED);
         return `${this.knockoutStages[i].name} - ${allFinished ? 'Complete' : 'In Progress'}`;
       }
     }

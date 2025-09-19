@@ -8,6 +8,7 @@ import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TournamentCardComponent } from '../components/tournament/tournament-card.component';
+import { APP_CONSTANTS } from '../constants/app.constants';
 
 @Component({
   selector: 'app-tournaments',
@@ -32,7 +33,7 @@ export class TournamentsPage {
   async createMockData() {
     const alert = await this.alertController.create({
       header: 'Create Mock Data',
-      message: 'Create mock tournament with players, teams, and matches?',
+      message: APP_CONSTANTS.MESSAGES.CONFIRM.CREATE_MOCK_DATA,
       buttons: [
         { text: 'No', role: 'cancel' },
         { text: 'Yes', handler: () => this.performCreateMockData() }
@@ -43,74 +44,55 @@ export class TournamentsPage {
 
   async performCreateMockData() {
     
-    const loading = await this.loadingController.create({ message: 'Creating mock data...' });
+    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.CREATING_MOCK_DATA });
     await loading.present();
     
     try {
       // Create tournament
       const tournamentId = await this.firestoreService.createTournament({
-        name: 'Mock Championship 2024',
-        sport: 'football',
+        name: APP_CONSTANTS.MOCK_DATA.TOURNAMENT_NAME,
+        sport: APP_CONSTANTS.MOCK_DATA.SPORT,
         startDate: new Date().toISOString()
       });
       
       // Create players
-      const players = [
-        { name: 'John Doe', gender: 'Male', remarks: 'Captain' },
-        { name: 'Jane Smith', gender: 'Female', remarks: 'Striker' },
-        { name: 'Mike Johnson', gender: 'Male', remarks: 'Defender' },
-        { name: 'Sarah Wilson', gender: 'Female', remarks: 'Midfielder' },
-        { name: 'Tom Brown', gender: 'Male', remarks: 'Goalkeeper' },
-        { name: 'Lisa Davis', gender: 'Female', remarks: 'Winger' },
-        { name: 'Chris Lee', gender: 'Male', remarks: 'Forward' },
-        { name: 'Amy Taylor', gender: 'Female', remarks: 'Defender' }
-      ];
+      const players = APP_CONSTANTS.MOCK_DATA.PLAYERS;
       
       for (const player of players) {
         await this.firestoreService.createPlayer(tournamentId, player);
       }
       
       // Create teams
-      const teams = [
-        { name: 'Team Alpha', players: [{ name: 'John Doe' }, { name: 'Jane Smith' }] },
-        { name: 'Team Beta', players: [{ name: 'Mike Johnson' }, { name: 'Sarah Wilson' }] },
-        { name: 'Team Gamma', players: [{ name: 'Tom Brown' }, { name: 'Lisa Davis' }] },
-        { name: 'Team Delta', players: [{ name: 'Chris Lee' }, { name: 'Amy Taylor' }] }
-      ];
+      const teams = APP_CONSTANTS.MOCK_DATA.TEAMS;
       
       for (const team of teams) {
         await this.firestoreService.createTeam(tournamentId, team);
       }
       
       // Create matches
-      const matches = [
-        { team1: 'Team Alpha', team2: 'Team Beta', status: 'finished', score1: 3, score2: 1, stage: 'group' },
-        { team1: 'Team Gamma', team2: 'Team Delta', status: 'finished', score1: 2, score2: 2, stage: 'group' },
-        { team1: 'Team Alpha', team2: 'Team Gamma', status: 'started', score1: 1, score2: 0, stage: 'group' },
-        { team1: 'Team Beta', team2: 'Team Delta', status: 'pending', score1: 0, score2: 0, stage: 'group' }
-      ];
+      const matches = APP_CONSTANTS.MOCK_DATA.MATCHES;
       
       for (const match of matches) {
         await this.firestoreService.createMatch(tournamentId, {
           ...match,
-          startTime: match.status !== 'pending' ? new Date() : null,
-          endTime: match.status === 'finished' ? new Date() : null,
-          duration: match.status === 'finished' ? 90 : 0
+          startTime: match.status !== APP_CONSTANTS.MATCH.STATUS.PENDING ? new Date() : null,
+          endTime: match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED ? new Date() : null,
+          duration: match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED ? APP_CONSTANTS.MATCH.DEFAULT_DURATION : 0
         });
       }
       
       const toast = await this.toastController.create({
-        message: 'Mock tournament created successfully!',
-        duration: 3000,
-        color: 'success'
+        message: APP_CONSTANTS.MESSAGES.SUCCESS.MOCK_DATA_CREATED,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.SUCCESS
       });
       await toast.present();
     } catch (error) {
       console.error('Error creating mock data:', error);
       const toast = await this.toastController.create({
-        message: 'Error creating mock data',
-        duration: 3000,
-        color: 'danger'
+        message: APP_CONSTANTS.MESSAGES.ERROR.MOCK_DATA_CREATE,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.DANGER
       });
       await toast.present();
     } finally {
@@ -129,7 +111,7 @@ export class TournamentsPage {
   async deleteTournament(id: string, name: string) {
     const alert = await this.alertController.create({
       header: 'Delete Tournament',
-      message: `Are you sure you want to delete "${name}"? This will delete all players, teams, and matches.`,
+      message: APP_CONSTANTS.MESSAGES.CONFIRM.DELETE_TOURNAMENT.replace('{name}', name),
       buttons: [
         { text: 'No', role: 'cancel' },
         { text: 'Yes', handler: () => this.performDeleteTournament(id, name) }
@@ -140,23 +122,23 @@ export class TournamentsPage {
 
   async performDeleteTournament(id: string, name: string) {
     
-    const loading = await this.loadingController.create({ message: 'Deleting tournament...' });
+    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.DELETING_TOURNAMENT });
     await loading.present();
     
     try {
       await this.firestoreService.deleteTournament(id);
       const toast = await this.toastController.create({
-        message: 'Tournament deleted successfully!',
-        duration: 3000,
-        color: 'success'
+        message: APP_CONSTANTS.MESSAGES.SUCCESS.TOURNAMENT_DELETED,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.SUCCESS
       });
       await toast.present();
     } catch (error) {
       console.error('Error deleting tournament:', error);
       const toast = await this.toastController.create({
-        message: 'Error deleting tournament',
-        duration: 3000,
-        color: 'danger'
+        message: APP_CONSTANTS.MESSAGES.ERROR.TOURNAMENT_DELETE,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.DANGER
       });
       await toast.present();
     } finally {

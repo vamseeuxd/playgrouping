@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FirestoreService {
-  private firestore = inject(Firestore);
+  constructor(private firestore: Firestore) {}
 
   // Tournament operations
   getTournaments(): Observable<any[]> {

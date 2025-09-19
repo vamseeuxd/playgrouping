@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonInput, IonSelect, IonSelectOption, IonTextarea } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { GENDER_OPTIONS } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-player-modal',
@@ -67,6 +68,8 @@ export class PlayerModalComponent {
   @Input() player = { id: '', name: '', gender: '', remarks: '' };
   @Output() save = new EventEmitter<any>();
   @Output() close = new EventEmitter<void>();
+  
+  genderOptions = GENDER_OPTIONS;
 
   onSave() {
     this.save.emit(this.player);
