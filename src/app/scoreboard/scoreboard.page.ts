@@ -19,6 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
+import { APP_CONSTANTS } from '../constants/app.constants';
 import { TeamStandingsComponent } from '../components/scoreboard/team-standings.component';
 
 @Component({
@@ -86,7 +87,7 @@ export class ScoreboardPage {
 
       this.matches.forEach((match) => {
         if (
-          match.status === 'finished' &&
+          match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED &&
           (match.team1 === teamName || match.team2 === teamName)
         ) {
           played++;
@@ -109,7 +110,7 @@ export class ScoreboardPage {
         }
       });
 
-      const points = won * 3 + drawn * 1; // 3 points for win, 1 for draw
+      const points = won * APP_CONSTANTS.TOURNAMENT.POINTS.WIN + drawn * APP_CONSTANTS.TOURNAMENT.POINTS.DRAW;
       const goalDifference = goalsFor - goalsAgainst;
 
       return {

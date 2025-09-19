@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
+import { APP_CONSTANTS } from '../constants/app.constants';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -44,7 +45,7 @@ export class SportsPage {
   async saveSport() {
     if (!this.currentSport.name.trim()) return;
 
-    const loading = await this.loadingController.create({ message: 'Saving sport...' });
+    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.SAVING_SPORT });
     await loading.present();
 
     try {
@@ -55,17 +56,17 @@ export class SportsPage {
       }
       this.showSportModal = false;
       const toast = await this.toastController.create({
-        message: 'Sport saved successfully!',
-        duration: 3000,
-        color: 'success'
+        message: APP_CONSTANTS.MESSAGES.SUCCESS.SPORT_SAVED,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.SUCCESS
       });
       await toast.present();
     } catch (error) {
       console.error('Error saving sport:', error);
       const toast = await this.toastController.create({
-        message: 'Error saving sport',
-        duration: 3000,
-        color: 'danger'
+        message: APP_CONSTANTS.MESSAGES.ERROR.SPORT_SAVE,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.DANGER
       });
       await toast.present();
     } finally {
@@ -76,7 +77,7 @@ export class SportsPage {
   async deleteSport(id: string, name: string) {
     const alert = await this.alertController.create({
       header: 'Delete Sport',
-      message: `Delete sport "${name}"?`,
+      message: APP_CONSTANTS.MESSAGES.CONFIRM.DELETE_SPORT.replace('{name}', name),
       buttons: [
         { text: 'No', role: 'cancel' },
         { text: 'Yes', handler: () => this.performDeleteSport(id) }
@@ -86,23 +87,23 @@ export class SportsPage {
   }
 
   async performDeleteSport(id: string) {
-      const loading = await this.loadingController.create({ message: 'Deleting sport...' });
+      const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.DELETING_SPORT });
       await loading.present();
       
       try {
         await this.firestoreService.deleteSport(id);
         const toast = await this.toastController.create({
-          message: 'Sport deleted successfully!',
-          duration: 3000,
-          color: 'success'
+          message: APP_CONSTANTS.MESSAGES.SUCCESS.SPORT_DELETED,
+          duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+          color: APP_CONSTANTS.UI.COLORS.SUCCESS
         });
         await toast.present();
       } catch (error) {
         console.error('Error deleting sport:', error);
         const toast = await this.toastController.create({
-          message: 'Error deleting sport',
-          duration: 3000,
-          color: 'danger'
+          message: APP_CONSTANTS.MESSAGES.ERROR.SPORT_DELETE,
+          duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+          color: APP_CONSTANTS.UI.COLORS.DANGER
         });
         await toast.present();
       } finally {

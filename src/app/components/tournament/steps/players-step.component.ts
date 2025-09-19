@@ -57,12 +57,14 @@ export class PlayersStepComponent {
     this.currentPlayer = { id: '', name: '', gender: '', remarks: '' };
     this.editingPlayer = false;
     this.showPlayerModal = true;
+    this.addPlayer.emit();
   }
 
   onEditPlayer(player: any) {
     this.currentPlayer = { ...player };
     this.editingPlayer = true;
     this.showPlayerModal = true;
+    this.editPlayer.emit(player);
   }
 
   onRemovePlayer(playerId: string) {

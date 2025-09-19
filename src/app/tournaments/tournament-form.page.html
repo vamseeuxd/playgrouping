@@ -40,6 +40,8 @@
   @if (currentStep === '2') {
   <app-players-step
     [players]="players"
+    (addPlayer)="addPlayer()"
+    (editPlayer)="editPlayer($event)"
     (savePlayer)="savePlayer()"
     (removePlayer)="removePlayer($event)">
   </app-players-step>

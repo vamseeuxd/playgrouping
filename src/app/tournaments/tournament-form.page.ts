@@ -38,6 +38,7 @@ import { PlayersStepComponent } from '../components/tournament/steps/players-ste
 import { TeamsStepComponent } from '../components/tournament/steps/teams-step.component';
 import { MatchesStepComponent } from '../components/tournament/steps/matches-step.component';
 import { ReviewStepComponent } from '../components/tournament/steps/review-step.component';
+import { APP_CONSTANTS } from '../constants/app.constants';
 
 @Component({
   selector: 'app-tournament-form',
@@ -173,7 +174,7 @@ export class TournamentFormPage {
 
   addPlayer() {
     if (!this.tournamentId) {
-      alert('Please save the tournament first');
+      alert(APP_CONSTANTS.MESSAGES.VALIDATION.SAVE_TOURNAMENT_FIRST);
       return;
     }
     this.currentPlayer = { id: '', name: '', gender: '', remarks: '' };
@@ -195,7 +196,7 @@ export class TournamentFormPage {
     );
 
     if (isDuplicate) {
-      alert('Player name already exists!');
+      alert(APP_CONSTANTS.MESSAGES.VALIDATION.DUPLICATE_PLAYER);
       return;
     }
 
@@ -393,7 +394,7 @@ export class TournamentFormPage {
 
   async saveMatch() {
     if (!this.currentMatch.team1 || !this.currentMatch.team2 || this.currentMatch.team1 === this.currentMatch.team2) {
-      alert('Please select different teams');
+      alert(APP_CONSTANTS.MESSAGES.VALIDATION.DIFFERENT_TEAMS);
       return;
     }
 
@@ -420,7 +421,7 @@ export class TournamentFormPage {
   }
 
   async submitTournament() {
-    const loading = await this.loadingController.create({ message: 'Saving tournament...' });
+    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.UPDATING_TOURNAMENT });
     await loading.present();
     
     try {
@@ -430,18 +431,18 @@ export class TournamentFormPage {
         await this.firestoreService.createTournament(this.tournament);
       }
       const toast = await this.toastController.create({
-        message: 'Tournament saved successfully!',
-        duration: 3000,
-        color: 'success'
+        message: APP_CONSTANTS.MESSAGES.SUCCESS.TOURNAMENT_UPDATED,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.SUCCESS
       });
       await toast.present();
       this.router.navigate(['/tournaments']);
     } catch (error) {
       console.error('Error saving tournament:', error);
       const toast = await this.toastController.create({
-        message: 'Error saving tournament',
-        duration: 3000,
-        color: 'danger'
+        message: APP_CONSTANTS.MESSAGES.ERROR.TOURNAMENT_UPDATE,
+        duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
+        color: APP_CONSTANTS.UI.COLORS.DANGER
       });
       await toast.present();
     } finally {
