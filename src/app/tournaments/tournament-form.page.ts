@@ -33,6 +33,11 @@ import { inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
+import { BasicDetailsStepComponent } from '../components/tournament/steps/basic-details-step.component';
+import { PlayersStepComponent } from '../components/tournament/steps/players-step.component';
+import { TeamsStepComponent } from '../components/tournament/steps/teams-step.component';
+import { MatchesStepComponent } from '../components/tournament/steps/matches-step.component';
+import { ReviewStepComponent } from '../components/tournament/steps/review-step.component';
 
 @Component({
   selector: 'app-tournament-form',
@@ -40,7 +45,6 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
   styleUrls: ['./tournament-form.page.scss'],
   imports: [
     CommonModule,
-    RouterLink,
     IonModal,
     FormsModule,
     IonHeader,
@@ -54,16 +58,16 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
     IonBackButton,
     IonButtons,
     IonTextarea,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonIcon,
     IonItem,
     IonLabel,
     IonSegment,
     IonSegmentButton,
-    IonCheckbox
+    IonCheckbox,
+    BasicDetailsStepComponent,
+    PlayersStepComponent,
+    TeamsStepComponent,
+    MatchesStepComponent,
+    ReviewStepComponent
 ],
 })
 export class TournamentFormPage {

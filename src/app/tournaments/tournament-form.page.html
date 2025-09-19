@@ -29,177 +29,51 @@
 
   <!-- Step 1: Basic Details -->
   @if (currentStep === '1') {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Basic Details</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <form #basicForm="ngForm">
-        <ion-input
-          label="Tournament Name"
-          class="ion-margin-bottom"
-          label-placement="floating"
-          fill="outline"
-          [(ngModel)]="tournament.name"
-          name="name"
-          required
-        ></ion-input>
-
-        <ion-select
-          label="Sport"
-          class="ion-margin-bottom"
-          label-placement="floating"
-          fill="outline"
-          [(ngModel)]="tournament.sport"
-          name="sport"
-          required
-        >
-          @for (sport of sports; track sport.id) {
-          <ion-select-option [value]="sport.name">{{ sport.name }}</ion-select-option>
-          }
-        </ion-select>
-        <ion-button fill="clear" size="small" routerLink="/sports">
-          Manage Sports
-        </ion-button>
-
-        <ion-input
-          label="Start Date"
-          class="ion-margin-bottom"
-          label-placement="floating"
-          fill="outline"
-          type="datetime-local"
-          [(ngModel)]="tournament.startDate"
-          name="startDate"
-          required
-        ></ion-input>
-      </form>
-    </ion-card-content>
-  </ion-card>
+  <app-basic-details-step
+    [tournament]="tournament"
+    [sports]="sports"
+    (tournamentChange)="tournament = $event">
+  </app-basic-details-step>
   }
 
   <!-- Step 2: Players -->
   @if (currentStep === '2') {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Players</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      @for (player of players; track player.id) {
-      <ion-item>
-        <ion-label>
-          <h3>{{ player.name }}</h3>
-          <p>{{ player.gender }} - {{ player.remarks }}</p>
-        </ion-label>
-        <ion-button fill="clear" color="primary" (click)="editPlayer(player)">
-          <ion-icon name="create-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" color="danger" (click)="removePlayer(player.id)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-      </ion-item>
-      }
-      <ion-button expand="block" fill="outline" (click)="addPlayer()">
-        <ion-icon name="add-outline" slot="start"></ion-icon>
-        Add Player
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <app-players-step
+    [players]="players"
+    (savePlayer)="savePlayer()"
+    (removePlayer)="removePlayer($event)">
+  </app-players-step>
   }
 
   <!-- Step 3: Teams -->
   @if (currentStep === '3') {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Teams</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      @for (team of teams; track team.id) {
-      <ion-item>
-        <ion-label>
-          <h3>{{ team.name }}</h3>
-          <p>Players: {{ team.players?.length || 0 }}</p>
-        </ion-label>
-        <ion-button fill="clear" color="primary" (click)="editTeam(team)">
-          <ion-icon name="create-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" color="danger" (click)="removeTeam(team.id)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-      </ion-item>
-      }
-      <ion-button expand="block" fill="outline" (click)="addTeam()">
-        <ion-icon name="add-outline" slot="start"></ion-icon>
-        Add Team
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <app-teams-step
+    [teams]="teams"
+    (addTeam)="addTeam()"
+    (editTeam)="editTeam($event)"
+    (removeTeam)="removeTeam($event)">
+  </app-teams-step>
   }
 
   <!-- Step 4: Matches -->
   @if (currentStep === '4') {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Schedule Matches</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      @for (match of matches; track match.id) {
-      <ion-item>
-        <ion-label>
-          <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
-          <p>{{ match.date | date:'short' }}</p>
-          @if (match.court) { <p>Court: {{ match.court }}</p> }
-          @if (match.umpire) { <p>Umpire: {{ match.umpire }}</p> }
-        </ion-label>
-        <ion-button fill="clear" color="primary" (click)="editMatch(match)">
-          <ion-icon name="create-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" color="danger" (click)="removeMatch(match.id)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-      </ion-item>
-      }
-      <ion-button expand="block" fill="outline" (click)="generateMatches()">
-        Generate Matches
-      </ion-button>
-      <ion-button expand="block" fill="outline" (click)="addMatch()">
-        <ion-icon name="add-outline" slot="start"></ion-icon>
-        Add Match
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <app-matches-step
+    [matches]="matches"
+    (generateMatches)="generateMatches()"
+    (addMatch)="addMatch()"
+    (editMatch)="editMatch($event)"
+    (removeMatch)="removeMatch($event)">
+  </app-matches-step>
   }
 
   <!-- Step 5: Review -->
   @if (currentStep === '5') {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Review & Submit</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label>
-          <h3>Tournament: {{ tournament.name }}</h3>
-          <p>Sport: {{ tournament.sport }}</p>
-          <p>Start Date: {{ tournament.startDate | date:'short' }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h3>Players: {{ players.length }}</h3>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h3>Teams: {{ teams.length }}</h3>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h3>Matches: {{ matches.length }}</h3>
-        </ion-label>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
+  <app-review-step
+    [tournament]="tournament"
+    [playersCount]="players.length"
+    [teamsCount]="teams.length"
+    [matchesCount]="matches.length">
+  </app-review-step>
   }
 
   <!-- Navigation Buttons -->

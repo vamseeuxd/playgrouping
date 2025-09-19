@@ -1,0 +1,80 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { PlayerModalComponent } from '../player-modal.component';
+
+@Component({
+  selector: 'app-players-step',
+  template: `
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Players</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        @for (player of players; track player.id) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ player.name }}</h3>
+            <p>{{ player.gender }} - {{ player.remarks }}</p>
+          </ion-label>
+          <ion-button fill="clear" color="primary" (click)="onEditPlayer(player)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="onRemovePlayer(player.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+        }
+        <ion-button expand="block" fill="outline" (click)="onAddPlayer()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Add Player
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <app-player-modal
+      [isOpen]="showPlayerModal"
+      [isEditing]="editingPlayer"
+      [player]="currentPlayer"
+      (save)="onSavePlayer($event)"
+      (close)="onCloseModal()">
+    </app-player-modal>
+  `,
+  imports: [CommonModule, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, PlayerModalComponent]
+})
+export class PlayersStepComponent {
+  @Input() players: any[] = [];
+  @Output() addPlayer = new EventEmitter<void>();
+  @Output() editPlayer = new EventEmitter<any>();
+  @Output() removePlayer = new EventEmitter<string>();
+  @Output() savePlayer = new EventEmitter<any>();
+
+  showPlayerModal = false;
+  editingPlayer = false;
+  currentPlayer = { id: '', name: '', gender: '', remarks: '' };
+
+  onAddPlayer() {
+    this.currentPlayer = { id: '', name: '', gender: '', remarks: '' };
+    this.editingPlayer = false;
+    this.showPlayerModal = true;
+  }
+
+  onEditPlayer(player: any) {
+    this.currentPlayer = { ...player };
+    this.editingPlayer = true;
+    this.showPlayerModal = true;
+  }
+
+  onRemovePlayer(playerId: string) {
+    this.removePlayer.emit(playerId);
+  }
+
+  onSavePlayer(player: any) {
+    this.savePlayer.emit(player);
+    this.showPlayerModal = false;
+  }
+
+  onCloseModal() {
+    this.showPlayerModal = false;
+  }
+}
