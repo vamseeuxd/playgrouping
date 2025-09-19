@@ -26,13 +26,13 @@ export class AuthService {
   }
 
   hasPermission(role: 'admin' | 'editor' | 'viewer', tournament: any): boolean {
-    const isAdmin = this.user && this.user?.email === tournament.email;
     if (this.user) {
       switch (role) {
         case 'admin':
           return this.user?.email === tournament.email;
         case 'editor':
-          return tournament.editors?.includes(this.user?.email);
+          const editorEmails = tournament.editors.filter((obj: any) => obj.approved).map((obj: any) => obj.email);
+          return editorEmails.includes(this.user?.email);
         case 'viewer':
           return true;
         default:

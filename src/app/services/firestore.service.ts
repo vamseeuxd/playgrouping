@@ -27,6 +27,11 @@ export class FirestoreService {
     await updateDoc(doc(this.firestore, 'tournaments', id), tournament);
   }
 
+  async requestEditAccess(id: string, tournament: any, email: string): Promise<void> {
+    tournament.editors = [...tournament.editors, { approved: false, email }];
+    await updateDoc(doc(this.firestore, 'tournaments', id), tournament);
+  }
+
   async deleteTournament(id: string): Promise<void> {
     // Delete subcollections first
     const subcollections = ['players', 'teams', 'matches'];

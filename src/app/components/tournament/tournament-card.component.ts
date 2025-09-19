@@ -1,5 +1,10 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
-import { IonItem, IonLabel, IonButton, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonItem,
+  IonLabel,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -13,43 +18,62 @@ import { QrCodeService } from '../../services/qr-code.service';
       <ion-label>
         <h2>{{ tournament.name }}</h2>
         <p>Sport: {{ tournament.sport }}</p>
-        <p>Start Date: {{ tournament.startDate | date:'short' }}</p>
+        <p>Start Date: {{ tournament.startDate | date : 'short' }}</p>
       </ion-label>
       @if (canView) {
-        <ion-button fill="clear" slot="end" [routerLink]="'/scoreboard/' + tournament.id">
-          <ion-icon name="stats-chart-outline"></ion-icon>
-        </ion-button>
-      }
-      @if (canEdit) {
-        <ion-button fill="clear" slot="end" [routerLink]="'/knockout/' + tournament.id">
-          <ion-icon name="trophy-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" slot="end" (click)="onEdit()">
-          <ion-icon name="settings-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" slot="end" color="primary" (click)="onPrintQR()">
-          <ion-icon name="qr-code-outline"></ion-icon>
-        </ion-button>
-      }
-      @if (canDelete) {
+      <ion-button
+        fill="clear"
+        slot="end"
+        [routerLink]="'/scoreboard/' + tournament.id"
+      >
+        <ion-icon name="stats-chart-outline"></ion-icon>
+      </ion-button>
+      } @if (canEdit) {
+      <ion-button
+        fill="clear"
+        slot="end"
+        [routerLink]="'/knockout/' + tournament.id"
+      >
+        <ion-icon name="trophy-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" slot="end" (click)="onEdit()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" slot="end" color="primary" (click)="onPrintQR()">
+        <ion-icon name="qr-code-outline"></ion-icon>
+      </ion-button>
+      } @if (canDelete) {
       <ion-button fill="clear" slot="end" color="danger" (click)="onDelete()">
         <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+      } @if (canAskEdit) {
+      <ion-button fill="clear" slot="end" color="success" (click)="onAskEdit()">
+        <ion-icon name="albums-outline"></ion-icon>
       </ion-button>
       }
     </ion-item>
   `,
-  imports: [CommonModule, RouterLink, IonItem, IonLabel, IonButton, IonIcon]
+  imports: [CommonModule, RouterLink, IonItem, IonLabel, IonButton, IonIcon],
 })
 export class TournamentCardComponent {
   @Input() tournament: any;
   @Output() edit = new EventEmitter<string>();
-  @Output() delete = new EventEmitter<{id: string, name: string}>();
+  @Output() delete = new EventEmitter<{ id: string; name: string }>();
+  @Output() askEdit = new EventEmitter<{
+    id: string;
+    tournament: any;
+    email: string;
+  }>();
 
   private authService = inject(AuthService);
   private qrService = inject(QrCodeService);
 
   get canDelete() {
     return this.authService.hasPermission('admin', this.tournament);
+  }
+
+  get canAskEdit() {
+    return !!this.authService.user?.email;
   }
 
   get canEdit() {
@@ -65,7 +89,11 @@ export class TournamentCardComponent {
   }
 
   onDelete() {
-    this.delete.emit({id: this.tournament.id, name: this.tournament.name});
+    this.delete.emit({ id: this.tournament.id, name: this.tournament.name });
+  }
+
+  onAskEdit() {
+    this.askEdit.emit({ id: this.tournament.id, tournament: this.tournament, email: this.authService.user?.email! });
   }
 
   onPrintQR() {

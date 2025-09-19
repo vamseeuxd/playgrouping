@@ -87,7 +87,7 @@ export class TournamentFormPage {
     sport: '',
     startDate: '',
     email: '',
-    editors: [] as string[],
+    editors: [] as { approved: boolean; email: string }[],
   };
 
   currentStep = '1';
@@ -346,7 +346,9 @@ export class TournamentFormPage {
       if (!this.tournamentId) {
         this.tournament.email = this.auth.currentUser?.email || '';
         if (this.tournament.email) {
-          this.tournament.editors = [this.tournament.email];
+          this.tournament.editors = [
+            { approved: true, email: this.tournament.email },
+          ];
         }
         this.tournamentId = await this.firestoreService.createTournament(
           this.tournament

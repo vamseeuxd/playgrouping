@@ -10,7 +10,8 @@
     <app-tournament-card
       [tournament]="tournament"
       (edit)="editTournament($event)"
-      (delete)="deleteTournament($event.id, $event.name)">
+      (delete)="deleteTournament($event.id, $event.name)"
+      (askEdit)="askEditTournament($event.id, $event.tournament, $event.email)">
     </app-tournament-card>
     }
   </ion-list>
