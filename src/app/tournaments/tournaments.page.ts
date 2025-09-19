@@ -195,14 +195,14 @@ export class TournamentsPage {
         { text: 'No', role: 'cancel' },
         {
           text: 'Yes',
-          handler: () => this.performEditTournament(id, tournament, email),
+          handler: () => this.performAskEditTournament(id, tournament, email),
         },
       ],
     });
     await alert.present();
   }
 
-  async performEditTournament(id: string, tournament: any, email: string) {
+  async performAskEditTournament(id: string, tournament: any, email: string) {
 
     const loading = await this.loadingController.create({
       message: APP_CONSTANTS.MESSAGES.LOADING.ASK_EDIT_TOURNAMENT,
