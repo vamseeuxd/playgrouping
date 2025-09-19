@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
+import { Router, ActivatedRoute } from '@angular/router';
+import {
+  LoadingController,
+  AlertController,
+  ToastController,
+} from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
@@ -12,18 +16,11 @@ import {
   IonInput,
   IonSelect,
   IonSelectOption,
-  IonDatetime,
   IonButton,
   IonBackButton,
   IonButtons,
   IonTextarea,
-  IonDatetimeButton,
   IonModal,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonIcon,
   IonSegment,
   IonSegmentButton,
   IonCheckbox,
@@ -39,6 +36,7 @@ import { TeamsStepComponent } from '../components/tournament/steps/teams-step.co
 import { MatchesStepComponent } from '../components/tournament/steps/matches-step.component';
 import { ReviewStepComponent } from '../components/tournament/steps/review-step.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-tournament-form',
@@ -68,14 +66,15 @@ import { APP_CONSTANTS } from '../constants/app.constants';
     PlayersStepComponent,
     TeamsStepComponent,
     MatchesStepComponent,
-    ReviewStepComponent
-],
+    ReviewStepComponent,
+  ],
 })
 export class TournamentFormPage {
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
+  private auth = inject(Auth);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -87,6 +86,8 @@ export class TournamentFormPage {
     name: '',
     sport: '',
     startDate: '',
+    email: '',
+    editors: [] as string[],
   };
 
   currentStep = '1';
@@ -102,7 +103,14 @@ export class TournamentFormPage {
   editingMatch = false;
   currentPlayer = { id: '', name: '', gender: '', remarks: '' };
   currentTeam: any = { id: '', name: '', players: [] };
-  currentMatch: any = { id: '', team1: '', team2: '', date: '', court: '', umpire: '' };
+  currentMatch: any = {
+    id: '',
+    team1: '',
+    team2: '',
+    date: '',
+    court: '',
+    umpire: '',
+  };
   isEdit = false;
   tournamentId = '';
 
@@ -111,7 +119,9 @@ export class TournamentFormPage {
     this.isEdit = !!this.tournamentId;
 
     if (this.isEdit) {
-      const tournament = await this.firestoreService.getTournament(this.tournamentId);
+      const tournament = await this.firestoreService.getTournament(
+        this.tournamentId
+      );
       if (tournament) {
         this.tournament = tournament;
       }
@@ -123,25 +133,32 @@ export class TournamentFormPage {
   }
 
   loadSports() {
-    this.firestoreService.getSports().subscribe(sports => {
+    this.firestoreService.getSports().subscribe((sports) => {
       this.sports = sports;
     });
   }
 
   loadPlayers() {
     if (this.tournamentId) {
-      this.firestoreService.getPlayers(this.tournamentId).subscribe(players => {
-        this.players = players;
-      });
+      this.firestoreService
+        .getPlayers(this.tournamentId)
+        .subscribe((players) => {
+          this.players = players;
+        });
     }
   }
 
   async onSubmit() {
     try {
       if (this.isEdit) {
-        await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
+        await this.firestoreService.updateTournament(
+          this.tournamentId,
+          this.tournament
+        );
       } else {
-        this.tournamentId = await this.firestoreService.createTournament(this.tournament);
+        this.tournamentId = await this.firestoreService.createTournament(
+          this.tournament
+        );
         this.isEdit = true;
         return; // Stay on form to add players
       }
@@ -157,19 +174,19 @@ export class TournamentFormPage {
       message: 'Are you sure you want to delete this tournament?',
       buttons: [
         { text: 'No', role: 'cancel' },
-        { text: 'Yes', handler: () => this.performDeleteTournament() }
-      ]
+        { text: 'Yes', handler: () => this.performDeleteTournament() },
+      ],
     });
     await alert.present();
   }
 
   async performDeleteTournament() {
-      try {
-        await this.firestoreService.deleteTournament(this.tournamentId);
-        this.router.navigate(['/tournaments']);
-      } catch (error) {
-        console.error('Error deleting tournament:', error);
-      }
+    try {
+      await this.firestoreService.deleteTournament(this.tournamentId);
+      this.router.navigate(['/tournaments']);
+    } catch (error) {
+      console.error('Error deleting tournament:', error);
+    }
   }
 
   addPlayer() {
@@ -192,8 +209,9 @@ export class TournamentFormPage {
     const { player, isEditing } = event;
     if (!player.name.trim()) return;
 
-    const isDuplicate = this.players.some(p =>
-      p.name.toLowerCase() === player.name.toLowerCase() && p.id !== player.id
+    const isDuplicate = this.players.some(
+      (p) =>
+        p.name.toLowerCase() === player.name.toLowerCase() && p.id !== player.id
     );
 
     if (isDuplicate) {
@@ -205,11 +223,15 @@ export class TournamentFormPage {
       const playerData = {
         name: player.name,
         gender: player.gender,
-        remarks: player.remarks
+        remarks: player.remarks,
       };
 
       if (isEditing) {
-        await this.firestoreService.updatePlayer(this.tournamentId, player.id, playerData);
+        await this.firestoreService.updatePlayer(
+          this.tournamentId,
+          player.id,
+          playerData
+        );
       } else {
         await this.firestoreService.createPlayer(this.tournamentId, playerData);
       }
@@ -223,8 +245,10 @@ export class TournamentFormPage {
   async savePlayerFromModal() {
     if (!this.currentPlayer.name.trim()) return;
 
-    const isDuplicate = this.players.some(p =>
-      p.name.toLowerCase() === this.currentPlayer.name.toLowerCase() && p.id !== this.currentPlayer.id
+    const isDuplicate = this.players.some(
+      (p) =>
+        p.name.toLowerCase() === this.currentPlayer.name.toLowerCase() &&
+        p.id !== this.currentPlayer.id
     );
 
     if (isDuplicate) {
@@ -236,11 +260,15 @@ export class TournamentFormPage {
       const playerData = {
         name: this.currentPlayer.name,
         gender: this.currentPlayer.gender,
-        remarks: this.currentPlayer.remarks
+        remarks: this.currentPlayer.remarks,
       };
 
       if (this.editingPlayer) {
-        await this.firestoreService.updatePlayer(this.tournamentId, this.currentPlayer.id, playerData);
+        await this.firestoreService.updatePlayer(
+          this.tournamentId,
+          this.currentPlayer.id,
+          playerData
+        );
       } else {
         await this.firestoreService.createPlayer(this.tournamentId, playerData);
       }
@@ -258,19 +286,19 @@ export class TournamentFormPage {
       message: 'Remove this player?',
       buttons: [
         { text: 'No', role: 'cancel' },
-        { text: 'Yes', handler: () => this.performRemovePlayer(playerId) }
-      ]
+        { text: 'Yes', handler: () => this.performRemovePlayer(playerId) },
+      ],
     });
     await alert.present();
   }
 
   async performRemovePlayer(playerId: string) {
-      try {
-        await this.firestoreService.deletePlayer(this.tournamentId, playerId);
-        this.loadPlayers();
-      } catch (error) {
-        console.error('Error removing player:', error);
-      }
+    try {
+      await this.firestoreService.deletePlayer(this.tournamentId, playerId);
+      this.loadPlayers();
+    } catch (error) {
+      console.error('Error removing player:', error);
+    }
   }
 
   cancel() {
@@ -297,7 +325,11 @@ export class TournamentFormPage {
   canProceed(): boolean {
     switch (this.currentStep) {
       case '1':
-        return !!(this.tournament.name && this.tournament.sport && this.tournament.startDate);
+        return !!(
+          this.tournament.name &&
+          this.tournament.sport &&
+          this.tournament.startDate
+        );
       case '2':
         return this.players.length >= 2;
       case '3':
@@ -312,10 +344,19 @@ export class TournamentFormPage {
   async saveTournament() {
     try {
       if (!this.tournamentId) {
-        this.tournamentId = await this.firestoreService.createTournament(this.tournament);
+        this.tournament.email = this.auth.currentUser?.email || '';
+        if (this.tournament.email) {
+          this.tournament.editors = [this.tournament.email];
+        }
+        this.tournamentId = await this.firestoreService.createTournament(
+          this.tournament
+        );
         this.isEdit = true;
       } else {
-        await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
+        await this.firestoreService.updateTournament(
+          this.tournamentId,
+          this.tournament
+        );
       }
     } catch (error) {
       console.error('Error saving tournament:', error);
@@ -331,20 +372,23 @@ export class TournamentFormPage {
   editTeam(team: any) {
     this.currentTeam = { ...team };
     this.editingTeam = true;
-    
+
     // Mark current team players as selected
-    this.players.forEach(player => {
-      player.selected = team.players?.some((p: any) => p.id === player.id) || false;
+    this.players.forEach((player) => {
+      player.selected =
+        team.players?.some((p: any) => p.id === player.id) || false;
     });
-    
+
     this.showTeamModal = true;
   }
 
   async saveTeam() {
     if (!this.currentTeam.name.trim()) return;
 
-    const isDuplicate = this.teams.some(t =>
-      t.name.toLowerCase() === this.currentTeam.name.toLowerCase() && t.id !== this.currentTeam.id
+    const isDuplicate = this.teams.some(
+      (t) =>
+        t.name.toLowerCase() === this.currentTeam.name.toLowerCase() &&
+        t.id !== this.currentTeam.id
     );
 
     if (isDuplicate) {
@@ -352,19 +396,28 @@ export class TournamentFormPage {
       return;
     }
 
-    const selectedPlayers = this.players.filter(p => p.selected).map(p => ({ id: p.id, name: p.name }));
+    const selectedPlayers = this.players
+      .filter((p) => p.selected)
+      .map((p) => ({ id: p.id, name: p.name }));
     this.currentTeam.players = selectedPlayers;
 
     try {
       if (this.editingTeam) {
-        await this.firestoreService.updateTeam(this.tournamentId, this.currentTeam.id, this.currentTeam);
+        await this.firestoreService.updateTeam(
+          this.tournamentId,
+          this.currentTeam.id,
+          this.currentTeam
+        );
       } else {
-        await this.firestoreService.createTeam(this.tournamentId, this.currentTeam);
+        await this.firestoreService.createTeam(
+          this.tournamentId,
+          this.currentTeam
+        );
       }
 
       this.showTeamModal = false;
       this.loadTeams();
-      this.players.forEach(p => p.selected = false);
+      this.players.forEach((p) => (p.selected = false));
     } catch (error) {
       console.error('Error saving team:', error);
     }
@@ -376,24 +429,24 @@ export class TournamentFormPage {
       message: 'Remove this team?',
       buttons: [
         { text: 'No', role: 'cancel' },
-        { text: 'Yes', handler: () => this.performRemoveTeam(teamId) }
-      ]
+        { text: 'Yes', handler: () => this.performRemoveTeam(teamId) },
+      ],
     });
     await alert.present();
   }
 
   async performRemoveTeam(teamId: string) {
-      try {
-        await this.firestoreService.deleteTeam(this.tournamentId, teamId);
-        this.loadTeams();
-      } catch (error) {
-        console.error('Error removing team:', error);
-      }
+    try {
+      await this.firestoreService.deleteTeam(this.tournamentId, teamId);
+      this.loadTeams();
+    } catch (error) {
+      console.error('Error removing team:', error);
+    }
   }
 
   loadTeams() {
     if (this.tournamentId) {
-      this.firestoreService.getTeams(this.tournamentId).subscribe(teams => {
+      this.firestoreService.getTeams(this.tournamentId).subscribe((teams) => {
         this.teams = teams;
       });
     }
@@ -401,9 +454,11 @@ export class TournamentFormPage {
 
   loadMatches() {
     if (this.tournamentId) {
-      this.firestoreService.getMatches(this.tournamentId).subscribe(matches => {
-        this.matches = matches;
-      });
+      this.firestoreService
+        .getMatches(this.tournamentId)
+        .subscribe((matches) => {
+          this.matches = matches;
+        });
     }
   }
 
@@ -424,14 +479,21 @@ export class TournamentFormPage {
           stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
           startTime: null,
           endTime: null,
-          duration: 0
+          duration: 0,
         });
       }
     }
   }
 
   addMatch() {
-    this.currentMatch = { id: '', team1: '', team2: '', date: '', court: '', umpire: '' };
+    this.currentMatch = {
+      id: '',
+      team1: '',
+      team2: '',
+      date: '',
+      court: '',
+      umpire: '',
+    };
     this.editingMatch = false;
     this.showMatchModal = true;
   }
@@ -443,7 +505,11 @@ export class TournamentFormPage {
   }
 
   async saveMatch() {
-    if (!this.currentMatch.team1 || !this.currentMatch.team2 || this.currentMatch.team1 === this.currentMatch.team2) {
+    if (
+      !this.currentMatch.team1 ||
+      !this.currentMatch.team2 ||
+      this.currentMatch.team1 === this.currentMatch.team2
+    ) {
       alert(APP_CONSTANTS.MESSAGES.VALIDATION.DIFFERENT_TEAMS);
       return;
     }
@@ -462,12 +528,16 @@ export class TournamentFormPage {
         stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
         startTime: null,
         endTime: null,
-        duration: 0
+        duration: 0,
       };
-      
+
       if (this.editingMatch) {
-        await this.firestoreService.updateMatch(this.tournamentId, matchData.id, matchData);
-        const index = this.matches.findIndex(m => m.id === matchData.id);
+        await this.firestoreService.updateMatch(
+          this.tournamentId,
+          matchData.id,
+          matchData
+        );
+        const index = this.matches.findIndex((m) => m.id === matchData.id);
         if (index !== -1) {
           this.matches[index] = { ...matchData };
         }
@@ -475,7 +545,7 @@ export class TournamentFormPage {
         await this.firestoreService.createMatch(this.tournamentId, matchData);
         this.matches.push({ ...matchData });
       }
-      
+
       this.showMatchModal = false;
     } catch (error) {
       console.error('Error saving match:', error);
@@ -483,23 +553,28 @@ export class TournamentFormPage {
   }
 
   removeMatch(matchId: string) {
-    this.matches = this.matches.filter(m => m.id !== matchId);
+    this.matches = this.matches.filter((m) => m.id !== matchId);
   }
 
   async submitTournament() {
-    const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.UPDATING_TOURNAMENT });
+    const loading = await this.loadingController.create({
+      message: APP_CONSTANTS.MESSAGES.LOADING.UPDATING_TOURNAMENT,
+    });
     await loading.present();
-    
+
     try {
       if (this.isEdit) {
-        await this.firestoreService.updateTournament(this.tournamentId, this.tournament);
+        await this.firestoreService.updateTournament(
+          this.tournamentId,
+          this.tournament
+        );
       } else {
         await this.firestoreService.createTournament(this.tournament);
       }
       const toast = await this.toastController.create({
         message: APP_CONSTANTS.MESSAGES.SUCCESS.TOURNAMENT_UPDATED,
         duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
-        color: APP_CONSTANTS.UI.COLORS.SUCCESS
+        color: APP_CONSTANTS.UI.COLORS.SUCCESS,
       });
       await toast.present();
       this.router.navigate(['/tournaments']);
@@ -508,7 +583,7 @@ export class TournamentFormPage {
       const toast = await this.toastController.create({
         message: APP_CONSTANTS.MESSAGES.ERROR.TOURNAMENT_UPDATE,
         duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
-        color: APP_CONSTANTS.UI.COLORS.DANGER
+        color: APP_CONSTANTS.UI.COLORS.DANGER,
       });
       await toast.present();
     } finally {
@@ -518,19 +593,21 @@ export class TournamentFormPage {
 
   getAvailablePlayers() {
     const assignedPlayerIds = new Set();
-    
+
     // Get all assigned players from existing teams
-    this.teams.forEach(team => {
+    this.teams.forEach((team) => {
       if (team.players) {
         team.players.forEach((player: any) => assignedPlayerIds.add(player.id));
       }
     });
-    
+
     // If editing a team, allow its current players to be available
     if (this.editingTeam && this.currentTeam.players) {
-      this.currentTeam.players.forEach((player: any) => assignedPlayerIds.delete(player.id));
+      this.currentTeam.players.forEach((player: any) =>
+        assignedPlayerIds.delete(player.id)
+      );
     }
-    
-    return this.players.filter(player => !assignedPlayerIds.has(player.id));
+
+    return this.players.filter((player) => !assignedPlayerIds.has(player.id));
   }
 }

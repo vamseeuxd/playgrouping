@@ -15,10 +15,12 @@ import { QrCodeService } from '../../services/qr-code.service';
         <p>Sport: {{ tournament.sport }}</p>
         <p>Start Date: {{ tournament.startDate | date:'short' }}</p>
       </ion-label>
-      <ion-button fill="clear" slot="end" [routerLink]="'/scoreboard/' + tournament.id">
-        <ion-icon name="stats-chart-outline"></ion-icon>
-      </ion-button>
-      @if (canManageSports) {
+      @if (canView) {
+        <ion-button fill="clear" slot="end" [routerLink]="'/scoreboard/' + tournament.id">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+        </ion-button>
+      }
+      @if (canEdit) {
         <ion-button fill="clear" slot="end" [routerLink]="'/knockout/' + tournament.id">
           <ion-icon name="trophy-outline"></ion-icon>
         </ion-button>
@@ -47,11 +49,15 @@ export class TournamentCardComponent {
   private qrService = inject(QrCodeService);
 
   get canDelete() {
-    return this.authService.hasPermission('canDeleteTournament');
+    return this.authService.hasPermission('admin', this.tournament);
   }
 
-  get canManageSports() {
-    return this.authService.hasPermission('canManageSports');
+  get canEdit() {
+    return this.authService.hasPermission('editor', this.tournament);
+  }
+
+  get canView() {
+    return this.authService.hasPermission('viewer', this.tournament);
   }
 
   onEdit() {

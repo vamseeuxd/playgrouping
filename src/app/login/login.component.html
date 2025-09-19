@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-input
+  <!-- <ion-input
     label="Email"
     label-placement="floating"
     fill="outline"
@@ -18,10 +18,14 @@
     fill="outline"
     class="ion-margin-bottom"
     placeholder="Enter text"
-  ></ion-input>
+  ></ion-input> -->
 
-  <ion-button class="ion-margin-bottom" expand="block">Login</ion-button>
+  <!-- <ion-button class="ion-margin-bottom" expand="block">Login</ion-button> -->
   <ion-button color="danger" expand="block" (click)="signInWithGoogle()"
     >Login with Google</ion-button
+  >
+  
+  <ion-button fill="outline" expand="block" (click)="signInAnonymously()" class="ion-margin-top"
+    >Continue as Guest</ion-button
   >
 </ion-content>

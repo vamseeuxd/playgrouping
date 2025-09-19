@@ -1,14 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
-import { RouterLink } from '@angular/router';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonIcon, IonFab, IonFabButton, LoadingController, AlertController, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trophyOutline, addOutline, settingsOutline, flaskOutline, trashOutline, statsChartOutline, qrCodeOutline } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TournamentCardComponent } from '../components/tournament/tournament-card.component';
-import { RoleSelectorComponent } from '../components/shared/role-selector.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { AuthService } from '../services/auth.service';
 
@@ -16,24 +14,20 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-tournaments',
   templateUrl: './tournaments.page.html',
   styleUrls: ['./tournaments.page.scss'],
-  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonFab, IonFabButton, IonIcon, TournamentCardComponent, RoleSelectorComponent]
+  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonFab, IonFabButton, IonIcon, TournamentCardComponent]
 })
 export class TournamentsPage {
-  private firestoreService = inject(FirestoreService);
-  private loadingController = inject(LoadingController);
-  private alertController = inject(AlertController);
-  private toastController = inject(ToastController);
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  
+  firestoreService = inject(FirestoreService);
+  loadingController = inject(LoadingController);
+  alertController = inject(AlertController);
+  toastController = inject(ToastController);
+  router = inject(Router);
+  authService = inject(AuthService);
+
   tournaments$: Observable<any[]>;
-  
+
   get canCreateTournament() {
-    return this.authService.hasPermission('canCreateTournament');
-  }
-  
-  get canManageSports() {
-    return this.authService.hasPermission('canManageSports');
+    return !!this.authService.user?.email;
   }
 
   constructor() {
@@ -54,10 +48,10 @@ export class TournamentsPage {
   }
 
   async performCreateMockData() {
-    
+
     const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.CREATING_MOCK_DATA });
     await loading.present();
-    
+
     try {
       // Create tournament
       const tournamentId = await this.firestoreService.createTournament({
@@ -65,24 +59,24 @@ export class TournamentsPage {
         sport: APP_CONSTANTS.MOCK_DATA.SPORT,
         startDate: new Date().toISOString()
       });
-      
+
       // Create players
       const players = APP_CONSTANTS.MOCK_DATA.PLAYERS;
-      
+
       for (const player of players) {
         await this.firestoreService.createPlayer(tournamentId, player);
       }
-      
+
       // Create teams
       const teams = APP_CONSTANTS.MOCK_DATA.TEAMS;
-      
+
       for (const team of teams) {
         await this.firestoreService.createTeam(tournamentId, team);
       }
-      
+
       // Create matches
       const matches = APP_CONSTANTS.MOCK_DATA.MATCHES;
-      
+
       for (let i = 0; i < matches.length; i++) {
         const match = matches[i];
         await this.firestoreService.createMatch(tournamentId, {
@@ -98,7 +92,7 @@ export class TournamentsPage {
           duration: match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED ? APP_CONSTANTS.MATCH.DEFAULT_DURATION : 0
         });
       }
-      
+
       const toast = await this.toastController.create({
         message: APP_CONSTANTS.MESSAGES.SUCCESS.MOCK_DATA_CREATED,
         duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
@@ -139,10 +133,10 @@ export class TournamentsPage {
   }
 
   async performDeleteTournament(id: string, name: string) {
-    
+
     const loading = await this.loadingController.create({ message: APP_CONSTANTS.MESSAGES.LOADING.DELETING_TOURNAMENT });
     await loading.present();
-    
+
     try {
       await this.firestoreService.deleteTournament(id);
       const toast = await this.toastController.create({

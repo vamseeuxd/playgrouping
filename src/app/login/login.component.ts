@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {
-  IonInput,
   IonHeader,
   IonContent,
   IonTitle,
@@ -19,8 +18,7 @@ import { AuthService } from 'src/app/services/auth.service';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonHeader,
-    IonInput
+    IonHeader
 ],
   standalone: true,
 })
@@ -38,6 +36,15 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/tournaments']);
     } catch (error) {
       console.error('Google sign-in error:', error);
+    }
+  }
+
+  async signInAnonymously() {
+    try {
+      await this.authService.setViewAccess('guest');
+      this.router.navigate(['/tournaments']);
+    } catch (error) {
+      console.error('Anonymous sign-in error:', error);
     }
   }
 }
