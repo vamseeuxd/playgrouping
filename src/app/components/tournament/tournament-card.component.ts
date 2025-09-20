@@ -60,48 +60,6 @@ import { QrCodeService } from '../../services/qr-code.service';
                 <ion-icon slot="start" name="list-outline"></ion-icon>
                 <ion-label> Editors List </ion-label>
               </ion-item>
-
-              <ion-modal #editorsListModal mode="ios" [presentingElement]="presentingElement">
-                <ng-template>
-                  <ion-header>
-                    <ion-toolbar color="primary">
-                      <ion-title>Editors List</ion-title>
-                      <!-- <ion-buttons slot="end">
-                        <ion-button expandable (click)="editorsListModalOpen = false">Close</ion-button>
-                      </ion-buttons> -->
-                    </ion-toolbar>
-                  </ion-header>
-                  <ion-content>
-                    <ion-list>
-                      @if (tournament.editors?.length === 0) {
-                      <ion-item>
-                        <ion-label>No editors assigned.</ion-label>
-                      </ion-item>
-                      } @else {
-                        @for (item of tournament.editors; track $index) { 
-                           <ion-item-sliding>
-                             <ion-item>
-                               <ion-avatar slot="start">
-                                 <ion-img [src]="item.photoURL || 'https://i.pravatar.cc/300?u=' + item.email"></ion-img>
-                               </ion-avatar>
-                               <ion-label> 
-                                 <h2>{{ item.displayName }}</h2>
-                                 <p>{{ item.email }}</p>
-                               </ion-label>
-                             </ion-item>
-                             <ion-item-options side="end">
-                                 @if (item.email !== authService.user?.email) {
-                                  <ion-item-option expandable [disabled]="item.approved" (click)="onApproveEditAccess(item.email)">Approve</ion-item-option>
-                                  <ion-item-option expandable (click)="onRemoveEditor(item.email)">Remove</ion-item-option>
-                                }
-                               </ion-item-options>
-                           </ion-item-sliding>
-                        }
-                      }
-                    </ion-list>
-                  </ion-content>
-                </ng-template>
-              </ion-modal>
               } @if (canAskEdit) {
               <ion-item [button]="true" (click)="onAskEdit()">
                 <ion-icon slot="start" name="albums-outline"></ion-icon>
@@ -109,10 +67,52 @@ import { QrCodeService } from '../../services/qr-code.service';
               </ion-item>
               }
             </ion-list>
+
           </ion-content>
         </ng-template>
       </ion-popover>     
     </ion-item>
+    <ion-modal #editorsListModal mode="ios" [presentingElement]="presentingElement">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar color="primary">
+            <ion-title>Editors List</ion-title>
+            <!-- <ion-buttons slot="end">
+              <ion-button expandable (click)="editorsListModalOpen = false">Close</ion-button>
+            </ion-buttons> -->
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <ion-list>
+            @if (tournament.editors?.length === 0) {
+            <ion-item>
+              <ion-label>No editors assigned.</ion-label>
+            </ion-item>
+            } @else {
+              @for (item of tournament.editors; track $index) { 
+                 <ion-item-sliding>
+                   <ion-item>
+                     <ion-avatar slot="start">
+                       <ion-img [src]="item.photoURL || 'https://i.pravatar.cc/300?u=' + item.email"></ion-img>
+                     </ion-avatar>
+                     <ion-label> 
+                       <h2>{{ item.displayName }}</h2>
+                       <p>{{ item.email }}</p>
+                     </ion-label>
+                   </ion-item>
+                   <ion-item-options side="end">
+                       @if (item.email !== authService.user?.email) {
+                        <ion-item-option [disabled]="item.approved" (click)="onApproveEditAccess(item.email)">Approve</ion-item-option>
+                        <ion-item-option (click)="onRemoveEditor(item.email)">Remove</ion-item-option>
+                      }
+                     </ion-item-options>
+                 </ion-item-sliding>
+              }
+            }
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
   `,
   imports: [
     CommonModule,

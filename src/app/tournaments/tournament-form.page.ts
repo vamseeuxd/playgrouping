@@ -400,9 +400,9 @@ export class TournamentFormPage {
       .map((p) => ({ id: p.id, name: p.name }));
     
     // Auto-generate team name if empty
-    if (!this.currentTeam.name.trim() && selectedPlayers.length > 0) {
+    /* if (!this.currentTeam.name.trim() && selectedPlayers.length > 0) {
       this.currentTeam.name = this.generateTeamName(selectedPlayers);
-    }
+    } */
     
     if (!this.currentTeam.name.trim()) return;
 

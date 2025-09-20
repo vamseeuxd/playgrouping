@@ -71,7 +71,7 @@ export class PlayersStepComponent {
 
   onSavePlayer(player: any) {
     this.savePlayer.emit({ player, isEditing: this.editingPlayer });
-    this.showPlayerModal = false;
+    // this.showPlayerModal = false;
   }
 
   onCloseModal() {
