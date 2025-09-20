@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonCardSubtitle } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
     <ion-card>
       <ion-card-header>
         <ion-card-title>Live Score</ion-card-title>
+        <ion-card-subtitle>{{ team1 }} vs {{ team2 }} ( Status: {{ status | titlecase }} )</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
         <ion-grid>
@@ -44,11 +45,12 @@ import { CommonModule } from '@angular/common';
       </ion-card-content>
     </ion-card>
   `,
-  imports: [CommonModule, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol, IonButton, IonIcon]
+  imports: [CommonModule, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonGrid, IonRow, IonCol, IonButton, IonIcon]
 })
 export class ScoreBoardComponent {
   @Input() team1 = '';
   @Input() team2 = '';
+  @Input() status = '';
   @Input() score1 = 0;
   @Input() score2 = 0;
   @Input() canEdit = false;

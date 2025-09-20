@@ -35,6 +35,7 @@ import {
   albumsOutline,
   gridOutline,
   listOutline,
+  checkmark,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -95,6 +96,7 @@ export class AppComponent {
       albumsOutline,
       gridOutline,
       listOutline,
+      checkmark,
     });
   }
 

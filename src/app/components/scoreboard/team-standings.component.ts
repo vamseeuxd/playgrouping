@@ -102,6 +102,7 @@ import { CommonModule } from '@angular/common';
       flex-direction: column;
       align-items: center;
       text-align: center;
+      border: 1px solid #0054e9;
     }
 
     .stat-label {

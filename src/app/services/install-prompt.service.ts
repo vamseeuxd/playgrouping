@@ -17,7 +17,7 @@ export class InstallPromptService {
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       this.deferredPrompt = e;
-      this.showInstallPrompt();
+      // this.showInstallPrompt();
     });
 
     if (this.isIOS && !this.isStandalone()) {
@@ -31,7 +31,7 @@ export class InstallPromptService {
   }
 
   private showInstallPrompt() {
-    if (!this.isStandalone()) {
+    /* if (!this.isStandalone()) {
       const banner = document.createElement('div');
       banner.innerHTML = `
         <div style="position: fixed; top: 0; left: 0; right: 0; background: #3880ff; color: white; padding: 12px; text-align: center; z-index: 9999; font-size: 14px;">
@@ -46,11 +46,11 @@ export class InstallPromptService {
         this.deferredPrompt?.prompt();
         banner.style.display = 'none';
       });
-    }
+    } */
   }
 
   private showIOSInstallPrompt() {
-    if (!this.isStandalone()) {
+    /* if (!this.isStandalone()) {
       const banner = document.createElement('div');
       banner.innerHTML = `
         <div style="position: fixed; top: 0; left: 0; right: 0; background: #3880ff; color: white; padding: 12px; text-align: center; z-index: 9999; font-size: 14px;">
@@ -59,6 +59,6 @@ export class InstallPromptService {
         </div>
       `;
       document.body.appendChild(banner);
-    }
+    } */
   }
 }

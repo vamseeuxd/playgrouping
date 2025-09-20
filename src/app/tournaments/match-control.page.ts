@@ -32,6 +32,8 @@ import {
 } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
+import { AuthService } from '../services/auth.service';
+import { docData } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-match-control',
@@ -65,6 +67,8 @@ export class MatchControlPage {
   private toastController = inject(ToastController);
   matchId = '';
   tournamentId = '';
+  tournament: any = null;
+  private authService = inject(AuthService);
 
   match = {
     id: '',
@@ -91,8 +95,26 @@ export class MatchControlPage {
       qrCodeOutline,
     });
     this.tournamentId = this.route.snapshot.queryParams['tournamentId'] || 'default';
+    console.log('tournamentId:', this.route.snapshot.params);
+    
     this.matchId = this.route.snapshot.params['id'];
+    this.getTournament();
     this.loadMatch();
+    this.firestoreService.getLiveMatchData(this.tournamentId, this.matchId).subscribe((data) => {
+      if (data) {
+        this.match = data;
+      }
+    });
+  } 
+
+  async getTournament() {
+    const tournament = await this.firestoreService.getTournament(this.tournamentId);
+    this.tournament = tournament;
+  }
+
+  get canEdit() {
+    if (!this.tournament) return false;
+    return this.authService.hasPermission('editor', this.tournament);
   }
 
   async loadMatch() {

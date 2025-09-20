@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
     </ion-buttons>
     <ion-title>Knockout Tournament</ion-title>
   </ion-toolbar>
@@ -16,15 +16,17 @@
     <ion-card-content>
       <p><strong>Status:</strong> {{ getTournamentStatus() }}</p>
       <p>Teams: {{ teams.length }}</p>
-      <p>Total Matches: {{ knockoutStages[0].matches.length + knockoutStages[1].matches.length + knockoutStages[2].matches.length + knockoutStages[3].matches.length + knockoutStages[4].matches.length }}</p>
-      
-      @if (teams.length >= 2 && knockoutStages[0].matches.length === 0) {
+      <p>
+        Total Matches: {{ knockoutStages[0].matches.length +
+        knockoutStages[1].matches.length + knockoutStages[2].matches.length +
+        knockoutStages[3].matches.length + knockoutStages[4].matches.length }}
+      </p>
+
+      @if (teams.length >= 2 && knockoutStages[0].matches.length === 0 && canEdit) {
       <ion-button expand="block" color="primary" (click)="generateMatches()">
         Generate Group Stage Matches
       </ion-button>
-      }
-      
-      @if (canAdvanceToNextRound()) {
+      } @if (canAdvanceToNextRound() && canEdit) {
       <ion-button expand="block" color="success" (click)="advanceToNextRound()">
         <ion-icon name="refresh-outline" slot="start"></ion-icon>
         Advance to {{ knockoutStages[getCurrentStageIndex() + 1].name }}
@@ -33,38 +35,48 @@
     </ion-card-content>
   </ion-card>
 
-  @for (stage of knockoutStages; track stage.name) {
-  @if (stage.matches.length > 0) {
+  @for (stage of knockoutStages; track stage.name) { @if (stage.matches.length >
+  0) {
   <ion-card>
     <ion-card-header>
       <ion-card-title>
         {{ stage.name }}
-        <ion-chip color="{{ getStageStatus(stage.matches) === 'Complete' ? 'success' : getStageStatus(stage.matches) === 'In Progress' ? 'warning' : 'medium' }}">
+        <ion-chip
+          color="{{ getStageStatus(stage.matches) === 'Complete' ? 'success' : getStageStatus(stage.matches) === 'In Progress' ? 'warning' : 'medium' }}"
+        >
           {{ getStageStatus(stage.matches) }}
         </ion-chip>
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      @for (match of stage.matches; track match.id) {
-      <ion-item>
-        <ion-label>
-          <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
-          @if (match.status === 'finished') {
-          <p>Final Score: {{ match.score1 }} - {{ match.score2 }}</p>
-          <p><strong>Winner: {{ match.score1 > match.score2 ? match.team1 : (match.score2 > match.score1 ? match.team2 : 'Draw') }}</strong></p>
-          } @else if (match.status && match.status !== 'pending') {
-          <p>Status: {{ match.status | titlecase }} | Score: {{ match.score1 || 0 }} - {{ match.score2 || 0 }}</p>
-          } @else {
-          <p>Status: Pending</p>
-          }
-        </ion-label>
-        <ion-button fill="clear" color="primary" [routerLink]="['/match-control', match.id]" [queryParams]="{tournamentId: tournamentId}">
-          <ion-icon name="play-outline"></ion-icon>
-        </ion-button>
-      </ion-item>
-      }
+      <ion-list>
+        @for (match of stage.matches; track match.id) {
+        <ion-item lines="full" detail="true" [routerLink]="['/match-control', match.id]" [queryParams]="{tournamentId: tournamentId}">
+          <ion-label>
+            <h2>{{ match.team1 }} vs {{ match.team2 }}</h2>
+              @if (match.status === 'finished') {
+                <ion-label color="success">
+                  <h3>Final Score: {{ match.score1 }} - {{ match.score2 }}</h3>
+                  <h3>Winner: {{ match.score1 > match.score2 ? match.team1 : (match.score2 > match.score1 ? match.team2 : 'Draw') }}</h3>
+                </ion-label>
+              } @else if (match.status && match.status !== 'pending') {
+                <ion-label color="primary">
+                  <h3>Status: {{ match.status | titlecase }} | Score: {{ match.score1 || 0 }} - {{ match.score2 || 0 }}</h3>
+                </ion-label>
+              } @else {
+                <ion-label color="danger">
+                  <h3>Status: Pending</h3>
+                </ion-label>
+              }
+          </ion-label>
+          <!-- <ion-button slot="end" fill="clear" color="primary" [routerLink]="['/match-control', match.id]" 
+            [queryParams]="{tournamentId: tournamentId}" > 
+            <ion-icon name="play-outline"></ion-icon> 
+          </ion-button> -->
+        </ion-item>
+        }
+      </ion-list>
     </ion-card-content>
   </ion-card>
-  }
-  }
+  } }
 </ion-content>

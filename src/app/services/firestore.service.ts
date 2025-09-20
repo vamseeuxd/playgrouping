@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, setDoc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -27,10 +27,29 @@ export class FirestoreService {
     await updateDoc(doc(this.firestore, 'tournaments', id), tournament);
   }
 
-  async requestEditAccess(id: string, tournament: any, email: string): Promise<void> {
-    tournament.editors = [...tournament.editors, { approved: false, email }];
+  async removeEditAccess(id: string, tournament: any, email: string): Promise<void> {
+    tournament.editors = tournament.editors.filter((editor: any) => editor.email !== email);
     await updateDoc(doc(this.firestore, 'tournaments', id), tournament);
   }
+
+  async requestEditAccess(id: string, tournament: any, email: string, displayName: string, photoURL: string): Promise<void> {
+    tournament.editors = [...tournament.editors, { approved: false, email, displayName, photoURL }];
+    await updateDoc(doc(this.firestore, 'tournaments', id), tournament);
+  }
+  
+  
+  async approveEditAccess(id: string, tournament: any, email: string): Promise<void> {
+    // tournament.editors = [...tournament.editors, { approved: false, email, displayName, photoURL }];
+    tournament.editors = tournament.editors.map((editor: any) => {
+      if (editor.email === email) {
+        return { ...editor, approved: true };
+      }
+      return editor;
+    });
+    await updateDoc(doc(this.firestore, 'tournaments', id), tournament);
+  }
+
+
 
   async deleteTournament(id: string): Promise<void> {
     // Delete subcollections first
@@ -81,6 +100,10 @@ export class FirestoreService {
   // Match operations
   getMatches(tournamentId: string): Observable<any[]> {
     return collectionData(collection(this.firestore, `tournaments/${tournamentId}/matches`), { idField: 'id' });
+  }
+
+  getLiveMatchData(tournamentId: string, matchId: string): Observable<any> {
+    return docData(doc(this.firestore, `tournaments/${tournamentId}/matches`, matchId), { idField: 'id' });
   }
 
   async getMatch(tournamentId: string, matchId: string): Promise<any> {

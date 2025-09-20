@@ -87,7 +87,12 @@ export class TournamentFormPage {
     sport: '',
     startDate: '',
     email: '',
-    editors: [] as { approved: boolean; email: string }[],
+    editors: [] as {
+      approved: boolean;
+      email: string;
+      displayName: string;
+      photoURL: string;
+    }[],
   };
 
   currentStep = '1';
@@ -273,7 +278,7 @@ export class TournamentFormPage {
         await this.firestoreService.createPlayer(this.tournamentId, playerData);
       }
 
-      this.showPlayerModal = false;
+      // this.showPlayerModal = false;
       this.loadPlayers();
     } catch (error) {
       console.error('Error saving player:', error);
@@ -347,7 +352,12 @@ export class TournamentFormPage {
         this.tournament.email = this.auth.currentUser?.email || '';
         if (this.tournament.email) {
           this.tournament.editors = [
-            { approved: true, email: this.tournament.email },
+            {
+              approved: true,
+              email: this.tournament.email,
+              displayName: this.auth.currentUser?.displayName || '',
+              photoURL: this.auth.currentUser?.photoURL || '',
+            },
           ];
         }
         this.tournamentId = await this.firestoreService.createTournament(

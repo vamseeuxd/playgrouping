@@ -1,20 +1,5 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
-import {
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonAvatar,
-  IonImg,
-  IonList,
-  IonModal,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonPopover,
-} from '@ionic/angular/standalone';
+import { IonItem, IonLabel, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonPopover, IonItemSliding, IonItemOptions, IonItemOption } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -50,7 +35,6 @@ import { QrCodeService } from '../../services/qr-code.service';
                 <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
                 <ion-label> Scoreboard </ion-label>
               </ion-item>
-              } @if (canEdit) {
               <ion-item
                 [button]="true"
                 [routerLink]="'/knockout/' + tournament.id"
@@ -58,6 +42,7 @@ import { QrCodeService } from '../../services/qr-code.service';
                 <ion-icon slot="start" name="trophy-outline"></ion-icon>
                 <ion-label> Knockout </ion-label>
               </ion-item>
+              } @if (canEdit) {
               <ion-item [button]="true" (click)="onEdit()">
                 <ion-icon slot="start" name="settings-outline"></ion-icon>
                 <ion-label> Edit </ion-label>
@@ -71,67 +56,48 @@ import { QrCodeService } from '../../services/qr-code.service';
                 <ion-icon slot="start" name="trash-outline"></ion-icon>
                 <ion-label> Delete </ion-label>
               </ion-item>
-              <ion-item [button]="true" id="openEditorsListModal">
+              <ion-item [button]="true" id="openEditorsListModal" (click)="editorsListModalOpen = true">
                 <ion-icon slot="start" name="list-outline"></ion-icon>
                 <ion-label> Editors List </ion-label>
               </ion-item>
 
-              <ion-modal #editorsListModal trigger="openEditorsListModal" [presentingElement]="presentingElement">
+              <ion-modal #editorsListModal mode="ios" [isOpen]="editorsListModalOpen" [presentingElement]="presentingElement">
                 <ng-template>
                   <ion-header>
-                    <ion-toolbar>
+                    <ion-toolbar color="primary">
                       <ion-title>Editors List</ion-title>
-                      <ion-buttons slot="end">
-                        <ion-button (click)="editorsListModal.dismiss()">Close</ion-button>
-                      </ion-buttons>
+                      <!-- <ion-buttons slot="end">
+                        <ion-button expandable (click)="editorsListModalOpen = false">Close</ion-button>
+                      </ion-buttons> -->
                     </ion-toolbar>
                   </ion-header>
                   <ion-content>
                     <ion-list>
+                      @if (tournament.editors?.length === 0) {
                       <ion-item>
-                        <ion-avatar slot="start">
-                          <ion-img
-                            src="https://i.pravatar.cc/300?u=b"
-                          ></ion-img>
-                        </ion-avatar>
-                        <ion-label>
-                          <h2>Connor Smith</h2>
-                          <p>Sales Rep</p>
-                        </ion-label>
+                        <ion-label>No editors assigned.</ion-label>
                       </ion-item>
-                      <ion-item>
-                        <ion-avatar slot="start">
-                          <ion-img
-                            src="https://i.pravatar.cc/300?u=a"
-                          ></ion-img>
-                        </ion-avatar>
-                        <ion-label>
-                          <h2>Daniel Smith</h2>
-                          <p>Product Designer</p>
-                        </ion-label>
-                      </ion-item>
-                      <ion-item>
-                        <ion-avatar slot="start">
-                          <ion-img
-                            src="https://i.pravatar.cc/300?u=d"
-                          ></ion-img>
-                        </ion-avatar>
-                        <ion-label>
-                          <h2>Greg Smith</h2>
-                          <p>Director of Operations</p>
-                        </ion-label>
-                      </ion-item>
-                      <ion-item>
-                        <ion-avatar slot="start">
-                          <ion-img
-                            src="https://i.pravatar.cc/300?u=e"
-                          ></ion-img>
-                        </ion-avatar>
-                        <ion-label>
-                          <h2>Zoey Smith</h2>
-                          <p>CEO</p>
-                        </ion-label>
-                      </ion-item>
+                      } @else {
+                        @for (item of tournament.editors; track $index) { 
+                           <ion-item-sliding>
+                             <ion-item>
+                               <ion-avatar slot="start">
+                                 <ion-img [src]="item.photoURL || 'https://i.pravatar.cc/300?u=' + item.email"></ion-img>
+                               </ion-avatar>
+                               <ion-label> 
+                                 <h2>{{ item.displayName }}</h2>
+                                 <p>{{ item.email }}</p>
+                               </ion-label>
+                             </ion-item>
+                             <ion-item-options side="end">
+                                 @if (item.email !== authService.user?.email) {
+                                  <ion-item-option expandable [disabled]="item.approved" (click)="onApproveEditAccess(item.email)">Approve</ion-item-option>
+                                  <ion-item-option expandable (click)="onRemoveEditor(item.email)">Remove</ion-item-option>
+                                }
+                               </ion-item-options>
+                           </ion-item-sliding>
+                        }
+                      }
                     </ion-list>
                   </ion-content>
                 </ng-template>
@@ -145,9 +111,7 @@ import { QrCodeService } from '../../services/qr-code.service';
             </ion-list>
           </ion-content>
         </ng-template>
-      </ion-popover>
-
-      <!-- <ng-container *ngIf="canView || canEdit || canDelete || canAskEdit"> -->
+      </ion-popover>     
     </ion-item>
   `,
   imports: [
@@ -157,10 +121,7 @@ import { QrCodeService } from '../../services/qr-code.service';
     IonLabel,
     IonButton,
     IonIcon,
-    IonButton,
     IonAvatar,
-    IonButton,
-    IonButtons,
     IonContent,
     IonHeader,
     IonImg,
@@ -170,10 +131,14 @@ import { QrCodeService } from '../../services/qr-code.service';
     IonModal,
     IonTitle,
     IonToolbar,
-    IonPopover
-  ],
+    IonPopover,
+    IonItemSliding,
+    IonItemOptions,
+    IonItemOption
+],
 })
 export class TournamentCardComponent {
+  editorsListModalOpen = false;
   @Input() tournament: any;
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<{ id: string; name: string }>();
@@ -181,6 +146,14 @@ export class TournamentCardComponent {
     id: string;
     tournament: any;
     email: string;
+    displayName: string;
+    photoURL: string;
+  }>();
+  @Output() approveEditAccess = new EventEmitter<{
+    id: string, tournament: any, email: string
+  }>();
+  @Output() removeEditAccess = new EventEmitter<{
+    id: string, tournament: any, email: string
   }>();
 
   presentingElement!: HTMLElement | null;
@@ -189,8 +162,16 @@ export class TournamentCardComponent {
     this.presentingElement = document.querySelector('.ion-page');
   }
 
-  private authService = inject(AuthService);
-  private qrService = inject(QrCodeService);
+  onApproveEditAccess(email: string){
+    this.approveEditAccess.emit({id: this.tournament.id, tournament: this.tournament, email: email});
+  }
+
+  onRemoveEditor(email: string) {
+    this.removeEditAccess.emit({id: this.tournament.id, tournament: this.tournament, email: email});
+  }
+
+  authService = inject(AuthService);
+  qrService = inject(QrCodeService);
 
   get canDelete() {
     return this.authService.hasPermission('admin', this.tournament);
@@ -224,6 +205,8 @@ export class TournamentCardComponent {
       id: this.tournament.id,
       tournament: this.tournament,
       email: this.authService.user?.email!,
+      displayName: this.authService.user?.displayName!,
+      photoURL: this.authService.user?.photoURL!,
     });
   }
 

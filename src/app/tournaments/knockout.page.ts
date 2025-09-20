@@ -1,25 +1,28 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController, ToastController } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController, ToastController, IonList } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { playOutline, stopOutline, trophyOutline, refreshOutline } from 'ionicons/icons';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-knockout',
   templateUrl: './knockout.page.html',
   styleUrls: ['./knockout.page.scss'],
-  imports: [CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip]
+  imports: [IonList, CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip]
 })
 export class KnockoutPage {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private toastController = inject(ToastController);
+    private authService = inject(AuthService);
   tournamentId = '';
+  tournament: any = null;
   
   knockoutStages: any[] = APP_CONSTANTS.TOURNAMENT.STAGE_NAMES.map(name => ({ name, matches: [] }));
 
@@ -28,6 +31,7 @@ export class KnockoutPage {
   constructor() {
     addIcons({ playOutline, stopOutline, trophyOutline, refreshOutline });
     this.tournamentId = this.route.snapshot.params['id'];
+    this.getTournament();
     this.loadMatches();
   }
 
@@ -41,6 +45,16 @@ export class KnockoutPage {
         this.organizeMatches(matches);
       });
     }
+  }
+
+  async getTournament() {
+    const tournament = await this.firestoreService.getTournament(this.tournamentId);
+    this.tournament = tournament;
+  }
+
+  get canEdit() {
+    if (!this.tournament) return false;
+    return this.authService.hasPermission('editor', this.tournament);
   }
 
   async generateMatches() {

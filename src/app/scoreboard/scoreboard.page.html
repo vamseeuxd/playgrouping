@@ -1,14 +1,18 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
     </ion-buttons>
     <ion-title>Tournament Scoreboard</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  @if (teamStats.length > 0) {
   <app-team-standings [teamStats]="teamStats"></app-team-standings>
+  }@else {
+  <p>No team statistics available.</p>
+  }
 
   <!-- Recent Matches -->
   <ion-card>
@@ -16,8 +20,8 @@
       <ion-card-title>Recent Matches</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      @for (match of matches.slice(0, 5); track match.id) {
-      @if (match.status === 'finished') {
+      @for (match of matches.slice(0, 5); track match.id) { @if (match.status
+      === 'finished') {
       <ion-item>
         <ion-label>
           <div class="match-result">
@@ -25,16 +29,17 @@
             <span class="score">{{ match.score1 }} - {{ match.score2 }}</span>
             <span class="team-name">{{ match.team2 }}</span>
           </div>
-          <p class="match-date">{{ getMatchDate(match.endTime) | date:'MMM d, HH:mm' }}</p>
+          <p class="match-date">
+            {{ getMatchDate(match.endTime) | date:'MMM d, HH:mm' }}
+          </p>
         </ion-label>
       </ion-item>
-      }
-      }
+      } }
     </ion-card-content>
   </ion-card>
 
   <!-- Legend -->
-  <ion-card>
+  <!-- <ion-card>
     <ion-card-header>
       <ion-card-title>Legend</ion-card-title>
     </ion-card-header>
@@ -43,5 +48,5 @@
       <p><strong>GF</strong> = Goals For, <strong>GA</strong> = Goals Against, <strong>GD</strong> = Goal Difference</p>
       <p><strong>Pts</strong> = Points (3 for win, 1 for draw, 0 for loss)</p>
     </ion-card-content>
-  </ion-card>
+  </ion-card> -->
 </ion-content>

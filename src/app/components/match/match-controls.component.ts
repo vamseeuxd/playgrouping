@@ -1,5 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IonButton, IonIcon, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
+import {
+  IonButton,
+  IonIcon,
+  IonGrid,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { APP_CONSTANTS } from '../../constants/app.constants';
 
@@ -15,9 +21,7 @@ import { APP_CONSTANTS } from '../../constants/app.constants';
             Start Match
           </ion-button>
         </ion-col>
-        }
-        
-        @if (status === statusTypes.STARTED) {
+        } @if (status === statusTypes.STARTED) {
         <ion-col>
           <ion-button expand="block" color="warning" (click)="onPause()">
             <ion-icon name="pause-outline" slot="start"></ion-icon>
@@ -30,9 +34,7 @@ import { APP_CONSTANTS } from '../../constants/app.constants';
             End Match
           </ion-button>
         </ion-col>
-        }
-        
-        @if (status === statusTypes.PAUSED) {
+        } @if (status === statusTypes.PAUSED) {
         <ion-col>
           <ion-button expand="block" color="success" (click)="onStart()">
             <ion-icon name="play-outline" slot="start"></ion-icon>
@@ -47,11 +49,16 @@ import { APP_CONSTANTS } from '../../constants/app.constants';
         </ion-col>
         }
       </ion-row>
-      
-      @if (status !== statusTypes.PENDING && status !== statusTypes.FINISHED) {
+
+      @if (status !== statusTypes.PENDING) {
       <ion-row>
         <ion-col>
-          <ion-button expand="block" color="warning" fill="outline" (click)="onReset()">
+          <ion-button
+            expand="block"
+            color="warning"
+            fill="outline"
+            (click)="onReset()"
+          >
             Reset Match
           </ion-button>
         </ion-col>
@@ -59,7 +66,7 @@ import { APP_CONSTANTS } from '../../constants/app.constants';
       }
     </ion-grid>
   `,
-  imports: [CommonModule, IonButton, IonIcon, IonGrid, IonRow, IonCol]
+  imports: [CommonModule, IonButton, IonIcon, IonGrid, IonRow, IonCol],
 })
 export class MatchControlsComponent {
   @Input() status = APP_CONSTANTS.MATCH.STATUS.PENDING;
@@ -67,7 +74,7 @@ export class MatchControlsComponent {
   @Output() pause = new EventEmitter<void>();
   @Output() stop = new EventEmitter<void>();
   @Output() reset = new EventEmitter<void>();
-  
+
   statusTypes = APP_CONSTANTS.MATCH.STATUS;
 
   onStart() {

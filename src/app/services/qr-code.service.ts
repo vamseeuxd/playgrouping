@@ -76,7 +76,7 @@ export class QrCodeService {
         </html>
       `);
       printWindow.document.close();
-      printWindow.print();
+      /* printWindow.print(); */
     }
   }
 }

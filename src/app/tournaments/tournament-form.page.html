@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ isEdit ? 'Edit' : 'Add' }} Tournament</ion-title>
   </ion-toolbar>
@@ -96,10 +96,10 @@
   </div>
 
   <!-- Modals -->
-  <ion-modal [isOpen]="showPlayerModal" (didDismiss)="showPlayerModal = false">
+  <ion-modal [isOpen]="showPlayerModal" [initialBreakpoint]="0.25" handleBehavior="cycle" [breakpoints]="[0, 0.25, 0.5, 0.75]" (didDismiss)="showPlayerModal = false">
     <ng-template>
       <ion-header>
-        <ion-toolbar>
+        <ion-toolbar color="primary">
           <ion-title>{{ editingPlayer ? 'Edit' : 'Add' }} Player</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="showPlayerModal = false">Close</ion-button>
@@ -152,7 +152,7 @@
   <ion-modal [isOpen]="showTeamModal" (didDismiss)="showTeamModal = false">
     <ng-template>
       <ion-header>
-        <ion-toolbar>
+        <ion-toolbar color="primary">
           <ion-title>{{ editingTeam ? 'Edit' : 'Add' }} Team</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="showTeamModal = false">Close</ion-button>
@@ -195,7 +195,7 @@
   <ion-modal [isOpen]="showMatchModal" (didDismiss)="showMatchModal = false">
     <ng-template>
       <ion-header>
-        <ion-toolbar>
+        <ion-toolbar color="primary">
           <ion-title>{{ editingMatch ? 'Edit' : 'Add' }} Match</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="showMatchModal = false">Close</ion-button>

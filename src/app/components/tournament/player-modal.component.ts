@@ -10,7 +10,7 @@ import { GENDER_OPTIONS } from '../../constants/app.constants';
     <ion-modal [isOpen]="isOpen" (didDismiss)="onDismiss()">
       <ng-template>
         <ion-header>
-          <ion-toolbar>
+          <ion-toolbar color="primary">
             <ion-title>{{ isEditing ? 'Edit' : 'Add' }} Player</ion-title>
             <ion-buttons slot="end">
               <ion-button (click)="onClose()">Close</ion-button>
