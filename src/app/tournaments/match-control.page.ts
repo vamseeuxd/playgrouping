@@ -20,7 +20,7 @@ import {
 } from '@ionic/angular/standalone';
 import { MatchControlsComponent } from '../components/match/match-controls.component';
 import { ScoreBoardComponent } from '../components/match/score-board.component';
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import {
   playOutline,
@@ -33,7 +33,6 @@ import {
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { AuthService } from '../services/auth.service';
-import { docData } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-match-control',
@@ -41,7 +40,6 @@ import { docData } from '@angular/fire/firestore';
   styleUrls: ['./match-control.page.scss'],
   imports: [
     CommonModule,
-    TitleCasePipe,
     FormsModule,
     IonHeader,
     IonToolbar,

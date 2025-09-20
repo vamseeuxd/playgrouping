@@ -177,8 +177,10 @@
           @for (player of getAvailablePlayers(); track player.id) {
           <ion-item>
             <ion-checkbox
+              slot="start"
               [(ngModel)]="player.selected"
               name="player_{{ player.id }}"
+              (ionChange)="onPlayerSelectionChange()"
             ></ion-checkbox>
             <ion-label class="ion-margin-start">{{ player.name }}</ion-label>
           </ion-item>

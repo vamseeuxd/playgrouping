@@ -395,6 +395,15 @@ export class TournamentFormPage {
   }
 
   async saveTeam() {
+    const selectedPlayers = this.players
+      .filter((p) => p.selected)
+      .map((p) => ({ id: p.id, name: p.name }));
+    
+    // Auto-generate team name if empty
+    if (!this.currentTeam.name.trim() && selectedPlayers.length > 0) {
+      this.currentTeam.name = this.generateTeamName(selectedPlayers);
+    }
+    
     if (!this.currentTeam.name.trim()) return;
 
     const isDuplicate = this.teams.some(
@@ -408,9 +417,6 @@ export class TournamentFormPage {
       return;
     }
 
-    const selectedPlayers = this.players
-      .filter((p) => p.selected)
-      .map((p) => ({ id: p.id, name: p.name }));
     this.currentTeam.players = selectedPlayers;
 
     try {
@@ -621,5 +627,20 @@ export class TournamentFormPage {
     }
 
     return this.players.filter((player) => !assignedPlayerIds.has(player.id));
+  }
+
+  generateTeamName(players: any[]): string {
+    return players
+      .map(player => player.name.split(' ')[0])
+      .join(' & ');
+  }
+
+  onPlayerSelectionChange() {
+    const selectedPlayers = this.players.filter(p => p.selected);
+    if (selectedPlayers.length > 0) {
+      this.currentTeam.name = this.generateTeamName(selectedPlayers);
+    } else {
+      this.currentTeam.name = '';
+    }
   }
 }

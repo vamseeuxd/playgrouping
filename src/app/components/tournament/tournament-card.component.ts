@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, ViewChild } from '@angular/core';
 import { IonItem, IonLabel, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonPopover, IonItemSliding, IonItemOptions, IonItemOption } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -16,14 +16,14 @@ import { QrCodeService } from '../../services/qr-code.service';
         <p>Start Date: {{ tournament.startDate | date : 'short' }}</p>
       </ion-label>
       <ion-button
-        id="click-trigger"
+        id="click-trigger-{{tournament.id}}"
         color="medium"
         slot="end"
         fill="clear"
         size="large"
         ><ion-icon name="grid-outline"></ion-icon
       ></ion-button>
-      <ion-popover trigger="click-trigger" [dismissOnSelect]="true" mode="ios">
+      <ion-popover trigger="click-trigger-{{tournament.id}}" [dismissOnSelect]="true" mode="ios">
         <ng-template>
           <ion-content>
             <ion-list mode="ios">
@@ -56,12 +56,12 @@ import { QrCodeService } from '../../services/qr-code.service';
                 <ion-icon slot="start" name="trash-outline"></ion-icon>
                 <ion-label> Delete </ion-label>
               </ion-item>
-              <ion-item [button]="true" id="openEditorsListModal" (click)="editorsListModalOpen = true">
+              <ion-item [button]="true" (click)="openEditorsModal()">
                 <ion-icon slot="start" name="list-outline"></ion-icon>
                 <ion-label> Editors List </ion-label>
               </ion-item>
 
-              <ion-modal #editorsListModal mode="ios" [isOpen]="editorsListModalOpen" [presentingElement]="presentingElement">
+              <ion-modal #editorsListModal mode="ios" [presentingElement]="presentingElement">
                 <ng-template>
                   <ion-header>
                     <ion-toolbar color="primary">
@@ -138,6 +138,7 @@ import { QrCodeService } from '../../services/qr-code.service';
 ],
 })
 export class TournamentCardComponent {
+  @ViewChild('editorsListModal') editorsListModal!: IonModal;
   editorsListModalOpen = false;
   @Input() tournament: any;
   @Output() edit = new EventEmitter<string>();
@@ -212,5 +213,9 @@ export class TournamentCardComponent {
 
   onPrintQR() {
     this.qrService.printQRCode(this.tournament.id, this.tournament.name);
+  }
+
+  openEditorsModal() {
+    this.editorsListModal.present();
   }
 }
