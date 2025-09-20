@@ -22,18 +22,11 @@
   </ion-list>
 
   @if (canCreateTournament) {
-  <ion-fab vertical="bottom" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addTournament()">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
   }
 
-  <!-- @if (canCreateTournament) {
-  <ion-fab vertical="bottom" horizontal="start">
-    <ion-fab-button color="secondary" (click)="createMockData()">
-      <ion-icon name="flask-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-  } -->
 </ion-content>

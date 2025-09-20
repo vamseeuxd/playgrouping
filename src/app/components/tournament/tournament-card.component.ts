@@ -1,27 +1,38 @@
 import { Component, Input, Output, EventEmitter, inject, ViewChild } from '@angular/core';
-import { IonItem, IonLabel, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonPopover, IonItemSliding, IonItemOptions, IonItemOption } from '@ionic/angular/standalone';
-import { RouterLink } from '@angular/router';
+import { IonItem, IonLabel, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonModal, IonHeader, IonToolbar, IonTitle, IonPopover, IonItemSliding, IonItemOptions, IonItemOption, IonChip, IonCard, IonCardContent } from '@ionic/angular/standalone';
+import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { QrCodeService } from '../../services/qr-code.service';
+import { FirestoreService } from '../../services/firestore.service';
 
 @Component({
   selector: 'app-tournament-card',
-  template: `
-    <ion-item>
-      <!-- <ion-icon name="trophy-outline" slot="start"></ion-icon> -->
-      <ion-label>
-        <h2>{{ tournament.name }}</h2>
-        <p>Sport: {{ tournament.sport }}</p>
-        <p>Start Date: {{ tournament.startDate | date : 'short' }}</p>
-      </ion-label>
+  template: `        
+    <ion-card style="position: relative;">        
+        <ion-card-content>
+        <p style="font-size: 1.2rem;font-weight: bold;">{{ tournament.name }}</p>
+        <p style="font-size: 0.9rem;">Sport: {{ tournament.sport }}</p>
+        <p style="font-size: 0.9rem;">Start Date: {{ tournament.startDate | date : 'short' }}</p>
+        <div style="margin-top: 8px;border: 1px solid #ccc; padding: 8px;">
+          <p style="font-size: 1rem;font-weight: bold;border-bottom: 1px solid #ccc;padding-bottom: 4px;margin: 0 4px 4px 4px;">Matches: {{ matches.length }}</p>
+          @if (matches.length > 0) {
+            <div style="display: flex; overflow-x: auto; gap: 4px; white-space: nowrap;padding-bottom: 8px;">
+              @for (match of matches; track $index) {
+                <ion-chip [color]="getMatchColor($index)" style="flex-shrink: 0;" (click)="onMatchClick(match.id)">{{ getMatchDisplay(match) }}</ion-chip>
+              }
+            </div>
+          }
+        </div>
+      </ion-card-content>
+      <!-- ********************************** Editors List Modal Popover ********************************** -->
       <ion-button
         id="click-trigger-{{tournament.id}}"
         color="medium"
-        slot="end"
         fill="clear"
         size="large"
-        ><ion-icon name="grid-outline"></ion-icon
+        style="position: absolute; top: 8px; right: 8px; z-index: 10;"
+        ><ion-icon name="ellipsis-vertical-outline"></ion-icon
       ></ion-button>
       <ion-popover trigger="click-trigger-{{tournament.id}}" [dismissOnSelect]="true" mode="ios">
         <ng-template>
@@ -70,8 +81,9 @@ import { QrCodeService } from '../../services/qr-code.service';
 
           </ion-content>
         </ng-template>
-      </ion-popover>     
-    </ion-item>
+      </ion-popover>
+      <!-- ********************************** Editors List Modal Popover ********************************** -->
+    </ion-card>      
     <ion-modal #editorsListModal mode="ios" [presentingElement]="presentingElement">
       <ng-template>
         <ion-header>
@@ -134,13 +146,17 @@ import { QrCodeService } from '../../services/qr-code.service';
     IonPopover,
     IonItemSliding,
     IonItemOptions,
-    IonItemOption
+    IonItemOption,
+    IonChip,
+    IonCard,
+    IonCardContent
 ],
 })
 export class TournamentCardComponent {
   @ViewChild('editorsListModal') editorsListModal!: IonModal;
   editorsListModalOpen = false;
   @Input() tournament: any;
+  matches: any[] = [];
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<{ id: string; name: string }>();
   @Output() askEdit = new EventEmitter<{
@@ -161,6 +177,13 @@ export class TournamentCardComponent {
 
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
+    this.loadMatches();
+  }
+
+  loadMatches() {
+    this.firestoreService.getMatches(this.tournament.id).subscribe(matches => {
+      this.matches = matches;
+    });
   }
 
   onApproveEditAccess(email: string){
@@ -173,6 +196,8 @@ export class TournamentCardComponent {
 
   authService = inject(AuthService);
   qrService = inject(QrCodeService);
+  firestoreService = inject(FirestoreService);
+  router = inject(Router);
 
   get canDelete() {
     return this.authService.hasPermission('admin', this.tournament);
@@ -217,5 +242,21 @@ export class TournamentCardComponent {
 
   openEditorsModal() {
     this.editorsListModal.present();
+  }
+
+  getMatchColor(index: number): string {
+    const colors = ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'medium', 'dark'];
+    return colors[index % colors.length];
+  }
+
+  getMatchDisplay(match: any): string {
+    return match.team1 && match.team2 ? `${match.team1} vs ${match.team2}` : 
+           match.teamA && match.teamB ? `${match.teamA} vs ${match.teamB}` :
+           match.homeTeam && match.awayTeam ? `${match.homeTeam} vs ${match.awayTeam}` :
+           `Match ${match.id || 'Unknown'}`;
+  }
+
+  onMatchClick(matchId: string) {
+    this.router.navigate(['/match-control', matchId], { queryParams: { tournamentId: this.tournament.id } });
   }
 }
