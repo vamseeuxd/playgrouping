@@ -20,9 +20,6 @@
       <ion-label>Teams</ion-label>
     </ion-segment-button>
     <ion-segment-button value="4">
-      <ion-label>Matches</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="5">
       <ion-label>Review</ion-label>
     </ion-segment-button>
   </ion-segment>
@@ -55,24 +52,13 @@
   </app-teams-step>
   }
 
-  <!-- Step 4: Matches -->
+  <!-- Step 4: Review -->
   @if (currentStep === '4') {
-  <app-matches-step
-    [matches]="matches"
-    (generateMatches)="generateMatches()"
-    (addMatch)="addMatch()"
-    (editMatch)="editMatch($event)"
-    (removeMatch)="removeMatch($event)">
-  </app-matches-step>
-  }
-
-  <!-- Step 5: Review -->
-  @if (currentStep === '5') {
   <app-review-step
     [tournament]="tournament"
     [playersCount]="players.length"
     [teamsCount]="teams.length"
-    [matchesCount]="matches.length">
+    [matchesCount]="0">
   </app-review-step>
   }
 
@@ -81,7 +67,7 @@
     <ion-button fill="outline" [disabled]="currentStep === '1'" (click)="previousStep()">
       Previous
     </ion-button>
-    @if (currentStep !== '5') {
+    @if (currentStep !== '4') {
     <ion-button [disabled]="!canProceed()" (click)="nextStep()">
       Next
     </ion-button>
@@ -194,82 +180,5 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal [isOpen]="showMatchModal" (didDismiss)="showMatchModal = false">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>{{ editingMatch ? 'Edit' : 'Add' }} Match</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="showMatchModal = false">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <form #matchForm="ngForm" (ngSubmit)="saveMatch()">
-          <ion-select
-            label="Team 1"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentMatch.team1"
-            name="team1"
-            required
-          >
-            @for (team of teams; track team.id) {
-            <ion-select-option [value]="team.name">{{ team.name }}</ion-select-option>
-            }
-          </ion-select>
 
-          <ion-select
-            label="Team 2"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentMatch.team2"
-            name="team2"
-            required
-          >
-            @for (team of teams; track team.id) {
-            <ion-select-option [value]="team.name">{{ team.name }}</ion-select-option>
-            }
-          </ion-select>
-
-          <ion-input
-            label="Match Date"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            type="datetime-local"
-            [(ngModel)]="currentMatch.date"
-            name="matchDate"
-            required
-          ></ion-input>
-
-          <ion-input
-            label="Court/Ground Name"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentMatch.court"
-            name="court"
-            placeholder="e.g. Court A, Ground 1"
-          ></ion-input>
-
-          <ion-input
-            label="Umpire/Referee Name"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentMatch.umpire"
-            name="umpire"
-            placeholder="e.g. John Doe"
-          ></ion-input>
-
-          <ion-button expand="block" type="submit" [disabled]="!matchForm.valid">
-            {{ editingMatch ? 'Update' : 'Add' }} Match
-          </ion-button>
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
 </ion-content>

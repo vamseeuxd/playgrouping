@@ -33,10 +33,11 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
 import { BasicDetailsStepComponent } from '../components/tournament/steps/basic-details-step.component';
 import { PlayersStepComponent } from '../components/tournament/steps/players-step.component';
 import { TeamsStepComponent } from '../components/tournament/steps/teams-step.component';
-import { MatchesStepComponent } from '../components/tournament/steps/matches-step.component';
+
 import { ReviewStepComponent } from '../components/tournament/steps/review-step.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { Auth } from '@angular/fire/auth';
+import { Tournament, Player, Team, Match, Sport, TeamPlayer } from '../interfaces';
 
 @Component({
   selector: 'app-tournament-form',
@@ -65,7 +66,7 @@ import { Auth } from '@angular/fire/auth';
     BasicDetailsStepComponent,
     PlayersStepComponent,
     TeamsStepComponent,
-    MatchesStepComponent,
+
     ReviewStepComponent,
   ],
 })
@@ -82,40 +83,24 @@ export class TournamentFormPage {
     addIcons({ createOutline, trashOutline, addOutline });
   }
 
-  tournament = {
+  tournament: Tournament = {
     name: '',
     sport: '',
     startDate: '',
     email: '',
-    editors: [] as {
-      approved: boolean;
-      email: string;
-      displayName: string;
-      photoURL: string;
-    }[],
+    editors: [],
   };
 
   currentStep = '1';
-  players: any[] = [];
-  teams: any[] = [];
-  matches: any[] = [];
-  sports: any[] = [];
+  players: Player[] = [];
+  teams: Team[] = [];
+  sports: Sport[] = [];
   showPlayerModal = false;
   showTeamModal = false;
-  showMatchModal = false;
   editingPlayer = false;
   editingTeam = false;
-  editingMatch = false;
-  currentPlayer = { id: '', name: '', gender: '', remarks: '' };
-  currentTeam: any = { id: '', name: '', players: [] };
-  currentMatch: any = {
-    id: '',
-    team1: '',
-    team2: '',
-    date: '',
-    court: '',
-    umpire: '',
-  };
+  currentPlayer: Player = { id: '', name: '', gender: '', remarks: '' };
+  currentTeam: Team = { id: '', name: '', players: [] };
   isEdit = false;
   tournamentId = '';
 
@@ -132,7 +117,6 @@ export class TournamentFormPage {
       }
       this.loadPlayers();
       this.loadTeams();
-      this.loadMatches();
     }
     this.loadSports();
   }
@@ -204,13 +188,13 @@ export class TournamentFormPage {
     this.showPlayerModal = true;
   }
 
-  editPlayer(player: any) {
+  editPlayer(player: Player) {
     this.currentPlayer = { ...player };
     this.editingPlayer = true;
     this.showPlayerModal = true;
   }
 
-  async savePlayer(event: any) {
+  async savePlayer(event: { player: Player; isEditing: boolean }) {
     const { player, isEditing } = event;
     if (!player.name.trim()) return;
 
@@ -234,7 +218,7 @@ export class TournamentFormPage {
       if (isEditing) {
         await this.firestoreService.updatePlayer(
           this.tournamentId,
-          player.id,
+          player.id!,
           playerData
         );
       } else {
@@ -271,7 +255,7 @@ export class TournamentFormPage {
       if (this.editingPlayer) {
         await this.firestoreService.updatePlayer(
           this.tournamentId,
-          this.currentPlayer.id,
+          this.currentPlayer.id!,
           playerData
         );
       } else {
@@ -312,7 +296,7 @@ export class TournamentFormPage {
 
   nextStep() {
     const step = parseInt(this.currentStep);
-    if (step < 5) {
+    if (step < 4) {
       this.currentStep = (step + 1).toString();
       if (step === 1 && !this.tournamentId) {
         this.saveTournament();
@@ -339,8 +323,6 @@ export class TournamentFormPage {
         return this.players.length >= 2;
       case '3':
         return this.teams.length >= 2;
-      case '4':
-        return this.matches.length > 0;
       default:
         return true;
     }
@@ -381,14 +363,14 @@ export class TournamentFormPage {
     this.showTeamModal = true;
   }
 
-  editTeam(team: any) {
+  editTeam(team: Team) {
     this.currentTeam = { ...team };
     this.editingTeam = true;
 
     // Mark current team players as selected
     this.players.forEach((player) => {
       player.selected =
-        team.players?.some((p: any) => p.id === player.id) || false;
+        team.players?.some((p: TeamPlayer) => p.id === player.id) || false;
     });
 
     this.showTeamModal = true;
@@ -397,7 +379,7 @@ export class TournamentFormPage {
   async saveTeam() {
     const selectedPlayers = this.players
       .filter((p) => p.selected)
-      .map((p) => ({ id: p.id, name: p.name }));
+      .map((p) => ({ id: p.id!, name: p.name }));
     
     // Auto-generate team name if empty
     /* if (!this.currentTeam.name.trim() && selectedPlayers.length > 0) {
@@ -423,7 +405,7 @@ export class TournamentFormPage {
       if (this.editingTeam) {
         await this.firestoreService.updateTeam(
           this.tournamentId,
-          this.currentTeam.id,
+          this.currentTeam.id!,
           this.currentTeam
         );
       } else {
@@ -470,109 +452,9 @@ export class TournamentFormPage {
     }
   }
 
-  loadMatches() {
-    if (this.tournamentId) {
-      this.firestoreService
-        .getMatches(this.tournamentId)
-        .subscribe((matches) => {
-          this.matches = matches;
-        });
-    }
-  }
 
-  generateMatches() {
-    this.matches = [];
-    for (let i = 0; i < this.teams.length; i++) {
-      for (let j = i + 1; j < this.teams.length; j++) {
-        this.matches.push({
-          id: `${i}-${j}`,
-          team1: this.teams[i].name,
-          team2: this.teams[j].name,
-          date: new Date().toISOString().slice(0, 16),
-          court: '',
-          umpire: '',
-          status: APP_CONSTANTS.MATCH.STATUS.PENDING,
-          score1: 0,
-          score2: 0,
-          stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
-          startTime: null,
-          endTime: null,
-          duration: 0,
-        });
-      }
-    }
-  }
 
-  addMatch() {
-    this.currentMatch = {
-      id: '',
-      team1: '',
-      team2: '',
-      date: '',
-      court: '',
-      umpire: '',
-    };
-    this.editingMatch = false;
-    this.showMatchModal = true;
-  }
 
-  editMatch(match: any) {
-    this.currentMatch = { ...match };
-    this.editingMatch = true;
-    this.showMatchModal = true;
-  }
-
-  async saveMatch() {
-    if (
-      !this.currentMatch.team1 ||
-      !this.currentMatch.team2 ||
-      this.currentMatch.team1 === this.currentMatch.team2
-    ) {
-      alert(APP_CONSTANTS.MESSAGES.VALIDATION.DIFFERENT_TEAMS);
-      return;
-    }
-
-    try {
-      const matchData = {
-        id: this.currentMatch.id || `match-${Date.now()}`,
-        team1: this.currentMatch.team1,
-        team2: this.currentMatch.team2,
-        date: this.currentMatch.date || new Date().toISOString().slice(0, 16),
-        court: this.currentMatch.court || '',
-        umpire: this.currentMatch.umpire || '',
-        status: APP_CONSTANTS.MATCH.STATUS.PENDING,
-        score1: 0,
-        score2: 0,
-        stage: APP_CONSTANTS.TOURNAMENT.STAGES.GROUP,
-        startTime: null,
-        endTime: null,
-        duration: 0,
-      };
-
-      if (this.editingMatch) {
-        await this.firestoreService.updateMatch(
-          this.tournamentId,
-          matchData.id,
-          matchData
-        );
-        const index = this.matches.findIndex((m) => m.id === matchData.id);
-        if (index !== -1) {
-          this.matches[index] = { ...matchData };
-        }
-      } else {
-        await this.firestoreService.createMatch(this.tournamentId, matchData);
-        this.matches.push({ ...matchData });
-      }
-
-      this.showMatchModal = false;
-    } catch (error) {
-      console.error('Error saving match:', error);
-    }
-  }
-
-  removeMatch(matchId: string) {
-    this.matches = this.matches.filter((m) => m.id !== matchId);
-  }
 
   async submitTournament() {
     const loading = await this.loadingController.create({
@@ -615,13 +497,13 @@ export class TournamentFormPage {
     // Get all assigned players from existing teams
     this.teams.forEach((team) => {
       if (team.players) {
-        team.players.forEach((player: any) => assignedPlayerIds.add(player.id));
+        team.players.forEach((player: TeamPlayer) => assignedPlayerIds.add(player.id));
       }
     });
 
     // If editing a team, allow its current players to be available
     if (this.editingTeam && this.currentTeam.players) {
-      this.currentTeam.players.forEach((player: any) =>
+      this.currentTeam.players.forEach((player: TeamPlayer) =>
         assignedPlayerIds.delete(player.id)
       );
     }
@@ -629,7 +511,7 @@ export class TournamentFormPage {
     return this.players.filter((player) => !assignedPlayerIds.has(player.id));
   }
 
-  generateTeamName(players: any[]): string {
+  generateTeamName(players: TeamPlayer[]): string {
     return players
       .map(player => player.name.split(' ')[0])
       .join(' & ');
@@ -638,7 +520,7 @@ export class TournamentFormPage {
   onPlayerSelectionChange() {
     const selectedPlayers = this.players.filter(p => p.selected);
     if (selectedPlayers.length > 0) {
-      this.currentTeam.name = this.generateTeamName(selectedPlayers);
+      this.currentTeam.name = this.generateTeamName(selectedPlayers as TeamPlayer[]);
     } else {
       this.currentTeam.name = '';
     }

@@ -10,6 +10,7 @@ import {
   User,
 } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { TournamentWithId } from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -25,14 +26,14 @@ export class AuthService {
     });
   }
 
-  hasPermission(role: 'admin' | 'editor' | 'viewer', tournament: any): boolean {
+  hasPermission(role: 'admin' | 'editor' | 'viewer', tournament: TournamentWithId): boolean {
     if (this.user) {
       switch (role) {
         case 'admin':
           return this.user?.email === tournament.email;
         case 'editor':
-          const editorEmails = tournament.editors.filter((obj: any) => obj.approved).map((obj: any) => obj.email);
-          return editorEmails.includes(this.user?.email);
+          const editorEmails = tournament.editors.filter(editor => editor.approved).map(editor => editor.email);
+          return this.user?.email ? editorEmails.includes(this.user.email) : false;
         case 'viewer':
           return true;
         default:

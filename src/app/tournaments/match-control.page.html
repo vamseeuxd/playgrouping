@@ -17,7 +17,10 @@
     [score2]="match.score2"
     [status]="match.status"
     [canEdit]="match.status !== 'finished' && canEdit"
-    (scoreChange)="updateScore($event.team, $event.increment)">
+    [team1Players]="match.team1Players || []"
+    [team2Players]="match.team2Players || []"
+    (scoreChange)="updateScore($event.team, $event.increment)"
+    (playerScoreChange)="updatePlayerScore($event.team, $event.playerId, $event.increment)">
   </app-score-board>
   }@else {
     <ion-card>

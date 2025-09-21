@@ -70,7 +70,6 @@ export class KnockoutPage {
       for (let i = 0; i < this.teams.length; i++) {
         for (let j = i + 1; j < this.teams.length; j++) {
           await this.firestoreService.createMatch(this.tournamentId, {
-            id: `${i}-${j}`,
             team1: this.teams[i].name,
             team2: this.teams[j].name,
             status: APP_CONSTANTS.MATCH.STATUS.PENDING,
@@ -147,7 +146,6 @@ export class KnockoutPage {
       for (let i = 0; i < teamsToAdvance.length; i += 2) {
         if (i + 1 < teamsToAdvance.length) {
           await this.firestoreService.createMatch(this.tournamentId, {
-            id: `${nextStageKey}-${Math.floor(i/2)}`,
             team1: teamsToAdvance[i],
             team2: teamsToAdvance[i + 1],
             status: APP_CONSTANTS.MATCH.STATUS.PENDING,

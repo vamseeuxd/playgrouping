@@ -29,6 +29,7 @@ import { CommonModule } from '@angular/common';
 import { TournamentCardComponent } from '../components/tournament/tournament-card.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { AuthService } from '../services/auth.service';
+import { TournamentWithId } from '../interfaces';
 
 @Component({
   selector: 'app-tournaments',
@@ -56,7 +57,7 @@ export class TournamentsPage {
   router = inject(Router);
   authService = inject(AuthService);
 
-  tournaments$: Observable<any[]>;
+  tournaments$: Observable<TournamentWithId[]>;
 
   get canCreateTournament() {
     return !!this.authService.user?.email;
@@ -98,7 +99,7 @@ export class TournamentsPage {
     await alert.present();
   }
 
-  async removeEditAccess(id: string, tournament: any, email: string) {
+  async removeEditAccess(id: string, tournament: TournamentWithId, email: string) {
     const alert = await this.alertController.create({
       header: 'Remove Editor',
       message: APP_CONSTANTS.MESSAGES.CONFIRM.REMOVE_EDITOR.replace(
@@ -113,14 +114,14 @@ export class TournamentsPage {
     await alert.present();
   }
 
-  async performRemoveEditAccess(id: string, tournament: any, email: string) {
+  async performRemoveEditAccess(id: string, tournament: TournamentWithId, email: string) {
     const loading = await this.loadingController.create({
       message: APP_CONSTANTS.MESSAGES.LOADING.REMOVING_EDITOR,
     });
     await loading.present();
     
     try {
-      tournament.editors = tournament.editors.filter((editor: any) => editor.email !== email);
+      tournament.editors = tournament.editors.filter(editor => editor.email !== email);
       await this.firestoreService.updateTournament(id, tournament);
       const toast = await this.toastController.create({
         message: APP_CONSTANTS.MESSAGES.SUCCESS.EDITOR_REMOVED,
@@ -141,7 +142,7 @@ export class TournamentsPage {
     } 
   } 
 
-  async approveEditAccess(id: string, tournament: any, email: string) {
+  async approveEditAccess(id: string, tournament: TournamentWithId, email: string) {
     debugger;
     const loading = await this.loadingController.create({
       message: APP_CONSTANTS.MESSAGES.LOADING.APPROVING_EDIT_ACCESS,
@@ -169,8 +170,8 @@ export class TournamentsPage {
     } 
   }
 
-  async askEditTournament(id: string, tournament: any, email: string, displayName: string, photoURL: string) {
-    if(tournament.editors.some((obj: any) => obj.email === email)) {
+  async askEditTournament(id: string, tournament: TournamentWithId, email: string, displayName: string, photoURL: string) {
+    if(tournament.editors.some(editor => editor.email === email)) {
       const toast = await this.toastController.create({
         message: APP_CONSTANTS.MESSAGES.ERROR.ASK_EDIT_TOURNAMENT_EXISTS,
         duration: APP_CONSTANTS.UI.TOAST_DURATION.MEDIUM,
@@ -196,7 +197,7 @@ export class TournamentsPage {
     await alert.present();
   }
 
-  async performAskEditTournament(id: string, tournament: any, email: string, displayName: string, photoURL: string) {
+  async performAskEditTournament(id: string, tournament: TournamentWithId, email: string, displayName: string, photoURL: string) {
 
     const loading = await this.loadingController.create({
       message: APP_CONSTANTS.MESSAGES.LOADING.ASK_EDIT_TOURNAMENT,

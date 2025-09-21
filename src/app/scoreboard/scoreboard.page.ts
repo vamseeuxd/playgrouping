@@ -21,8 +21,10 @@ import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { TeamStandingsComponent } from '../components/scoreboard/team-standings.component';
+import { PlayerStandingsComponent } from '../components/scoreboard/player-standings.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { Match, Team, TeamPlayer } from '../interfaces';
 
 @Component({
   selector: 'app-scoreboard',
@@ -43,6 +45,7 @@ import { Router } from '@angular/router';
     IonBackButton,
     IonButtons,
     TeamStandingsComponent,
+    PlayerStandingsComponent,
   ],
 })
 export class ScoreboardPage {
@@ -52,9 +55,10 @@ export class ScoreboardPage {
   private router = inject(Router);
   tournamentId = '';
 
-  teams: any[] = [];
-  matches: any[] = [];
+  teams: Team[] = [];
+  matches: Match[] = [];
   teamStats: any[] = [];
+  playerStats: any[] = [];
 
   constructor() {
     this.tournamentId = this.route.snapshot.params['id'];
@@ -88,6 +92,11 @@ export class ScoreboardPage {
   calculateStats() {
     if (this.teams.length === 0 || this.matches.length === 0) return;
 
+    this.calculateTeamStats();
+    this.calculatePlayerStats();
+  }
+
+  calculateTeamStats() {
     this.teamStats = this.teams.map((team) => {
       const teamName = team.name;
       let played = 0;
@@ -143,6 +152,53 @@ export class ScoreboardPage {
       if (b.points !== a.points) return b.points - a.points;
       return b.goalDifference - a.goalDifference;
     });
+  }
+
+  calculatePlayerStats() {
+    const playerStatsMap = new Map<string, { name: string; team: string; goals: number; played: number }>();
+
+    // Initialize all players
+    this.teams.forEach(team => {
+      team.players.forEach(player => {
+        playerStatsMap.set(player.id, {
+          name: player.name,
+          team: team.name,
+          goals: 0,
+          played: 0
+        });
+      });
+    });
+
+    // Calculate player stats from matches
+    this.matches.forEach(match => {
+      if (match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED) {
+        // Team 1 players
+        match.team1Players?.forEach(player => {
+          const stats = playerStatsMap.get(player.id);
+          if (stats) {
+            stats.goals += player.score || 0;
+            stats.played++;
+          }
+        });
+
+        // Team 2 players
+        match.team2Players?.forEach(player => {
+          const stats = playerStatsMap.get(player.id);
+          if (stats) {
+            stats.goals += player.score || 0;
+            stats.played++;
+          }
+        });
+      }
+    });
+
+    // Convert to array and calculate averages
+    this.playerStats = Array.from(playerStatsMap.values())
+      .map(stats => ({
+        ...stats,
+        averageGoals: stats.played > 0 ? stats.goals / stats.played : 0
+      }))
+      .sort((a, b) => b.goals - a.goals); // Sort by goals descending
   }
 
   getMatchDate(timestamp: any): Date | null {

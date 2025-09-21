@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { QrCodeService } from '../../services/qr-code.service';
 import { FirestoreService } from '../../services/firestore.service';
+import { TournamentWithId, Match, EditAccessEvent, TournamentDeleteEvent } from '../../interfaces';
 
 @Component({
   selector: 'app-tournament-card',
@@ -19,7 +20,7 @@ import { FirestoreService } from '../../services/firestore.service';
           @if (matches.length > 0) {
             <div style="display: flex; overflow-x: auto; gap: 4px; white-space: nowrap;padding-bottom: 8px;">
               @for (match of matches; track $index) {
-                <ion-chip [color]="getMatchColor($index)" style="flex-shrink: 0;" (click)="onMatchClick(match.id)">{{ getMatchDisplay(match) }}</ion-chip>
+                <ion-chip [color]="getMatchColor($index)" style="flex-shrink: 0;" (click)="onMatchClick(match.id!)">{{ getMatchDisplay(match) }}</ion-chip>
               }
             </div>
           }
@@ -96,7 +97,7 @@ import { FirestoreService } from '../../services/firestore.service';
         </ion-header>
         <ion-content>
           <ion-list>
-            @if (tournament.editors?.length === 0) {
+            @if (tournament.editors.length === 0) {
             <ion-item>
               <ion-label>No editors assigned.</ion-label>
             </ion-item>
@@ -155,23 +156,13 @@ import { FirestoreService } from '../../services/firestore.service';
 export class TournamentCardComponent {
   @ViewChild('editorsListModal') editorsListModal!: IonModal;
   editorsListModalOpen = false;
-  @Input() tournament: any;
-  matches: any[] = [];
+  @Input() tournament!: TournamentWithId;
+  matches: Match[] = [];
   @Output() edit = new EventEmitter<string>();
-  @Output() delete = new EventEmitter<{ id: string; name: string }>();
-  @Output() askEdit = new EventEmitter<{
-    id: string;
-    tournament: any;
-    email: string;
-    displayName: string;
-    photoURL: string;
-  }>();
-  @Output() approveEditAccess = new EventEmitter<{
-    id: string, tournament: any, email: string
-  }>();
-  @Output() removeEditAccess = new EventEmitter<{
-    id: string, tournament: any, email: string
-  }>();
+  @Output() delete = new EventEmitter<TournamentDeleteEvent>();
+  @Output() askEdit = new EventEmitter<EditAccessEvent>();
+  @Output() approveEditAccess = new EventEmitter<EditAccessEvent>();
+  @Output() removeEditAccess = new EventEmitter<EditAccessEvent>();
 
   presentingElement!: HTMLElement | null;
 
@@ -187,11 +178,11 @@ export class TournamentCardComponent {
   }
 
   onApproveEditAccess(email: string){
-    this.approveEditAccess.emit({id: this.tournament.id, tournament: this.tournament, email: email});
+    this.approveEditAccess.emit({id: this.tournament.id, tournament: this.tournament, email: email, displayName: '', photoURL: ''});
   }
 
   onRemoveEditor(email: string) {
-    this.removeEditAccess.emit({id: this.tournament.id, tournament: this.tournament, email: email});
+    this.removeEditAccess.emit({id: this.tournament.id, tournament: this.tournament, email: email, displayName: '', photoURL: ''});
   }
 
   authService = inject(AuthService);
@@ -249,10 +240,8 @@ export class TournamentCardComponent {
     return colors[index % colors.length];
   }
 
-  getMatchDisplay(match: any): string {
+  getMatchDisplay(match: Match): string {
     return match.team1 && match.team2 ? `${match.team1} vs ${match.team2}` : 
-           match.teamA && match.teamB ? `${match.teamA} vs ${match.teamB}` :
-           match.homeTeam && match.awayTeam ? `${match.homeTeam} vs ${match.awayTeam}` :
            `Match ${match.id || 'Unknown'}`;
   }
 

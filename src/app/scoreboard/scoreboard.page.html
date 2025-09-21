@@ -14,6 +14,10 @@
   <p>No team statistics available.</p>
   }
 
+  @if (playerStats.length > 0) {
+  <app-player-standings [playerStats]="playerStats"></app-player-standings>
+  }
+
   <!-- Recent Matches -->
   <ion-card>
     <ion-card-header>

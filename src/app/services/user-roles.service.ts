@@ -2,15 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, doc, getDoc, setDoc, updateDoc, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ROLES, Role } from '../constants/roles.constants';
-
-interface UserRole {
-  id: string;
-  email: string;
-  role: Role;
-  tournamentAccess?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { UserRole } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
