@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonCardSubtitle, IonItem, IonLabel, IonList } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { TeamPlayer } from '../../interfaces';
+import { TeamPlayerWithUser } from '../../interfaces';
 
 @Component({
   selector: 'app-score-board',
@@ -29,11 +29,11 @@ import { TeamPlayer } from '../../interfaces';
                         <b>{{ player?.name || 'Unknown' }}</b>
                       </div>
                       @if (canEdit) {
-                        <ion-button size="small" (click)="onPlayerScoreChange(1, player.id, true)">
+                        <ion-button size="small" (click)="onPlayerScoreChange(1, player.id!, true)">
                           <ion-icon name="add-outline"></ion-icon>
                         </ion-button>
                         <p>Score: {{ player?.score || 0 }}</p>
-                        <ion-button size="small" (click)="onPlayerScoreChange(1, player.id, false)">
+                        <ion-button size="small" (click)="onPlayerScoreChange(1, player.id!, false)">
                           <ion-icon name="remove-outline"></ion-icon>
                         </ion-button>
                       }
@@ -62,11 +62,11 @@ import { TeamPlayer } from '../../interfaces';
                         <b>{{ player?.name || 'Unknown' }}</b>
                       </div>
                       @if (canEdit) {
-                        <ion-button size="small" (click)="onPlayerScoreChange(2, player.id, true)">
+                        <ion-button size="small" (click)="onPlayerScoreChange(2, player.id!, true)">
                           <ion-icon name="add-outline"></ion-icon>
                         </ion-button>
                         <p>Score: {{ player?.score || 0 }}</p>
-                        <ion-button size="small" (click)="onPlayerScoreChange(2, player.id, false)">
+                        <ion-button size="small" (click)="onPlayerScoreChange(2, player.id!, false)">
                           <ion-icon name="remove-outline"></ion-icon>
                         </ion-button>
                       }
@@ -92,8 +92,8 @@ export class ScoreBoardComponent {
   @Input() score1 = 0;
   @Input() score2 = 0;
   @Input() canEdit = false;
-  @Input() team1Players: TeamPlayer[] = [];
-  @Input() team2Players: TeamPlayer[] = [];
+  @Input() team1Players: TeamPlayerWithUser[] = [];
+  @Input() team2Players: TeamPlayerWithUser[] = [];
   @Output() scoreChange = new EventEmitter<{team: number, increment: boolean}>();
   @Output() playerScoreChange = new EventEmitter<{team: number, playerId: string, increment: boolean}>();
 

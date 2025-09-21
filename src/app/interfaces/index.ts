@@ -8,6 +8,7 @@ export interface Tournament {
   startDate: string;
   email: string;
   editors: Editor[];
+  registrationOpen?: boolean;
 }
 
 export interface TournamentWithId extends Tournament {
@@ -32,13 +33,18 @@ export interface Player {
 export interface Team {
   id?: string;
   name: string;
-  players: TeamPlayer[];
 }
 
 export interface TeamPlayer {
-  id: string;
-  name: string;
+  id?: string;
+  userId: string;
   score?: number;
+}
+
+export interface TeamPlayerWithUser extends TeamPlayer {
+  name: string;
+  email: string;
+  photoURL?: string;
 }
 
 export interface Match {
@@ -55,8 +61,8 @@ export interface Match {
   startTime: Date | null;
   endTime: Date | null;
   duration: number;
-  team1Players?: TeamPlayer[];
-  team2Players?: TeamPlayer[];
+  team1Players?: TeamPlayerWithUser[];
+  team2Players?: TeamPlayerWithUser[];
 }
 
 export interface Sport {
@@ -91,4 +97,23 @@ export interface EditAccessEvent {
   email: string;
   displayName: string;
   photoURL: string;
+}
+
+export interface PlayerRegistration {
+  id?: string;
+  userId: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  gender: string;
+  remarks?: string;
+  photoURL?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -33,7 +33,7 @@ import {
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { AuthService } from '../services/auth.service';
-import { Match, TournamentWithId, Team, TeamPlayer } from '../interfaces';
+import { Match, TournamentWithId, Team, TeamPlayerWithUser } from '../interfaces';
 
 @Component({
   selector: 'app-match-control',
@@ -68,7 +68,7 @@ export class MatchControlPage {
   tournamentId = '';
   tournament: TournamentWithId | null = null;
   private authService = inject(AuthService);
-  teams: Team[] = [];
+  teams: (Team & { players: TeamPlayerWithUser[] })[] = [];
 
   match: Match = {
     id: '',
@@ -118,11 +118,9 @@ export class MatchControlPage {
     this.tournament = tournament;
   }
 
-  loadTeams() {
-    this.firestoreService.getTeams(this.tournamentId).subscribe(teams => {
-      this.teams = teams;
-      this.initializePlayerScores();
-    });
+  async loadTeams() {
+    this.teams = await this.firestoreService.getTeamsWithPlayers(this.tournamentId);
+    this.initializePlayerScores();
   }
 
   initializePlayerScores() {
@@ -132,16 +130,22 @@ export class MatchControlPage {
     const team2 = this.teams.find(t => t.name === this.match.team2);
     
     if (team1 && (!this.match.team1Players || this.match.team1Players.length === 0)) {
-      this.match.team1Players = team1.players.map(p => ({ 
-        id: p.id, 
-        name: p.name, 
+      this.match.team1Players = team1.players.map((p: TeamPlayerWithUser) => ({ 
+        id: p.id,
+        userId: p.userId, 
+        name: p.name,
+        email: p.email,
+        photoURL: p.photoURL,
         score: p.score || 0 
       }));
     }
     if (team2 && (!this.match.team2Players || this.match.team2Players.length === 0)) {
-      this.match.team2Players = team2.players.map(p => ({ 
-        id: p.id, 
-        name: p.name, 
+      this.match.team2Players = team2.players.map((p: TeamPlayerWithUser) => ({ 
+        id: p.id,
+        userId: p.userId, 
+        name: p.name,
+        email: p.email,
+        photoURL: p.photoURL,
         score: p.score || 0 
       }));
     }
@@ -282,7 +286,7 @@ export class MatchControlPage {
     
     try {
       const players = team === 1 ? this.match.team1Players : this.match.team2Players;
-      const player = players?.find(p => p.id === playerId);
+      const player = players?.find(p => p.userId === playerId);
       
       if (player) {
         player.score = (player.score || 0) + (increment ? 1 : -1);

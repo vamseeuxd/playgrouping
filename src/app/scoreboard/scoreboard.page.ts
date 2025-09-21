@@ -24,7 +24,7 @@ import { TeamStandingsComponent } from '../components/scoreboard/team-standings.
 import { PlayerStandingsComponent } from '../components/scoreboard/player-standings.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { Match, Team, TeamPlayer } from '../interfaces';
+import { Match, Team, TeamPlayerWithUser } from '../interfaces';
 
 @Component({
   selector: 'app-scoreboard',
@@ -55,7 +55,7 @@ export class ScoreboardPage {
   private router = inject(Router);
   tournamentId = '';
 
-  teams: Team[] = [];
+  teams: (Team & { players: TeamPlayerWithUser[] })[] = [];
   matches: Match[] = [];
   teamStats: any[] = [];
   playerStats: any[] = [];
@@ -75,8 +75,8 @@ export class ScoreboardPage {
 
   loadData() {
     if (this.tournamentId) {
-      // Load teams
-      this.firestoreService.getTeams(this.tournamentId).subscribe((teams) => {
+      // Load teams with players
+      this.firestoreService.getTeamsWithPlayers(this.tournamentId).then((teams) => {
         this.teams = teams;
         this.calculateStats();
       });
@@ -159,8 +159,8 @@ export class ScoreboardPage {
 
     // Initialize all players
     this.teams.forEach(team => {
-      team.players.forEach(player => {
-        playerStatsMap.set(player.id, {
+      team.players.forEach((player: TeamPlayerWithUser) => {
+        playerStatsMap.set(player.userId, {
           name: player.name,
           team: team.name,
           goals: 0,
@@ -174,7 +174,7 @@ export class ScoreboardPage {
       if (match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED) {
         // Team 1 players
         match.team1Players?.forEach(player => {
-          const stats = playerStatsMap.get(player.id);
+          const stats = playerStatsMap.get(player.userId);
           if (stats) {
             stats.goals += player.score || 0;
             stats.played++;
@@ -183,7 +183,7 @@ export class ScoreboardPage {
 
         // Team 2 players
         match.team2Players?.forEach(player => {
-          const stats = playerStatsMap.get(player.id);
+          const stats = playerStatsMap.get(player.userId);
           if (stats) {
             stats.goals += player.score || 0;
             stats.played++;

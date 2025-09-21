@@ -9,6 +9,7 @@
     <h2 class="ion-no-margin">{{ user.displayName | titlecase }}</h2>
   </ion-text>
   <ion-note color="tertiary" class="user-email">{{ user.email }}</ion-note>
+  <ion-button fill="clear" routerLink="/profile">Edit Profile</ion-button>
   <ion-button fill="clear" (click)="logout()">Logout</ion-button>
 </div>
 } @else {

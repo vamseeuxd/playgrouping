@@ -39,6 +39,12 @@ import {
   ellipsisVerticalOutline,
   personOutline,
   peopleCircleOutline,
+  peopleOutline,
+  lockOpenOutline,
+  personAddOutline,
+  lockClosedOutline,
+  checkmarkOutline,
+  closeOutline,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -103,6 +109,12 @@ export class AppComponent {
       ellipsisVerticalOutline,
       personOutline,
       peopleCircleOutline,
+      peopleOutline,
+      lockOpenOutline,
+      personAddOutline,
+      lockClosedOutline,
+      checkmarkOutline,
+      closeOutline,
     });
   }
 

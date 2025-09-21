@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Register for {{ tournamentName }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form #playerForm="ngForm" (ngSubmit)="registerPlayer()">
+    <ion-input
+      label="Player Name *"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="playerData.name"
+      name="playerName"
+      class="ion-margin-bottom ion-margin-top"
+      required
+    ></ion-input>
+
+    <ion-select
+      label="Gender *"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="playerData.gender"
+      class="ion-margin-bottom"
+      name="playerGender"
+      required
+    >
+      <ion-select-option value="Male">Male</ion-select-option>
+      <ion-select-option value="Female">Female</ion-select-option>
+      <ion-select-option value="Other">Other</ion-select-option>
+    </ion-select>
+
+    <ion-textarea
+      label="Remarks"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="playerData.remarks"
+      class="ion-margin-bottom"
+      name="playerRemarks"
+      rows="3"
+      placeholder="Any additional information..."
+    ></ion-textarea>
+
+    <div class="ion-margin-top">
+      <ion-button expand="block" type="submit" [disabled]="!playerForm.valid">
+        Register as Player
+      </ion-button>
+      <ion-button expand="block" fill="outline" color="medium" (click)="cancel()">
+        Cancel
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

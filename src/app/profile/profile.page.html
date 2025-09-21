@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form #profileForm="ngForm" (ngSubmit)="saveProfile()">
+    <div class="profile-avatar">
+      <ion-avatar>
+        <img [src]="profile.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'" [alt]="profile.name">
+      </ion-avatar>
+    </div>
+
+    <ion-input
+      label="Name *"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="profile.name"
+      class="ion-margin-top ion-margin-bottom"
+      name="name"
+      required
+    ></ion-input>
+
+    <ion-input
+      label="Email"
+      label-placement="floating"
+      class="ion-margin-top ion-margin-bottom"
+      fill="outline"
+      [value]="profile.email"
+      readonly
+    ></ion-input>
+
+    <ion-select
+      label="Gender"
+      label-placement="floating"
+      fill="outline"
+      [(ngModel)]="profile.gender"
+      class="ion-margin-top ion-margin-bottom"
+      name="gender"
+      placeholder="Select Gender"
+    >
+      <ion-select-option value="Male">Male</ion-select-option>
+      <ion-select-option value="Female">Female</ion-select-option>
+      <ion-select-option value="Other">Other</ion-select-option>
+    </ion-select>
+
+    <ion-textarea
+      label="Remarks"
+      label-placement="floating"
+      class="ion-margin-top ion-margin-bottom"
+      fill="outline"
+      [(ngModel)]="profile.remarks"
+      name="remarks"
+      rows="3"
+    ></ion-textarea>
+
+    <ion-button expand="block" type="submit" [disabled]="!profileForm.valid" class="ion-margin-top">
+      Update Profile
+    </ion-button>
+  </form>
+</ion-content>

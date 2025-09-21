@@ -16,7 +16,10 @@
       (delete)="deleteTournament($event.id, $event.name)"
       (removeEditAccess)="removeEditAccess($event.id, $event.tournament, $event.email)"
       (approveEditAccess)="approveEditAccess($event.id, $event.tournament, $event.email)"
-      (askEdit)="askEditTournament($event.id, $event.tournament, $event.email, $event.displayName, $event.photoURL)">
+      (askEdit)="askEditTournament($event.id, $event.tournament, $event.email, $event.displayName, $event.photoURL)"
+      (registerAsPlayer)="registerAsPlayer($event.tournamentId, $event.tournamentName)"
+      (toggleRegistration)="toggleRegistration($event)"
+      (manageTeams)="manageTeams($event)">
     </app-tournament-card>
     }
   </ion-list>

@@ -8,177 +8,25 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Stepper Progress -->
-  <ion-segment mode="ios" [(ngModel)]="currentStep">
-    <ion-segment-button value="1">
-      <ion-label>Basic</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="2">
-      <ion-label>Players</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="3">
-      <ion-label>Teams</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="4">
-      <ion-label>Review</ion-label>
-    </ion-segment-button>
-  </ion-segment>
 
-  <!-- Step 1: Basic Details -->
-  @if (currentStep === '1') {
+
   <app-basic-details-step
     [tournament]="tournament"
     [sports]="sports"
     (tournamentChange)="tournament = $event">
   </app-basic-details-step>
-  }
-
-  <!-- Step 2: Players -->
-  @if (currentStep === '2') {
-  <app-players-step
-    [players]="players"
-    (savePlayer)="savePlayer($event)"
-    (removePlayer)="removePlayer($event)">
-  </app-players-step>
-  }
-
-  <!-- Step 3: Teams -->
-  @if (currentStep === '3') {
-  <app-teams-step
-    [teams]="teams"
-    (addTeam)="addTeam()"
-    (editTeam)="editTeam($event)"
-    (removeTeam)="removeTeam($event)">
-  </app-teams-step>
-  }
-
-  <!-- Step 4: Review -->
-  @if (currentStep === '4') {
-  <app-review-step
-    [tournament]="tournament"
-    [playersCount]="players.length"
-    [teamsCount]="teams.length"
-    [matchesCount]="0">
-  </app-review-step>
-  }
 
   <!-- Navigation Buttons -->
   <div class="step-navigation">
-    <ion-button fill="outline" [disabled]="currentStep === '1'" (click)="previousStep()">
-      Previous
+    <ion-button color="success" [disabled]="!canProceed()" (click)="submitTournament()">
+      {{ isEdit ? 'Update' : 'Create' }} Tournament
     </ion-button>
-    @if (currentStep !== '4') {
-    <ion-button [disabled]="!canProceed()" (click)="nextStep()">
-      Next
-    </ion-button>
-    } @else {
-    <ion-button color="success" (click)="submitTournament()">
-      Submit
-    </ion-button>
-    }
     <ion-button fill="outline" color="medium" (click)="cancel()">
       Cancel
     </ion-button>
   </div>
 
-  <!-- Modals -->
-  <ion-modal [isOpen]="showPlayerModal" [initialBreakpoint]="0.25" handleBehavior="cycle" [breakpoints]="[0, 0.25, 0.5, 0.75]" (didDismiss)="showPlayerModal = false">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>{{ editingPlayer ? 'Edit' : 'Add' }} Player</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="showPlayerModal = false">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <form #playerForm="ngForm" (ngSubmit)="savePlayerFromModal()">
-          <ion-input
-            label="Player Name"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentPlayer.name"
-            name="playerName"
-            required
-          ></ion-input>
 
-          <ion-select
-            label="Gender"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentPlayer.gender"
-            name="playerGender"
-            required
-          >
-            <ion-select-option value="Male">Male</ion-select-option>
-            <ion-select-option value="Female">Female</ion-select-option>
-          </ion-select>
-
-          <ion-textarea
-            label="Remarks"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentPlayer.remarks"
-            name="playerRemarks"
-            rows="3"
-          ></ion-textarea>
-
-          <ion-button expand="block" type="submit" [disabled]="!playerForm.valid">
-            {{ editingPlayer ? 'Update' : 'Add' }} Player
-          </ion-button>
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <ion-modal [isOpen]="showTeamModal" (didDismiss)="showTeamModal = false">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>{{ editingTeam ? 'Edit' : 'Add' }} Team</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="showTeamModal = false">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <form #teamForm="ngForm" (ngSubmit)="saveTeam()">
-          <ion-input
-            label="Team Name"
-            class="ion-margin-bottom"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="currentTeam.name"
-            name="teamName"
-            required
-          ></ion-input>
-
-          <ion-item>
-            <ion-label>Select Players</ion-label>
-          </ion-item>
-          @for (player of getAvailablePlayers(); track player.id) {
-          <ion-item>
-            <ion-checkbox
-              slot="start"
-              [(ngModel)]="player.selected"
-              name="player_{{ player.id }}"
-              (ionChange)="onPlayerSelectionChange()"
-            ></ion-checkbox>
-            <ion-label class="ion-margin-start">{{ player.name }}</ion-label>
-          </ion-item>
-          }
-
-          <ion-button expand="block" type="submit" [disabled]="!teamForm.valid">
-            {{ editingTeam ? 'Update' : 'Add' }} Team
-          </ion-button>
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
 
 
 </ion-content>

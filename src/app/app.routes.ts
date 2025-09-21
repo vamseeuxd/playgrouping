@@ -55,8 +55,30 @@ export const routes: Routes = [
       import('./scoreboard/scoreboard.page').then((m) => m.ScoreboardPage),
   },
   {
+    path: 'player-registration/:tournamentId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./player-registration/player-registration.page').then(
+        (m) => m.PlayerRegistrationPage
+      ),
+  },
+  {
+    path: 'team-management/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./team-management/team-management.page').then(
+        (m) => m.TeamManagementPage
+      ),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import('./login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./profile/profile.page').then((m) => m.ProfilePage),
   },
 ];

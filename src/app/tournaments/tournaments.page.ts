@@ -251,4 +251,56 @@ export class TournamentsPage {
       await loading.dismiss();
     }
   }
+
+  async registerAsPlayer(tournamentId: string, tournamentName: string) {
+    if (!this.authService.user?.uid) return;
+
+    // Check if user already has a registration
+    const existingRegistration = await this.firestoreService.getUserRegistration(tournamentId, this.authService.user.uid);
+    
+    if (existingRegistration) {
+      const alert = await this.alertController.create({
+        header: 'Already Registered',
+        message: 'You have already sent a registration request for this tournament.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+
+    this.router.navigate(['/player-registration', tournamentId], {
+      queryParams: { tournamentName }
+    });
+  }
+
+  async toggleRegistration(tournamentId: string) {
+    const loading = await this.loadingController.create({
+      message: 'Updating registration status...'
+    });
+    await loading.present();
+
+    try {
+      await this.firestoreService.toggleTournamentRegistration(tournamentId);
+      const toast = await this.toastController.create({
+        message: 'Registration status updated successfully!',
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+    } catch (error) {
+      console.error('Error toggling registration:', error);
+      const toast = await this.toastController.create({
+        message: 'Error updating registration status',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
+    } finally {
+      await loading.dismiss();
+    }
+  }
+
+  manageTeams(tournamentId: string) {
+    this.router.navigate(['/team-management', tournamentId]);
+  }
 }

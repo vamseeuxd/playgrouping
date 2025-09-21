@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   User,
+  updateProfile,
 } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { TournamentWithId } from '../interfaces';
@@ -60,5 +61,11 @@ export class AuthService {
   async signInWithGoogle() {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(this.auth, provider);
+  }
+
+  async updateUserProfile(displayName: string, photoURL?: string) {
+    if (this.user) {
+      await updateProfile(this.user, { displayName, photoURL });
+    }
   }
 }

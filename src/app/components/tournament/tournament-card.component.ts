@@ -77,6 +77,20 @@ import { TournamentWithId, Match, EditAccessEvent, TournamentDeleteEvent } from 
                 <ion-icon slot="start" name="albums-outline"></ion-icon>
                 <ion-label> Ask Edit </ion-label>
               </ion-item>
+              } @if (canRegisterAsPlayer) {
+              <ion-item [button]="true" (click)="onRegisterAsPlayer()">
+                <ion-icon slot="start" name="person-add-outline"></ion-icon>
+                <ion-label> Register as Player </ion-label>
+              </ion-item>
+              } @if (canManageRegistration) {
+              <ion-item [button]="true" (click)="onToggleRegistration()">
+                <ion-icon slot="start" name="{{ tournament.registrationOpen ? 'lock-closed-outline' : 'lock-open-outline' }}"></ion-icon>
+                <ion-label> {{ tournament.registrationOpen ? 'Close' : 'Open' }} Registration </ion-label>
+              </ion-item>
+              <ion-item [button]="true" (click)="onManageTeams()">
+                <ion-icon slot="start" name="people-outline"></ion-icon>
+                <ion-label> Manage Teams </ion-label>
+              </ion-item>
               }
             </ion-list>
 
@@ -163,6 +177,9 @@ export class TournamentCardComponent {
   @Output() askEdit = new EventEmitter<EditAccessEvent>();
   @Output() approveEditAccess = new EventEmitter<EditAccessEvent>();
   @Output() removeEditAccess = new EventEmitter<EditAccessEvent>();
+  @Output() registerAsPlayer = new EventEmitter<{ tournamentId: string; tournamentName: string }>();
+  @Output() toggleRegistration = new EventEmitter<string>();
+  @Output() manageTeams = new EventEmitter<string>();
 
   presentingElement!: HTMLElement | null;
 
@@ -209,6 +226,18 @@ export class TournamentCardComponent {
     return this.authService.hasPermission('viewer', this.tournament);
   }
 
+  get canRegisterAsPlayer() {
+    return (
+      !!this.authService.user?.email &&
+      this.tournament.registrationOpen &&
+      !this.authService.hasPermission('admin', this.tournament)
+    );
+  }
+
+  get canManageRegistration() {
+    return this.authService.hasPermission('editor', this.tournament) || this.authService.hasPermission('admin', this.tournament);
+  }
+
   onEdit() {
     this.edit.emit(this.tournament.id);
   }
@@ -247,5 +276,20 @@ export class TournamentCardComponent {
 
   onMatchClick(matchId: string) {
     this.router.navigate(['/match-control', matchId], { queryParams: { tournamentId: this.tournament.id } });
+  }
+
+  onRegisterAsPlayer() {
+    this.registerAsPlayer.emit({
+      tournamentId: this.tournament.id,
+      tournamentName: this.tournament.name
+    });
+  }
+
+  onToggleRegistration() {
+    this.toggleRegistration.emit(this.tournament.id);
+  }
+
+  onManageTeams() {
+    this.manageTeams.emit(this.tournament.id);
   }
 }

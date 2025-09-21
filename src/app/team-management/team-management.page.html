@@ -1,0 +1,162 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Manage Teams - {{ tournament?.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="registrations-section">
+    <h2>Player Registrations</h2>
+    @if (registrations.length === 0) {
+      <p>No registration requests.</p>
+    } @else {
+      <ion-list>
+        @for (registration of registrations; track registration.id) {
+          <ion-item>
+            <ion-avatar slot="start">
+              <img [src]="registration.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'" [alt]="registration.name">
+            </ion-avatar>
+            <ion-label>
+              <h3>{{ registration.name }}</h3>
+              <p>{{ registration.email }} - {{ registration.gender }}</p>
+              <p>Status: {{ registration.status }}</p>
+              @if (registration.remarks) {
+                <p>Remarks: {{ registration.remarks }}</p>
+              }
+            </ion-label>
+            <ion-button
+              id="registration-trigger-{{ registration.id }}"
+              fill="clear"
+              size="small">
+              <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+            </ion-button>
+            <ion-popover trigger="registration-trigger-{{ registration.id }}" [dismissOnSelect]="true">
+              <ng-template>
+                <ion-content>
+                  <ion-list>
+                    @if (registration.status === 'pending') {
+                      <ion-item [button]="true" (click)="approveRegistration(registration)">
+                        <ion-icon slot="start" name="checkmark-outline" color="success"></ion-icon>
+                        <ion-label>Approve</ion-label>
+                      </ion-item>
+                      <ion-item [button]="true" (click)="rejectRegistration(registration)">
+                        <ion-icon slot="start" name="close-outline" color="danger"></ion-icon>
+                        <ion-label>Reject</ion-label>
+                      </ion-item>
+                    }
+                    <ion-item [button]="true" (click)="deleteRegistration(registration)">
+                      <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
+                      <ion-label>Delete</ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+        }
+      </ion-list>
+    }
+  </div>
+
+  <div class="teams-section">
+    <div class="section-header">
+      <h2>Teams</h2>
+      <ion-button (click)="openTeamModal()" fill="outline">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Add Team
+      </ion-button>
+    </div>
+
+    @if (teams.length === 0) {
+      <p>No teams created yet.</p>
+    } @else {
+      <ion-list>
+        @for (team of teams; track team.id) {
+          <ion-item>
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>{{ team.name }}</h3>
+              <p>{{ team.players.length }} players</p>
+            </ion-label>
+            <ion-button
+              id="team-trigger-{{ team.id }}"
+              fill="clear"
+              size="small">
+              <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+            </ion-button>
+            <ion-popover trigger="team-trigger-{{ team.id }}" [dismissOnSelect]="true">
+              <ng-template>
+                <ion-content>
+                  <ion-list>
+                    <ion-item [button]="true" (click)="openTeamModal(team)">
+                      <ion-icon slot="start" name="create-outline" color="primary"></ion-icon>
+                      <ion-label>Edit</ion-label>
+                    </ion-item>
+                    <ion-item [button]="true" (click)="deleteTeam(team)">
+                      <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
+                      <ion-label>Delete</ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+        }
+      </ion-list>
+    }
+  </div>
+
+  <!-- Team Modal -->
+  <ion-modal [isOpen]="showTeamModal" (didDismiss)="showTeamModal = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ editingTeam ? 'Edit' : 'Add' }} Team</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showTeamModal = false">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #teamForm="ngForm" (ngSubmit)="saveTeam()">
+          <ion-input
+            label="Team Name *"
+            label-placement="floating"
+            fill="outline"
+            [(ngModel)]="currentTeam.name"
+            name="teamName"
+            required
+          ></ion-input>
+
+          <div class="ion-margin-top">
+            <h3>Select Players</h3>
+            @if (approvedRegistrations.length === 0) {
+              <p>No approved players available.</p>
+            } @else {
+              @for (registration of approvedRegistrations; track registration.id) {
+                <ion-item>
+                  <ion-checkbox
+                    slot="start"
+                    [checked]="isPlayerSelected(registration)"
+                    (ionChange)="onPlayerSelectionChange(registration, $event.detail.checked)"
+                  ></ion-checkbox>
+                  <ion-label class="ion-margin-start">
+                    <h3>{{ registration.name }}</h3>
+                    <p>{{ registration.email }}</p>
+                  </ion-label>
+                </ion-item>
+              }
+            }
+          </div>
+
+          <ion-button expand="block" type="submit" [disabled]="!teamForm.valid" class="ion-margin-top">
+            {{ editingTeam ? 'Update' : 'Create' }} Team
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
