@@ -16,8 +16,7 @@ import {
   IonButtons,
   LoadingController,
   AlertController,
-  ToastController,
-} from '@ionic/angular/standalone';
+  ToastController, IonFooter } from '@ionic/angular/standalone';
 import { MatchControlsComponent } from '../components/match/match-controls.component';
 import { ScoreBoardComponent } from '../components/match/score-board.component';
 import { CommonModule } from '@angular/common';
@@ -33,13 +32,13 @@ import {
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { AuthService } from '../services/auth.service';
-import { Match, TournamentWithId, Team, TeamPlayerWithUser } from '../interfaces';
+import { Match, MatchWithTeams, TournamentWithId, Team, TeamPlayerWithUser, MatchPlayerWithUser } from '../interfaces';
 
 @Component({
   selector: 'app-match-control',
   templateUrl: './match-control.page.html',
   styleUrls: ['./match-control.page.scss'],
-  imports: [
+  imports: [IonFooter,
     CommonModule,
     FormsModule,
     IonHeader,
@@ -55,8 +54,7 @@ import { Match, TournamentWithId, Team, TeamPlayerWithUser } from '../interfaces
     IonBackButton,
     IonButtons,
     MatchControlsComponent,
-    ScoreBoardComponent
-],
+    ScoreBoardComponent],
 })
 export class MatchControlPage {
   private route = inject(ActivatedRoute);
@@ -69,11 +67,15 @@ export class MatchControlPage {
   tournament: TournamentWithId | null = null;
   private authService = inject(AuthService);
   teams: (Team & { players: TeamPlayerWithUser[] })[] = [];
+  team1PlayersWithUser: MatchPlayerWithUser[] = [];
+  team2PlayersWithUser: MatchPlayerWithUser[] = [];
 
-  match: Match = {
+  match: MatchWithTeams = {
     id: '',
-    team1: 'Team A',
-    team2: 'Team B',
+    team1Id: '',
+    team2Id: '',
+    team1Name: 'Team A',
+    team2Name: 'Team B',
     score1: 0,
     score2: 0,
     status: APP_CONSTANTS.MATCH.STATUS.PENDING,
@@ -104,11 +106,16 @@ export class MatchControlPage {
     this.getTournament();
     this.loadTeams();
     this.loadMatch();
-    this.firestoreService.getLiveMatchData(this.tournamentId, this.matchId).subscribe((data) => {
+    this.firestoreService.getLiveMatchData(this.tournamentId, this.matchId).subscribe(async (data) => {
       if (data) {
-        this.match = data;
-        console.log('Match data loaded:', this.match);
-        this.initializePlayerScores();
+        // Convert Match to MatchWithTeams by fetching team names
+        const matches = await this.firestoreService.getMatchesWithTeams(this.tournamentId);
+        const matchWithTeams = matches.find(m => m.id === this.matchId);
+        if (matchWithTeams) {
+          this.match = { ...data, team1Name: matchWithTeams.team1Name, team2Name: matchWithTeams.team2Name } as MatchWithTeams;
+          console.log('Match data loaded:', this.match);
+          this.initializePlayerScores();
+        }
       }
     });
   } 
@@ -123,37 +130,58 @@ export class MatchControlPage {
     this.initializePlayerScores();
   }
 
-  initializePlayerScores() {
-    if (this.teams.length === 0 || !this.match.team1 || !this.match.team2) return;
+  async initializePlayerScores() {
+    if (this.teams.length === 0 || !this.match.team1Id || !this.match.team2Id) return;
     
-    const team1 = this.teams.find(t => t.name === this.match.team1);
-    const team2 = this.teams.find(t => t.name === this.match.team2);
+    const team1 = this.teams.find(t => t.id === this.match.team1Id);
+    const team2 = this.teams.find(t => t.id === this.match.team2Id);
     
     if (team1 && (!this.match.team1Players || this.match.team1Players.length === 0)) {
       this.match.team1Players = team1.players.map((p: TeamPlayerWithUser) => ({ 
-        id: p.id,
         userId: p.userId, 
-        name: p.name,
-        email: p.email,
-        photoURL: p.photoURL,
-        score: p.score || 0 
+        score: 0
       }));
     }
     if (team2 && (!this.match.team2Players || this.match.team2Players.length === 0)) {
       this.match.team2Players = team2.players.map((p: TeamPlayerWithUser) => ({ 
-        id: p.id,
         userId: p.userId, 
-        name: p.name,
-        email: p.email,
-        photoURL: p.photoURL,
-        score: p.score || 0 
+        score: 0
       }));
     }
     
-    console.log('Initialized players:', {
-      team1Players: this.match.team1Players,
-      team2Players: this.match.team2Players
-    });
+    await this.loadPlayersWithUserData();
+  }
+
+  async loadPlayersWithUserData() {
+    if (this.match.team1Players) {
+      this.team1PlayersWithUser = await Promise.all(
+        this.match.team1Players.map(async (player) => {
+          const userProfile = await this.firestoreService.getUserProfile(player.userId);
+          return {
+            userId: player.userId,
+            score: player.score,
+            name: userProfile?.name || `Player ${player.userId.slice(-4)}`,
+            email: userProfile?.email || '',
+            photoURL: userProfile?.photoURL
+          };
+        })
+      );
+    }
+    
+    if (this.match.team2Players) {
+      this.team2PlayersWithUser = await Promise.all(
+        this.match.team2Players.map(async (player) => {
+          const userProfile = await this.firestoreService.getUserProfile(player.userId);
+          return {
+            userId: player.userId,
+            score: player.score,
+            name: userProfile?.name || `Player ${player.userId.slice(-4)}`,
+            email: userProfile?.email || '',
+            photoURL: userProfile?.photoURL
+          };
+        })
+      );
+    }
   }
 
   get canEdit() {
@@ -166,7 +194,8 @@ export class MatchControlPage {
     await loading.present();
     
     try {
-      const match = await this.firestoreService.getMatch(this.tournamentId, this.matchId);
+      const matches = await this.firestoreService.getMatchesWithTeams(this.tournamentId);
+      const match = matches.find(m => m.id === this.matchId);
       if (match) {
         this.match = match;
         console.log('Initial match load:', this.match);
@@ -301,6 +330,7 @@ export class MatchControlPage {
         }
         
         await this.updateMatchInFirestore();
+        await this.loadPlayersWithUserData(); // Refresh display data
       }
     } finally {
       await loading.dismiss();
@@ -310,8 +340,8 @@ export class MatchControlPage {
   async updateMatchInFirestore() {
     const matchData: Partial<Match> = {
       id: this.matchId,
-      team1: this.match.team1,
-      team2: this.match.team2,
+      team1Id: this.match.team1Id,
+      team2Id: this.match.team2Id,
       status: this.match.status,
       score1: this.match.score1,
       score2: this.match.score2,

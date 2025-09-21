@@ -24,7 +24,7 @@ import { TeamStandingsComponent } from '../components/scoreboard/team-standings.
 import { PlayerStandingsComponent } from '../components/scoreboard/player-standings.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { Match, Team, TeamPlayerWithUser } from '../interfaces';
+import { Match, MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '../interfaces';
 
 @Component({
   selector: 'app-scoreboard',
@@ -56,7 +56,7 @@ export class ScoreboardPage {
   tournamentId = '';
 
   teams: (Team & { players: TeamPlayerWithUser[] })[] = [];
-  matches: Match[] = [];
+  matches: MatchWithTeams[] = [];
   teamStats: any[] = [];
   playerStats: any[] = [];
 
@@ -82,8 +82,8 @@ export class ScoreboardPage {
       });
 
       // Load matches
-      this.firestoreService.getMatches(this.tournamentId).subscribe((matches) => {
-        this.matches = matches;
+      this.firestoreService.getMatches(this.tournamentId).subscribe(async (matches) => {
+        this.matches = await this.firestoreService.getMatchesWithTeams(this.tournamentId);
         this.calculateStats();
       });
     }
@@ -109,11 +109,11 @@ export class ScoreboardPage {
       this.matches.forEach((match) => {
         if (
           match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED &&
-          (match.team1 === teamName || match.team2 === teamName)
+          (match.team1Name === teamName || match.team2Name === teamName)
         ) {
           played++;
 
-          if (match.team1 === teamName) {
+          if (match.team1Name === teamName) {
             goalsFor += match.score1 || 0;
             goalsAgainst += match.score2 || 0;
 
@@ -173,7 +173,7 @@ export class ScoreboardPage {
     this.matches.forEach(match => {
       if (match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED) {
         // Team 1 players
-        match.team1Players?.forEach(player => {
+        match.team1Players?.forEach((player: MatchPlayer) => {
           const stats = playerStatsMap.get(player.userId);
           if (stats) {
             stats.goals += player.score || 0;
@@ -182,7 +182,7 @@ export class ScoreboardPage {
         });
 
         // Team 2 players
-        match.team2Players?.forEach(player => {
+        match.team2Players?.forEach((player: MatchPlayer) => {
           const stats = playerStatsMap.get(player.userId);
           if (stats) {
             stats.goals += player.score || 0;

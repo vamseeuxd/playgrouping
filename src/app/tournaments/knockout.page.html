@@ -53,11 +53,11 @@
         @for (match of stage.matches; track match.id) {
         <ion-item lines="full" detail="true" [routerLink]="['/match-control', match.id]" [queryParams]="{tournamentId: tournamentId}">
           <ion-label>
-            <h2>{{ match.team1 }} vs {{ match.team2 }}</h2>
+            <h2>{{ match.team1Name }} vs {{ match.team2Name }}</h2>
               @if (match.status === 'finished') {
                 <ion-label color="success">
                   <h3>Final Score: {{ match.score1 }} - {{ match.score2 }}</h3>
-                  <h3>Winner: {{ match.score1 > match.score2 ? match.team1 : (match.score2 > match.score1 ? match.team2 : 'Draw') }}</h3>
+                  <h3>Winner: {{ match.score1 > match.score2 ? match.team1Name : (match.score2 > match.score1 ? match.team2Name : 'Draw') }}</h3>
                 </ion-label>
               } @else if (match.status && match.status !== 'pending') {
                 <ion-label color="primary">

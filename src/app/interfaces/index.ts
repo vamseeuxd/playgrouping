@@ -49,8 +49,8 @@ export interface TeamPlayerWithUser extends TeamPlayer {
 
 export interface Match {
   id?: string;
-  team1: string;
-  team2: string;
+  team1Id: string;
+  team2Id: string;
   date?: string;
   court?: string;
   umpire?: string;
@@ -61,8 +61,24 @@ export interface Match {
   startTime: Date | null;
   endTime: Date | null;
   duration: number;
-  team1Players?: TeamPlayerWithUser[];
-  team2Players?: TeamPlayerWithUser[];
+  team1Players?: MatchPlayer[];
+  team2Players?: MatchPlayer[];
+}
+
+export interface MatchWithTeams extends Match {
+  team1Name: string;
+  team2Name: string;
+}
+
+export interface MatchPlayer {
+  userId: string;
+  score: number;
+}
+
+export interface MatchPlayerWithUser extends MatchPlayer {
+  name: string;
+  email: string;
+  photoURL?: string;
 }
 
 export interface Sport {

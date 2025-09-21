@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
         @for (match of matches; track match.id) {
         <ion-item>
           <ion-label>
-            <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
+            <h3>{{ match.team1Name }} vs {{ match.team2Name }}</h3>
             <p>{{ match.date | date:'short' }}</p>
             @if (match.court) { <p>Court: {{ match.court }}</p> }
             @if (match.umpire) { <p>Umpire: {{ match.umpire }}</p> }

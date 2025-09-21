@@ -35,14 +35,13 @@ export class KnockoutPage {
     this.loadMatches();
   }
 
-  loadMatches() {
+  async loadMatches() {
     if (this.tournamentId) {
-      this.firestoreService.getTeams(this.tournamentId).subscribe(teams => {
-        this.teams = teams;
-      });
+      this.teams = await this.firestoreService.getTeamsWithPlayers(this.tournamentId);
       
-      this.firestoreService.getMatches(this.tournamentId).subscribe(matches => {
-        this.organizeMatches(matches);
+      this.firestoreService.getMatches(this.tournamentId).subscribe(async matches => {
+        const matchesWithTeams = await this.firestoreService.getMatchesWithTeams(this.tournamentId);
+        this.organizeMatches(matchesWithTeams);
       });
     }
   }
@@ -70,8 +69,8 @@ export class KnockoutPage {
       for (let i = 0; i < this.teams.length; i++) {
         for (let j = i + 1; j < this.teams.length; j++) {
           await this.firestoreService.createMatch(this.tournamentId, {
-            team1: this.teams[i].name,
-            team2: this.teams[j].name,
+            team1Id: this.teams[i].id!,
+            team2Id: this.teams[j].id!,
             status: APP_CONSTANTS.MATCH.STATUS.PENDING,
             score1: 0,
             score2: 0,
@@ -127,9 +126,9 @@ export class KnockoutPage {
       let qualifiedTeams: string[] = [];
       
       if (currentStageIndex === 0) {
-        qualifiedTeams = this.getUniqueTeamsFromMatches(currentStage.matches);
+        qualifiedTeams = this.getUniqueTeamIdsFromMatches(currentStage.matches);
       } else {
-        qualifiedTeams = this.getWinnersFromStage(currentStage.matches);
+        qualifiedTeams = this.getWinnerIdsFromStage(currentStage.matches);
       }
       
       if (qualifiedTeams.length < 2) {
@@ -146,8 +145,8 @@ export class KnockoutPage {
       for (let i = 0; i < teamsToAdvance.length; i += 2) {
         if (i + 1 < teamsToAdvance.length) {
           await this.firestoreService.createMatch(this.tournamentId, {
-            team1: teamsToAdvance[i],
-            team2: teamsToAdvance[i + 1],
+            team1Id: teamsToAdvance[i],
+            team2Id: teamsToAdvance[i + 1],
             status: APP_CONSTANTS.MATCH.STATUS.PENDING,
             score1: 0,
             score2: 0,
@@ -195,9 +194,19 @@ export class KnockoutPage {
     return matches
       .filter((match: any) => match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED)
       .map((match: any) => {
-        if (match.score1 > match.score2) return match.team1;
-        if (match.score2 > match.score1) return match.team2;
-        return match.team1;
+        if (match.score1 > match.score2) return match.team1Name;
+        if (match.score2 > match.score1) return match.team2Name;
+        return match.team1Name;
+      });
+  }
+
+  getWinnerIdsFromStage(matches: any[]): string[] {
+    return matches
+      .filter((match: any) => match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED)
+      .map((match: any) => {
+        if (match.score1 > match.score2) return match.team1Id;
+        if (match.score2 > match.score1) return match.team2Id;
+        return match.team1Id;
       });
   }
 
@@ -208,8 +217,17 @@ export class KnockoutPage {
   getUniqueTeamsFromMatches(matches: any[]): string[] {
     const teams = new Set<string>();
     matches.forEach((match: any) => {
-      teams.add(match.team1);
-      teams.add(match.team2);
+      teams.add(match.team1Name);
+      teams.add(match.team2Name);
+    });
+    return Array.from(teams);
+  }
+
+  getUniqueTeamIdsFromMatches(matches: any[]): string[] {
+    const teams = new Set<string>();
+    matches.forEach((match: any) => {
+      teams.add(match.team1Id);
+      teams.add(match.team2Id);
     });
     return Array.from(teams);
   }
@@ -241,9 +259,9 @@ export class KnockoutPage {
     
     let hasEnoughTeams = false;
     if (currentStageIndex === 0) {
-      hasEnoughTeams = this.getUniqueTeamsFromMatches(currentStage.matches).length >= 2;
+      hasEnoughTeams = this.getUniqueTeamIdsFromMatches(currentStage.matches).length >= 2;
     } else {
-      hasEnoughTeams = this.getWinnersFromStage(currentStage.matches).length >= 2;
+      hasEnoughTeams = this.getWinnerIdsFromStage(currentStage.matches).length >= 2;
     }
     
     return hasMatches && allFinished && nextStageEmpty && hasEnoughTeams;

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, setDoc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Tournament, TournamentWithId, Player, Team, Match, Sport, PlayerRegistration, UserProfile, TeamPlayer, TeamPlayerWithUser } from '../interfaces';
+import { Tournament, TournamentWithId, Player, Team, Match, MatchWithTeams, Sport, PlayerRegistration, UserProfile, TeamPlayer, TeamPlayerWithUser } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -155,9 +155,52 @@ export class FirestoreService {
     return registrationsWithUsers;
   }
 
+  getPlayerRegistrationsLive(tournamentId: string): Observable<(PlayerRegistration & UserProfile)[]> {
+    return new Observable(observer => {
+      const unsubscribe = collectionData(collection(this.firestore, `tournaments/${tournamentId}/registrations`), { idField: 'registrationId' })
+        .subscribe(async (registrations: any[]) => {
+          const registrationsWithUsers = await Promise.all(
+            registrations.map(async (reg) => {
+              const userProfile = await this.getUserProfile(reg.userId);
+              return { 
+                ...userProfile,
+                ...reg,
+                id: reg.registrationId
+              } as PlayerRegistration & UserProfile;
+            })
+          );
+          observer.next(registrationsWithUsers);
+        });
+      
+      return () => unsubscribe.unsubscribe();
+    });
+  }
+
   // Match operations
   getMatches(tournamentId: string): Observable<Match[]> {
     return collectionData(collection(this.firestore, `tournaments/${tournamentId}/matches`), { idField: 'id' }) as Observable<Match[]>;
+  }
+
+  async getMatchesWithTeams(tournamentId: string): Promise<MatchWithTeams[]> {
+    const matchesSnapshot = await getDocs(collection(this.firestore, `tournaments/${tournamentId}/matches`));
+    const matches = matchesSnapshot.docs.map(doc => ({ 
+      ...doc.data(), 
+      id: doc.id 
+    } as Match));
+    
+    const teamsSnapshot = await getDocs(collection(this.firestore, `tournaments/${tournamentId}/teams`));
+    const teams = teamsSnapshot.docs.map(doc => ({ 
+      ...doc.data(), 
+      id: doc.id 
+    } as Team));
+    
+    const teamsMap = new Map(teams.map(team => [team.id!, team.name]));
+    
+    return matches.map(match => ({
+      ...match,
+      team1Name: teamsMap.get(match.team1Id) || 'Unknown Team',
+      team2Name: teamsMap.get(match.team2Id) || 'Unknown Team'
+    } as MatchWithTeams));
   }
 
   getLiveMatchData(tournamentId: string, matchId: string): Observable<Match> {
@@ -269,11 +312,22 @@ export class FirestoreService {
     const playersWithUsers = await Promise.all(
       teamPlayers.map(async (player) => {
         const userProfile = await this.getUserProfile(player.userId);
+        
+        if (!userProfile) {
+          console.error(`User profile not found for userId: ${player.userId}`);
+          return { 
+            ...player,
+            name: 'Unknown User',
+            email: '',
+            photoURL: ''
+          } as TeamPlayerWithUser;
+        }
+        
         return { 
           ...player,
-          name: userProfile?.name || 'Unknown',
-          email: userProfile?.email || '',
-          photoURL: userProfile?.photoURL
+          name: userProfile.name,
+          email: userProfile.email,
+          photoURL: userProfile.photoURL
         } as TeamPlayerWithUser;
       })
     );

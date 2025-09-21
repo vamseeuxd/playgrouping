@@ -14,7 +14,7 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-
+  IonBadge,
   IonCheckbox,
   IonModal,
   IonIcon,
@@ -47,7 +47,7 @@ import { addOutline, peopleOutline } from 'ionicons/icons';
     IonItem,
     IonLabel,
     IonInput,
-
+    IonBadge,
     IonCheckbox,
     IonModal,
     IonIcon,
@@ -96,7 +96,12 @@ export class TeamManagementPage {
 
     try {
       this.tournament = await this.firestoreService.getTournament(this.tournamentId);
-      this.registrations = await this.firestoreService.getPlayerRegistrations(this.tournamentId);
+      
+      // Subscribe to live updates for registrations
+      this.firestoreService.getPlayerRegistrationsLive(this.tournamentId).subscribe(registrations => {
+        this.registrations = registrations;
+      });
+      
       this.teams = await this.firestoreService.getTeamsWithPlayers(this.tournamentId);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -107,6 +112,20 @@ export class TeamManagementPage {
 
   get approvedRegistrations() {
     return this.registrations.filter(reg => reg.status === 'approved');
+  }
+
+  get availableRegistrations() {
+    const assignedPlayerIds = new Set();
+    this.teams.forEach(team => {
+      team.players.forEach(player => {
+        assignedPlayerIds.add(player.userId);
+      });
+    });
+    
+    return this.approvedRegistrations.filter(reg => 
+      !assignedPlayerIds.has(reg.userId) || 
+      (this.editingTeam && this.editingTeam.players.some(p => p.userId === reg.userId))
+    );
   }
 
   openTeamModal(team?: Team & { players: TeamPlayerWithUser[] }) {
@@ -203,11 +222,11 @@ export class TeamManagementPage {
   onPlayerSelectionChange(registration: PlayerRegistration & UserProfile, checked: boolean) {
     if (checked) {
       this.currentTeam.players.push({
-        id: registration.id!,
+        id: registration.userId,
         name: registration.name
       });
     } else {
-      this.currentTeam.players = this.currentTeam.players.filter(p => p.id !== registration.id);
+      this.currentTeam.players = this.currentTeam.players.filter(p => p.id !== registration.userId);
     }
     this.generateTeamName();
   }
@@ -221,7 +240,7 @@ export class TeamManagementPage {
   }
 
   isPlayerSelected(registration: PlayerRegistration & UserProfile): boolean {
-    return this.currentTeam.players.some(p => p.id === registration.id);
+    return this.currentTeam.players.some(p => p.id === registration.userId);
   }
 
   async approveRegistration(registration: PlayerRegistration & UserProfile) {
@@ -244,7 +263,6 @@ export class TeamManagementPage {
 
     try {
       await this.firestoreService.updatePlayerRegistration(this.tournamentId, registration.id!, { status: 'approved' });
-      await this.loadData();
       
       const toast = await this.toastController.create({
         message: 'Registration approved successfully!',
@@ -279,7 +297,6 @@ export class TeamManagementPage {
 
     try {
       await this.firestoreService.updatePlayerRegistration(this.tournamentId, registration.id!, { status: 'rejected' });
-      await this.loadData();
       
       const toast = await this.toastController.create({
         message: 'Registration rejected.',
@@ -314,7 +331,6 @@ export class TeamManagementPage {
 
     try {
       await this.firestoreService.deletePlayerRegistration(this.tournamentId, registration.id!);
-      await this.loadData();
       
       const toast = await this.toastController.create({
         message: 'Registration deleted.',

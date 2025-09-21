@@ -23,7 +23,14 @@ import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
 import { BasicDetailsStepComponent } from '../components/tournament/steps/basic-details-step.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { Auth } from '@angular/fire/auth';
-import { Tournament, Player, Team, Match, Sport, TeamPlayer } from '../interfaces';
+import {
+  Tournament,
+  Player,
+  Team,
+  Match,
+  Sport,
+  TeamPlayer,
+} from '../interfaces';
 
 @Component({
   selector: 'app-tournament-form',
@@ -79,7 +86,6 @@ export class TournamentFormPage {
       if (tournament) {
         this.tournament = tournament;
       }
-
     }
     this.loadSports();
   }
@@ -90,13 +96,9 @@ export class TournamentFormPage {
     });
   }
 
-
-
   cancel() {
     this.router.navigate(['/tournaments']);
   }
-
-
 
   canProceed(): boolean {
     return !!(
@@ -136,12 +138,6 @@ export class TournamentFormPage {
     }
   }
 
-
-
-
-
-
-
   async submitTournament() {
     const loading = await this.loadingController.create({
       message: APP_CONSTANTS.MESSAGES.LOADING.UPDATING_TOURNAMENT,
@@ -155,6 +151,16 @@ export class TournamentFormPage {
           this.tournament
         );
       } else {
+        this.tournament.email = this.auth.currentUser?.email || '';
+        this.tournament.editors = [
+          {
+            approved: true,
+            email: this.auth.currentUser?.email || '',
+            displayName: this.auth.currentUser?.displayName || '',
+            photoURL: this.auth.currentUser?.photoURL || '',
+          },
+        ];
+        this.tournament.registrationOpen = true;
         await this.firestoreService.createTournament(this.tournament);
       }
       const toast = await this.toastController.create({
@@ -176,6 +182,4 @@ export class TournamentFormPage {
       await loading.dismiss();
     }
   }
-
-
 }

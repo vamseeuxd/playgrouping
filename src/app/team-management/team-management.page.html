@@ -27,9 +27,13 @@
                 <p>Remarks: {{ registration.remarks }}</p>
               }
             </ion-label>
+            @if (registration.status === 'pending') {
+              <ion-badge color="danger" style="position: absolute; bottom: 8px; right: 25px; font-size: 10px;">Pending for Approval</ion-badge>
+            }
             <ion-button
               id="registration-trigger-{{ registration.id }}"
               fill="clear"
+               style="position: absolute; top: 8px; right: 25px; font-size: 10px;"
               size="small">
               <ion-icon name="ellipsis-vertical-outline"></ion-icon>
             </ion-button>
@@ -133,10 +137,10 @@
 
           <div class="ion-margin-top">
             <h3>Select Players</h3>
-            @if (approvedRegistrations.length === 0) {
-              <p>No approved players available.</p>
+            @if (availableRegistrations.length === 0) {
+              <p>No available players (all approved players are already assigned to teams).</p>
             } @else {
-              @for (registration of approvedRegistrations; track registration.id) {
+              @for (registration of availableRegistrations; track registration.id) {
                 <ion-item>
                   <ion-checkbox
                     slot="start"

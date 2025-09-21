@@ -1,72 +1,52 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {
-  IonButton,
-  IonIcon,
-  IonGrid,
-  IonRow,
-  IonCol,
-} from '@ionic/angular/standalone';
+import { IonButton, IonButtons } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { APP_CONSTANTS } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-match-controls',
   template: `
-    <ion-grid>
-      <ion-row>
-        @if (status === statusTypes.PENDING) {
-        <ion-col>
-          <ion-button expand="block" color="success" (click)="onStart()">
-            <ion-icon name="play-outline" slot="start"></ion-icon>
-            Start Match
-          </ion-button>
-        </ion-col>
-        } @if (status === statusTypes.STARTED) {
-        <ion-col>
-          <ion-button expand="block" color="warning" (click)="onPause()">
-            <ion-icon name="pause-outline" slot="start"></ion-icon>
-            Pause Match
-          </ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button expand="block" color="danger" (click)="onStop()">
-            <ion-icon name="stop-outline" slot="start"></ion-icon>
-            End Match
-          </ion-button>
-        </ion-col>
-        } @if (status === statusTypes.PAUSED) {
-        <ion-col>
-          <ion-button expand="block" color="success" (click)="onStart()">
-            <ion-icon name="play-outline" slot="start"></ion-icon>
-            Resume Match
-          </ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button expand="block" color="danger" (click)="onStop()">
-            <ion-icon name="stop-outline" slot="start"></ion-icon>
-            End Match
-          </ion-button>
-        </ion-col>
-        }
-      </ion-row>
+  <ion-buttons class="ion-justify-content-between">
+    @if (status === statusTypes.PENDING) {
 
-      @if (status !== statusTypes.PENDING) {
-      <ion-row>
-        <ion-col>
-          <ion-button
-            expand="block"
-            color="warning"
-            fill="outline"
-            (click)="onReset()"
-          >
-            Reset Match
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      }
-    </ion-grid>
+    <ion-button color="success" (click)="onStart()">
+      Start
+    </ion-button>
+
+    } @if (status === statusTypes.STARTED) {
+
+    <ion-button color="medium" (click)="onPause()">
+      Pause
+    </ion-button>
+
+    <ion-button fill="clear" color="danger" (click)="onStop()">
+      End
+    </ion-button>
+
+    } @if (status === statusTypes.PAUSED) {
+
+    <ion-button fill="clear" color="success" (click)="onStart()">
+      Resume
+    </ion-button>
+
+    <ion-button fill="clear" color="danger" (click)="onStop()">
+      End
+    </ion-button>
+
+    } @if (status !== statusTypes.PENDING) {
+
+    <ion-button
+      fill="clear"
+      color="secondary"
+      (click)="onReset()"
+    >
+      Reset
+    </ion-button>
+
+    }
+</ion-buttons>
   `,
-  imports: [CommonModule, IonButton, IonIcon, IonGrid, IonRow, IonCol],
+  imports: [CommonModule, IonButton, IonButtons],
 })
 export class MatchControlsComponent {
   @Input() status = APP_CONSTANTS.MATCH.STATUS.PENDING;

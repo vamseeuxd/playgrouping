@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { QrCodeService } from '../../services/qr-code.service';
 import { FirestoreService } from '../../services/firestore.service';
-import { TournamentWithId, Match, EditAccessEvent, TournamentDeleteEvent } from '../../interfaces';
+import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDeleteEvent } from '../../interfaces';
 
 @Component({
   selector: 'app-tournament-card',
@@ -35,7 +35,7 @@ import { TournamentWithId, Match, EditAccessEvent, TournamentDeleteEvent } from 
         style="position: absolute; top: 8px; right: 8px; z-index: 10;"
         ><ion-icon name="ellipsis-vertical-outline"></ion-icon
       ></ion-button>
-      <ion-popover trigger="click-trigger-{{tournament.id}}" [dismissOnSelect]="true" mode="ios">
+      <ion-popover trigger="click-trigger-{{tournament.id}}" [dismissOnSelect]="true">
         <ng-template>
           <ion-content>
             <ion-list mode="ios">
@@ -171,7 +171,7 @@ export class TournamentCardComponent {
   @ViewChild('editorsListModal') editorsListModal!: IonModal;
   editorsListModalOpen = false;
   @Input() tournament!: TournamentWithId;
-  matches: Match[] = [];
+  matches: MatchWithTeams[] = [];
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<TournamentDeleteEvent>();
   @Output() askEdit = new EventEmitter<EditAccessEvent>();
@@ -188,10 +188,8 @@ export class TournamentCardComponent {
     this.loadMatches();
   }
 
-  loadMatches() {
-    this.firestoreService.getMatches(this.tournament.id).subscribe(matches => {
-      this.matches = matches;
-    });
+  async loadMatches() {
+    this.matches = await this.firestoreService.getMatchesWithTeams(this.tournament.id);
   }
 
   onApproveEditAccess(email: string){
@@ -229,8 +227,7 @@ export class TournamentCardComponent {
   get canRegisterAsPlayer() {
     return (
       !!this.authService.user?.email &&
-      this.tournament.registrationOpen &&
-      !this.authService.hasPermission('admin', this.tournament)
+      this.tournament.registrationOpen
     );
   }
 
@@ -269,8 +266,8 @@ export class TournamentCardComponent {
     return colors[index % colors.length];
   }
 
-  getMatchDisplay(match: Match): string {
-    return match.team1 && match.team2 ? `${match.team1} vs ${match.team2}` : 
+  getMatchDisplay(match: MatchWithTeams): string {
+    return match.team1Name && match.team2Name ? `${match.team1Name} vs ${match.team2Name}` : 
            `Match ${match.id || 'Unknown'}`;
   }
 
