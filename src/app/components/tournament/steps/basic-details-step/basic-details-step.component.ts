@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonSelect, IonSelectOption, IonButton } from '@ionic/angular/standalone';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonSelect, IonSelectOption, IonChip } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -25,7 +25,6 @@ import { RouterLink } from '@angular/router';
 
           <ion-select
             label="Sport"
-            class="ion-margin-bottom"
             label-placement="floating"
             fill="outline"
             [(ngModel)]="tournament.sport"
@@ -36,9 +35,10 @@ import { RouterLink } from '@angular/router';
             <ion-select-option [value]="sport.name">{{ sport.name }}</ion-select-option>
             }
           </ion-select>
-          <ion-button fill="clear" size="small" routerLink="/sports">
-            Manage Sports
-          </ion-button>
+
+          <div class="ion-margin-bottom" style="display: flex; flex-direction: row; justify-content: flex-end; ">
+            <ion-chip color="primary" routerLink="/sports">Manage Sports</ion-chip>
+          </div>
 
           <ion-input
             label="Start Date"
@@ -48,13 +48,13 @@ import { RouterLink } from '@angular/router';
             type="datetime-local"
             [(ngModel)]="tournament.startDate"
             name="startDate"
-            required
           ></ion-input>
         </form>
+        <ng-content></ng-content>        
       </ion-card-content>
     </ion-card>
   `,
-  imports: [CommonModule, FormsModule, RouterLink, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonSelect, IonSelectOption, IonButton]
+  imports: [CommonModule, FormsModule, RouterLink, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonSelect, IonSelectOption, IonChip]
 })
 export class BasicDetailsStepComponent {
   @Input() tournament: any = {};

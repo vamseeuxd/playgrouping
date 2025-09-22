@@ -22,18 +22,18 @@ import {
   IonPopover,
   LoadingController,
   ToastController,
-  AlertController,
-} from '@ionic/angular/standalone';
+  AlertController, IonChip } from '@ionic/angular/standalone';
 import { FirestoreService } from '../services/firestore.service';
-import { Tournament, Player, Team, PlayerRegistration, UserProfile, TeamPlayerWithUser } from '../interfaces';
+import { Tournament, TournamentWithId, Team, PlayerRegistration, UserProfile, TeamPlayerWithUser } from '../interfaces';
 import { addIcons } from 'ionicons';
 import { addOutline, peopleOutline } from 'ionicons/icons';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-team-management',
   templateUrl: './team-management.page.html',
 
-  imports: [
+  imports: [IonChip, 
     CommonModule,
     FormsModule,
     IonHeader,
@@ -58,13 +58,13 @@ import { addOutline, peopleOutline } from 'ionicons/icons';
 export class TeamManagementPage {
   private firestoreService = inject(FirestoreService);
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private loadingController = inject(LoadingController);
   private toastController = inject(ToastController);
   private alertController = inject(AlertController);
+  private authService = inject(AuthService);
 
   tournamentId = '';
-  tournament: Tournament | null = null;
+  tournament: TournamentWithId | null = null;
   registrations: (PlayerRegistration & UserProfile)[] = [];
   teams: (Team & { players: TeamPlayerWithUser[] })[] = [];
   showTeamModal = false;
@@ -342,6 +342,14 @@ export class TeamManagementPage {
       console.error('Error deleting registration:', error);
     } finally {
       await loading.dismiss();
+    }
+  }
+
+  get canEdit() {
+    if (this.tournament && this.tournament.id) {
+      return this.authService.hasPermission('editor', this.tournament);
+    } else {
+      return false;
     }
   }
 }

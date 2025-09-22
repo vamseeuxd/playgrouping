@@ -8,25 +8,32 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-
-
   <app-basic-details-step
     [tournament]="tournament"
     [sports]="sports"
-    (tournamentChange)="tournament = $event">
+    (tournamentChange)="tournament = $event"
+  >
+    <!-- Navigation Buttons -->
+    <div
+      class="step-navigation"
+      style="
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        align-items: center;
+        justify-content: space-between;
+      "
+    >
+      <ion-button
+        class="ion-margin-bottom ion-margin-top"
+        color="primary"
+        [disabled]="!canProceed()"
+        (click)="submitTournament()"
+      >
+        {{ isEdit ? 'Update' : 'Create' }}
+      </ion-button>
+      <ion-button color="dark" (click)="cancel()"> Cancel </ion-button>
+    </div>
   </app-basic-details-step>
-
-  <!-- Navigation Buttons -->
-  <div class="step-navigation">
-    <ion-button color="success" [disabled]="!canProceed()" (click)="submitTournament()">
-      {{ isEdit ? 'Update' : 'Create' }} Tournament
-    </ion-button>
-    <ion-button fill="outline" color="medium" (click)="cancel()">
-      Cancel
-    </ion-button>
-  </div>
-
-
-
-
 </ion-content>

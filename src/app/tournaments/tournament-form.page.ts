@@ -103,8 +103,11 @@ export class TournamentFormPage {
   canProceed(): boolean {
     return !!(
       this.tournament.name &&
-      this.tournament.sport &&
-      this.tournament.startDate
+      this.tournament.sport 
+      /* 
+        &&
+        this.tournament.startDate 
+      */
     );
   }
 

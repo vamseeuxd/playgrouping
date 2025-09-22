@@ -14,8 +14,7 @@ import {
   IonButtons,
   IonTextarea,
   LoadingController,
-  ToastController,
-} from '@ionic/angular/standalone';
+  ToastController, IonCardContent, IonCard, IonCardHeader, IonCardTitle } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
 import { AuthService } from '../services/auth.service';
@@ -24,7 +23,7 @@ import { PlayerRegistration } from '../interfaces';
 @Component({
   selector: 'app-player-registration',
   templateUrl: './player-registration.page.html',
-  imports: [
+  imports: [IonCardTitle, IonCardHeader, IonCard, IonCardContent, 
     CommonModule,
     FormsModule,
     IonHeader,
