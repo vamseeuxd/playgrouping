@@ -1,26 +1,31 @@
 <ion-header>
-  <ion-toolbar [style.background]="'var(--app-primary)'">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tournaments" [style.color]="'white'"></ion-back-button>
     </ion-buttons>
     <ion-title [style.color]="'white'" [style.font-weight]="'var(--app-font-weight-bold)'">
       Tournament Scoreboard
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="exportToImage()" [style.color]="'white'">
+        <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [style.background]="'var(--app-gray-50)'">
-  <div [style.padding]="'var(--app-space-4)'">
+  <div id="scoreboard-content" [style.padding]="'var(--app-space-4)'">
     <!-- Page Header -->
     <div [style.margin-bottom]="'var(--app-space-8)'" [style.text-align]="'center'">
-      <h1 [style.margin]="'0 0 var(--app-space-2) 0'" 
-          [style.color]="'var(--app-gray-900)'" 
-          [style.font-size]="'var(--app-font-size-2xl)'" 
+      <h1 [style.margin]="'0 0 var(--app-space-2) 0'"
+          [style.color]="'var(--app-gray-900)'"
+          [style.font-size]="'var(--app-font-size-2xl)'"
           [style.font-weight]="'var(--app-font-weight-bold)'">
         Tournament Statistics
       </h1>
-      <p [style.margin]="'0'" 
-         [style.color]="'var(--app-gray-600)'" 
+      <p [style.margin]="'0'"
+         [style.color]="'var(--app-gray-600)'"
          [style.font-size]="'var(--app-font-size-base)'">
         Live standings and player performance
       </p>
@@ -30,19 +35,19 @@
     @if (teamStats.length > 0) {
       <app-team-standings [teamStats]="teamStats"></app-team-standings>
     } @else {
-      <div [style.background]="'white'" 
-           [style.border-radius]="'var(--app-radius-xl)'" 
-           [style.box-shadow]="'var(--app-shadow-md)'" 
-           [style.margin-bottom]="'var(--app-space-6)'" 
-           [style.padding]="'var(--app-space-8)'" 
+      <div [style.background]="'white'"
+           [style.border-radius]="'var(--app-radius-xl)'"
+           [style.box-shadow]="'var(--app-shadow-md)'"
+           [style.margin-bottom]="'var(--app-space-6)'"
+           [style.padding]="'var(--app-space-8)'"
            [style.text-align]="'center'">
-        <ion-icon name="trophy-outline" 
-                  [style.font-size]="'48px'" 
-                  [style.color]="'var(--app-gray-400)'" 
+        <ion-icon name="trophy-outline"
+                  [style.font-size]="'48px'"
+                  [style.color]="'var(--app-gray-400)'"
                   [style.margin-bottom]="'var(--app-space-4)'">
         </ion-icon>
-        <p [style.margin]="'0'" 
-           [style.color]="'var(--app-gray-500)'" 
+        <p [style.margin]="'0'"
+           [style.color]="'var(--app-gray-500)'"
            [style.font-size]="'var(--app-font-size-base)'">
           No team statistics available yet
         </p>
@@ -57,81 +62,81 @@
     <!-- Recent Matches Section -->
     <div [style.margin-bottom]="'var(--app-space-8)'">
       <!-- Section Header -->
-      <div [style.display]="'flex'" 
-           [style.align-items]="'center'" 
-           [style.gap]="'var(--app-space-3)'" 
+      <div [style.display]="'flex'"
+           [style.align-items]="'center'"
+           [style.gap]="'var(--app-space-3)'"
            [style.margin-bottom]="'var(--app-space-6)'">
-        <ion-icon name="time-outline" 
-                  [style.font-size]="'var(--app-font-size-xl)'" 
+        <ion-icon name="time-outline"
+                  [style.font-size]="'var(--app-font-size-xl)'"
                   [style.color]="'var(--app-primary)'">
         </ion-icon>
-        <h2 [style.margin]="'0'" 
-            [style.color]="'var(--app-gray-900)'" 
-            [style.font-size]="'var(--app-font-size-xl)'" 
+        <h2 [style.margin]="'0'"
+            [style.color]="'var(--app-gray-900)'"
+            [style.font-size]="'var(--app-font-size-xl)'"
             [style.font-weight]="'var(--app-font-weight-bold)'">
           Recent Matches
         </h2>
       </div>
 
       @if (getRecentMatches().length === 0) {
-        <div [style.background]="'white'" 
-             [style.border-radius]="'var(--app-radius-xl)'" 
-             [style.box-shadow]="'var(--app-shadow-md)'" 
-             [style.padding]="'var(--app-space-8)'" 
+        <div [style.background]="'white'"
+             [style.border-radius]="'var(--app-radius-xl)'"
+             [style.box-shadow]="'var(--app-shadow-md)'"
+             [style.padding]="'var(--app-space-8)'"
              [style.text-align]="'center'">
-          <ion-icon name="football-outline" 
-                    [style.font-size]="'48px'" 
-                    [style.color]="'var(--app-gray-400)'" 
+          <ion-icon name="football-outline"
+                    [style.font-size]="'48px'"
+                    [style.color]="'var(--app-gray-400)'"
                     [style.margin-bottom]="'var(--app-space-4)'">
           </ion-icon>
-          <p [style.margin]="'0'" 
-             [style.color]="'var(--app-gray-500)'" 
+          <p [style.margin]="'0'"
+             [style.color]="'var(--app-gray-500)'"
              [style.font-size]="'var(--app-font-size-base)'">
             No recent matches to display
           </p>
         </div>
       } @else {
         <!-- Match Cards Grid -->
-        <div [style.display]="'grid'" 
-             [style.gap]="'var(--app-space-4)'" 
+        <div [style.display]="'grid'"
+             [style.gap]="'var(--app-space-4)'"
              [style.grid-template-columns]="'repeat(auto-fit, minmax(320px, 1fr))'">
           @for (match of getRecentMatches(); track match.id; let i = $index) {
-            <div [style.background]="'white'" 
-                 [style.border-radius]="'var(--app-radius-xl)'" 
-                 [style.box-shadow]="'var(--app-shadow-md)'" 
-                 [style.padding]="'var(--app-space-6)'" 
-                 [style.border]="'1px solid var(--app-gray-200)'" 
-                 [style.transition]="'all var(--app-transition-fast)'" 
-                 [style.cursor]="'pointer'" 
-                 [style.position]="'relative'" 
+            <div [style.background]="'white'"
+                 [style.border-radius]="'var(--app-radius-xl)'"
+                 [style.box-shadow]="'var(--app-shadow-md)'"
+                 [style.padding]="'var(--app-space-6)'"
+                 [style.border]="'1px solid var(--app-gray-200)'"
+                 [style.transition]="'all var(--app-transition-fast)'"
+                 [style.cursor]="'pointer'"
+                 [style.position]="'relative'"
                  [style.overflow]="'hidden'">
-              
+
               <!-- Match Number Badge -->
-              <div [style.position]="'absolute'" 
-                   [style.top]="'var(--app-space-4)'" 
-                   [style.right]="'var(--app-space-4)'" 
-                   [style.background]="'var(--app-primary)'" 
-                   [style.color]="'white'" 
-                   [style.border-radius]="'var(--app-radius-sm)'" 
-                   [style.padding]="'var(--app-space-1) var(--app-space-2)'" 
-                   [style.font-weight]="'var(--app-font-weight-bold)'" 
+              <div [style.position]="'absolute'"
+                   [style.top]="'var(--app-space-4)'"
+                   [style.right]="'var(--app-space-4)'"
+                   [style.background]="'var(--app-primary)'"
+                   [style.color]="'white'"
+                   [style.border-radius]="'var(--app-radius-sm)'"
+                   [style.padding]="'var(--app-space-1) var(--app-space-2)'"
+                   [style.font-weight]="'var(--app-font-weight-bold)'"
                    [style.font-size]="'var(--app-font-size-xs)'">
                 #{{ i + 1 }}
               </div>
 
               <!-- Match Header -->
-              <div [style.margin-bottom]="'var(--app-space-5)'" 
+              <div [style.margin-bottom]="'var(--app-space-5)'"
                    [style.padding-right]="'var(--app-space-8)'">
-                <div [style.display]="'flex'" 
-                     [style.align-items]="'center'" 
-                     [style.gap]="'var(--app-space-2)'" 
+                <div [style.display]="'flex'"
+                     [style.align-items]="'center'"
+                     [style.gap]="'var(--app-space-2)'"
                      [style.margin-bottom]="'var(--app-space-2)'">
-                  <ion-icon name="calendar-outline" 
-                            [style.font-size]="'var(--app-font-size-sm)'" 
+                  <ion-icon name="calendar-outline"
+                            [style.font-size]="'var(--app-font-size-sm)'"
                             [style.color]="'var(--app-gray-500)'">
                   </ion-icon>
-                  <span [style.color]="'var(--app-gray-500)'" 
-                        [style.font-size]="'var(--app-font-size-sm)'" 
+                  <span [style.color]="'var(--app-gray-500)'"
+                        [style.font-size]="'var(--app-font-size-sm)'"
                         [style.font-weight]="'var(--app-font-weight-medium)'">
                     {{ getMatchDate(match.endTime) | date:'MMM d, HH:mm' }}
                   </span>
@@ -139,54 +144,54 @@
               </div>
 
               <!-- Teams & Score -->
-              <div [style.display]="'flex'" 
-                   [style.align-items]="'center'" 
-                   [style.justify-content]="'space-between'" 
+              <div [style.display]="'flex'"
+                   [style.align-items]="'center'"
+                   [style.justify-content]="'space-between'"
                    [style.margin-bottom]="'var(--app-space-4)'">
                 <div [style.text-align]="'center'" [style.flex]="'1'">
-                  <h3 [style.margin]="'0 0 var(--app-space-2) 0'" 
-                      [style.color]="'var(--app-gray-900)'" 
-                      [style.font-size]="'var(--app-font-size-base)'" 
-                      [style.font-weight]="'var(--app-font-weight-bold)'" 
-                      [style.white-space]="'nowrap'" 
-                      [style.overflow]="'hidden'" 
+                  <h3 [style.margin]="'0 0 var(--app-space-2) 0'"
+                      [style.color]="'var(--app-gray-900)'"
+                      [style.font-size]="'var(--app-font-size-base)'"
+                      [style.font-weight]="'var(--app-font-weight-bold)'"
+                      [style.white-space]="'nowrap'"
+                      [style.overflow]="'hidden'"
                       [style.text-overflow]="'ellipsis'">
                     {{ match.team1Name }}
                   </h3>
-                  <div [style.background]="'var(--app-gray-50)'" 
-                       [style.border-radius]="'var(--app-radius-md)'" 
-                       [style.padding]="'var(--app-space-2)'" 
-                       [style.font-weight]="'var(--app-font-weight-bold)'" 
-                       [style.color]="'var(--app-primary)'" 
+                  <div [style.background]="'var(--app-gray-50)'"
+                       [style.border-radius]="'var(--app-radius-md)'"
+                       [style.padding]="'var(--app-space-2)'"
+                       [style.font-weight]="'var(--app-font-weight-bold)'"
+                       [style.color]="'var(--app-primary)'"
                        [style.font-size]="'var(--app-font-size-xl)'">
                     {{ match.score1 }}
                   </div>
                 </div>
-                
-                <div [style.margin]="'0 var(--app-space-4)'" 
+
+                <div [style.margin]="'0 var(--app-space-4)'"
                      [style.text-align]="'center'">
-                  <div [style.color]="'var(--app-gray-400)'" 
-                       [style.font-weight]="'var(--app-font-weight-bold)'" 
+                  <div [style.color]="'var(--app-gray-400)'"
+                       [style.font-weight]="'var(--app-font-weight-bold)'"
                        [style.font-size]="'var(--app-font-size-lg)'">
                     VS
                   </div>
                 </div>
-                
+
                 <div [style.text-align]="'center'" [style.flex]="'1'">
-                  <h3 [style.margin]="'0 0 var(--app-space-2) 0'" 
-                      [style.color]="'var(--app-gray-900)'" 
-                      [style.font-size]="'var(--app-font-size-base)'" 
-                      [style.font-weight]="'var(--app-font-weight-bold)'" 
-                      [style.white-space]="'nowrap'" 
-                      [style.overflow]="'hidden'" 
+                  <h3 [style.margin]="'0 0 var(--app-space-2) 0'"
+                      [style.color]="'var(--app-gray-900)'"
+                      [style.font-size]="'var(--app-font-size-base)'"
+                      [style.font-weight]="'var(--app-font-weight-bold)'"
+                      [style.white-space]="'nowrap'"
+                      [style.overflow]="'hidden'"
                       [style.text-overflow]="'ellipsis'">
                     {{ match.team2Name }}
                   </h3>
-                  <div [style.background]="'var(--app-gray-50)'" 
-                       [style.border-radius]="'var(--app-radius-md)'" 
-                       [style.padding]="'var(--app-space-2)'" 
-                       [style.font-weight]="'var(--app-font-weight-bold)'" 
-                       [style.color]="'var(--app-primary)'" 
+                  <div [style.background]="'var(--app-gray-50)'"
+                       [style.border-radius]="'var(--app-radius-md)'"
+                       [style.padding]="'var(--app-space-2)'"
+                       [style.font-weight]="'var(--app-font-weight-bold)'"
+                       [style.color]="'var(--app-primary)'"
                        [style.font-size]="'var(--app-font-size-xl)'">
                     {{ match.score2 }}
                   </div>
@@ -195,11 +200,11 @@
 
               <!-- Match Status -->
               <div [style.text-align]="'center'">
-                <span [style.background]="'var(--app-success)'" 
-                      [style.color]="'white'" 
-                      [style.padding]="'var(--app-space-1) var(--app-space-3)'" 
-                      [style.border-radius]="'var(--app-radius-full)'" 
-                      [style.font-weight]="'var(--app-font-weight-bold)'" 
+                <span [style.background]="'var(--app-success)'"
+                      [style.color]="'white'"
+                      [style.padding]="'var(--app-space-1) var(--app-space-3)'"
+                      [style.border-radius]="'var(--app-radius-full)'"
+                      [style.font-weight]="'var(--app-font-weight-bold)'"
                       [style.font-size]="'var(--app-font-size-xs)'">
                   Completed
                 </span>

@@ -55,6 +55,7 @@ import {
   timerOutline,
   radioButtonOn,
   pauseCircle,
+  downloadOutline,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -135,6 +136,7 @@ export class AppComponent {
       timerOutline,
       radioButtonOn,
       pauseCircle,
+      downloadOutline,
     });
   }
 

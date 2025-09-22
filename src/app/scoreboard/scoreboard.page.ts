@@ -7,10 +7,11 @@ import {
   IonContent,
   IonBackButton,
   IonButtons,
+  IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trophyOutline, timeOutline, calendarOutline, footballOutline } from 'ionicons/icons';
+import { trophyOutline, timeOutline, calendarOutline, footballOutline, downloadOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
@@ -32,6 +33,7 @@ import { MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '../interf
     IonContent,
     IonBackButton,
     IonButtons,
+    IonButton,
     IonIcon,
     TeamStandingsComponent,
     PlayerStandingsComponent
@@ -50,7 +52,7 @@ export class ScoreboardPage {
   playerStats: any[] = [];
 
   constructor() {
-    addIcons({ trophyOutline, timeOutline, calendarOutline, footballOutline });
+    addIcons({ trophyOutline, timeOutline, calendarOutline, footballOutline, downloadOutline });
 
     this.tournamentId = this.route.snapshot.params['id'];
 
@@ -204,5 +206,27 @@ export class ScoreboardPage {
     return this.matches
       .filter(match => match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED)
       .slice(0, 5);
+  }
+
+  async exportToImage() {
+    const element = document.getElementById('scoreboard-content');
+    if (!element) return;
+
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#f8fafc',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const link = document.createElement('a');
+      link.download = `tournament-scoreboard-${new Date().toISOString().split('T')[0]}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    } catch (error) {
+      console.error('Error exporting scoreboard:', error);
+    }
   }
 }
