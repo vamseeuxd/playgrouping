@@ -15,6 +15,7 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { MatchPlayerWithUser } from '../../interfaces';
+import { APP_CONSTANTS } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-score-board',
@@ -29,11 +30,9 @@ import { MatchPlayerWithUser } from '../../interfaces';
             <ion-col
               size="12"
               class="ion-text-center"
-              style="border: 1px solid #ccc;"
+              [style]="constants.STYLES.BORDER"
             >
-              <div
-                style="display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: space-between; "
-              >
+              <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
                 <h3>
                   <b>Team {{ team1 }} </b>
                 </h3>
@@ -45,69 +44,57 @@ import { MatchPlayerWithUser } from '../../interfaces';
               team1Players; track player.userId) {
               <ion-card>
                 <ion-card-content>
-                  <div
-                    style="display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: space-between; "
-                  >
+                  <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
                     <ion-chip>
                       <ion-avatar>
-                        <img
-                          src="{{
-                            player?.photoURL ||
-                              '../../../assets/default-avatar.png'
-                          }}"
-                          alt=""
-                        />
+                        <img [src]="getPlayerAvatar(player)" alt="" />
                       </ion-avatar>
-                      <ion-label>{{ player?.name || 'Unknown' }}</ion-label>
+                      <ion-label>{{ player?.name || constants.MESSAGES.UNKNOWN }}</ion-label>
                     </ion-chip>
                     @if (!canEdit) {
-                    <h1 style="margin: 0 20px;">{{ player?.score || 0 }}</h1>
+                    <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
                     }
                   </div>
                   @if (canEdit) {
-                  <div
-                    style=" display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: center; "
-                  >
+                  <div [style]="constants.STYLES.FLEX_ROW_CENTER">
                     <ion-button
                       size="small"
                       (click)="onPlayerScoreChange(1, player.userId, true)"
                     >
-                      <ion-icon name="add-outline"></ion-icon>
+                      <ion-icon [name]="constants.ICONS.ADD"></ion-icon>
                     </ion-button>
-                    <h1 style="margin: 0 20px;">{{ player?.score || 0 }}</h1>
+                    <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
                     <ion-button
                       size="small"
                       (click)="onPlayerScoreChange(1, player.userId, false)"
                     >
-                      <ion-icon name="remove-outline"></ion-icon>
+                      <ion-icon [name]="constants.ICONS.REMOVE"></ion-icon>
                     </ion-button>
                   </div>
                   }
                 </ion-card-content>
               </ion-card>
               } } @else {
-              <p>No players found for {{ team1 }}</p>
+              <p>{{ constants.MESSAGES.NO_PLAYERS_FOUND }} {{ team1 }}</p>
               }
             </ion-col>
             <ion-col
               size="12"
               class="ion-text-center"
-              style="display: flex; align-items: center; justify-content: center;"
+              [style]="constants.STYLES.FLEX_CENTER"
             >
               <img
-                src="../../../assets/vs.png"
+                [src]="constants.ASSETS.VS_IMAGE"
                 alt="vs"
-                style="max-width: 50px; margin-top: 10px;"
+                [style]="constants.STYLES.MAX_WIDTH_50"
               />
             </ion-col>
             <ion-col
               size="12"
               class="ion-text-center"
-              style="border: 1px solid #ccc;"
+              [style]="constants.STYLES.BORDER"
             >
-              <div
-                style=" display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: space-between; "
-              >
+              <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
                 <h3>
                   <b>Team {{ team2 }} </b>
                 </h3>
@@ -119,42 +106,32 @@ import { MatchPlayerWithUser } from '../../interfaces';
               team2Players; track player.userId) {
               <ion-card>
                 <ion-card-content>
-                  <div
-                    style="display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: space-between; "
-                  >
+                  <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
                     <ion-chip>
                       <ion-avatar>
-                        <img
-                          src="{{
-                            player?.photoURL ||
-                              '../../../assets/default-avatar.png'
-                          }}"
-                          alt=""
-                        />
+                        <img [src]="getPlayerAvatar(player)" alt="" />
                       </ion-avatar>
-                      <ion-label>{{ player?.name || 'Unknown' }}</ion-label>
+                      <ion-label>{{ player?.name || constants.MESSAGES.UNKNOWN }}</ion-label>
                     </ion-chip>
                     @if (!canEdit) {
-                    <h1 style="margin: 0 20px;">{{ player?.score || 0 }}</h1>
+                    <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
                     }
                   </div>
 
                   @if (canEdit) {
-                  <div
-                    style=" display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: center; "
-                  >
+                  <div [style]="constants.STYLES.FLEX_ROW_CENTER">
                     <ion-button
                       size="small"
                       (click)="onPlayerScoreChange(2, player.userId, true)"
                     >
-                      <ion-icon name="add-outline"></ion-icon>
+                      <ion-icon [name]="constants.ICONS.ADD"></ion-icon>
                     </ion-button>
-                    <h1 style="margin: 0 20px;">{{ player?.score || 0 }}</h1>
+                    <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
                     <ion-button
                       size="small"
                       (click)="onPlayerScoreChange(2, player.userId, false)"
                     >
-                      <ion-icon name="remove-outline"></ion-icon>
+                      <ion-icon [name]="constants.ICONS.REMOVE"></ion-icon>
                     </ion-button>
                   </div>
                   }
@@ -162,7 +139,7 @@ import { MatchPlayerWithUser } from '../../interfaces';
               </ion-card>
               } } @else {
               <p>Team2 Players Count: {{ team2Players.length || 0 }}</p>
-              <p>No players found for {{ team2 }}</p>
+              <p>{{ constants.MESSAGES.NO_PLAYERS_FOUND }} {{ team2 }}</p>
               }
             </ion-col>
           </ion-row>
@@ -195,6 +172,8 @@ export class ScoreBoardComponent {
   @Input() canEdit = false;
   @Input() team1Players: MatchPlayerWithUser[] = [];
   @Input() team2Players: MatchPlayerWithUser[] = [];
+  constants = APP_CONSTANTS;
+  
   @Output() scoreChange = new EventEmitter<{
     team: number;
     increment: boolean;
@@ -216,5 +195,9 @@ export class ScoreBoardComponent {
 
   onPlayerScoreChange(team: number, playerId: string, increment: boolean) {
     this.playerScoreChange.emit({ team, playerId, increment });
+  }
+
+  getPlayerAvatar(player: MatchPlayerWithUser): string {
+    return player?.photoURL || this.constants.ASSETS.DEFAULT_AVATAR;
   }
 }

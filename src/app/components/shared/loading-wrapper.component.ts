@@ -1,6 +1,7 @@
 import { Component, Input, inject } from '@angular/core';
 import { LoadingController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { APP_CONSTANTS } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-loading-wrapper',
@@ -10,8 +11,9 @@ import { CommonModule } from '@angular/common';
 export class LoadingWrapperComponent {
   private loadingController = inject(LoadingController);
   private currentLoading: HTMLIonLoadingElement | null = null;
+  constants = APP_CONSTANTS;
 
-  async showLoading(message: string) {
+  async showLoading(message: string = this.constants.MESSAGES.LOADING.DEFAULT) {
     if (this.currentLoading) {
       await this.currentLoading.dismiss();
     }

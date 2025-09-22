@@ -1,48 +1,185 @@
 export const APP_CONSTANTS = {
-  // Tournament constants
-  TOURNAMENT: {
-    MIN_TEAMS: 2,
-    MIN_PLAYERS: 2,
-    POINTS: {
-      WIN: 3,
-      DRAW: 1,
-      LOSS: 0
-    },
-    STAGES: {
-      GROUP: 'group',
-      ROUND_16: 'round16',
-      QUARTER: 'quarter',
-      SEMI: 'semi',
-      FINAL: 'final'
-    },
-    STAGE_NAMES: [
-      'Group Stage',
-      'Round of 16', 
-      'Quarter Finals',
-      'Semi Finals',
-      'Finals'
-    ],
-    STAGE_KEYS: ['group', 'round16', 'quarter', 'semi', 'final'],
-    STAGE_CAPACITY: {
-      1: 16, // Round of 16
-      2: 8,  // Quarter Finals
-      3: 4,  // Semi Finals
-      4: 2   // Finals
-    }
+  // Routes
+  ROUTES: {
+    LOGIN: '/login',
+    TOURNAMENTS: '/tournaments',
+    SCOREBOARD: '/scoreboard',
+    KNOCKOUT: '/knockout',
+    MATCH_CONTROL: '/match-control',
+    TEAM_MANAGEMENT: '/team-management',
+    PLAYER_REGISTRATION: '/player-registration'
   },
 
-  // Match constants
+  // Icons
+  ICONS: {
+    // Navigation & UI
+    GRID: 'grid-outline',
+    MENU: 'ellipsis-vertical-outline',
+    ADD: 'add-outline',
+    REMOVE: 'remove-outline',
+    CLOSE: 'close-outline',
+    
+    // Actions
+    STATS: 'stats-chart-outline',
+    TROPHY: 'trophy-outline',
+    SETTINGS: 'settings-outline',
+    QR_CODE: 'qr-code-outline',
+    TRASH: 'trash-outline',
+    LIST: 'list-outline',
+    ALBUMS: 'albums-outline',
+    PERSON_ADD: 'person-add-outline',
+    PEOPLE: 'people-outline',
+    LOCK_CLOSED: 'lock-closed-outline',
+    LOCK_OPEN: 'lock-open-outline'
+  },
+
+  // Colors
+  COLORS: {
+    PRIMARY: 'primary',
+    SECONDARY: 'secondary',
+    TERTIARY: 'tertiary',
+    SUCCESS: 'success',
+    WARNING: 'warning',
+    DANGER: 'danger',
+    MEDIUM: 'medium',
+    DARK: 'dark',
+    LIGHT: 'light'
+  },
+
+  // Chip Colors Array
+  CHIP_COLORS: ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'medium', 'dark'],
+
+  // Match Status
   MATCH: {
     STATUS: {
       PENDING: 'pending',
       STARTED: 'started',
       PAUSED: 'paused',
+      COMPLETED: 'completed',
       FINISHED: 'finished'
-    },
-    DEFAULT_DURATION: 90 // minutes
+    }
   },
 
-  // UI constants
+  // Tournament
+  TOURNAMENT: {
+    MIN_TEAMS: 2,
+    STAGES: {
+      GROUP: 'group',
+      ROUND_16: 'round_16',
+      QUARTER: 'quarter',
+      SEMI: 'semi',
+      FINAL: 'final'
+    },
+    STAGE_NAMES: ['Group', 'Round of 16', 'Quarter Final', 'Semi Final', 'Final'],
+    STAGE_KEYS: ['group', 'round_16', 'quarter', 'semi', 'final'],
+    STAGE_CAPACITY: {
+      group: 32,
+      round_16: 16,
+      quarter: 8,
+      semi: 4,
+      final: 2
+    },
+    POINTS: {
+      WIN: 3,
+      DRAW: 1
+    }
+  },
+
+  // Common Styles
+  STYLES: {
+    FLEX_ROW_BETWEEN: 'display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: space-between;',
+    FLEX_ROW_CENTER: 'display: flex; flex-direction: row; align-content: center; align-items: center; justify-content: center;',
+    FLEX_CENTER: 'display: flex; align-items: center; justify-content: center;',
+    BORDER: 'border: 1px solid #ccc;',
+    CHIPS_CONTAINER: 'display: flex; overflow-x: auto; gap: 4px; white-space: nowrap;',
+    CHIP: 'flex-shrink: 0;',
+    ITEM: 'position: relative;',
+    BUTTON: 'position: absolute; top: 8px; right: 8px; z-index: 10;',
+    POSITION_RELATIVE: 'position: relative;',
+    ABSOLUTE_TOP_RIGHT: 'position: absolute; top: 8px; right: 8px; z-index: 10;',
+    MARGIN_SIDES: 'margin: 0 20px;',
+    MAX_WIDTH_50: 'max-width: 50px; margin-top: 10px;'
+  },
+
+  // Assets
+  ASSETS: {
+    DEFAULT_AVATAR: '../../../assets/default-avatar.png',
+    VS_IMAGE: '../../../assets/vs.png',
+    PRAVATAR_BASE: 'https://i.pravatar.cc/300?u='
+  },
+
+  // Messages
+  MESSAGES: {
+    NO_PLAYERS_FOUND: 'No players found for',
+    NO_EDITORS_ASSIGNED: 'No editors assigned.',
+    UNKNOWN: 'Unknown',
+    LOADING: {
+      DEFAULT: 'Loading...',
+      SAVING_SPORT: 'Saving sport...',
+      DELETING_SPORT: 'Deleting sport...',
+      GENERATING_MATCHES: 'Generating matches...',
+      ADVANCING_ROUND: 'Advancing to next round...',
+      REMOVING_EDITOR: 'Removing editor...',
+      APPROVING_EDIT_ACCESS: 'Approving edit access...',
+      ASK_EDIT_TOURNAMENT: 'Requesting edit access...',
+      DELETING_TOURNAMENT: 'Deleting tournament...',
+      UPDATING_TOURNAMENT: 'Updating tournament...'
+    },
+    SUCCESS: {
+      SPORT_SAVED: 'Sport saved successfully',
+      SPORT_DELETED: 'Sport deleted successfully',
+      MATCHES_GENERATED: 'Matches generated successfully',
+      EDITOR_REMOVED: 'Editor removed successfully',
+      EDIT_ACCESS_APPROVED: 'Edit access approved',
+      ASK_EDIT_TOURNAMENT: 'Edit access requested',
+      TOURNAMENT_DELETED: 'Tournament deleted successfully',
+      TOURNAMENT_UPDATED: 'Tournament updated successfully'
+    },
+    ERROR: {
+      SPORT_SAVE: 'Failed to save sport',
+      SPORT_DELETE: 'Failed to delete sport',
+      MATCHES_GENERATE: 'Failed to generate matches',
+      REMOVE_EDITOR: 'Failed to remove editor',
+      EDIT_ACCESS_APPROVE: 'Failed to approve edit access',
+      ASK_EDIT_TOURNAMENT_EXISTS: 'Edit access already requested',
+      ASK_EDIT_TOURNAMENT: 'Failed to request edit access',
+      TOURNAMENT_DELETE: 'Failed to delete tournament',
+      TOURNAMENT_UPDATE: 'Failed to update tournament'
+    },
+    CONFIRM: {
+      DELETE_SPORT: 'Are you sure you want to delete {name}?',
+      DELETE_TOURNAMENT: 'Are you sure you want to delete {name}?',
+      REMOVE_EDITOR: 'Remove {name} as editor?',
+      ASK_EDIT_TOURNAMENT: 'Request edit access for {name}?'
+    },
+    VALIDATION: {
+      MIN_TEAMS: 'At least 2 teams are required',
+      TOURNAMENT_COMPLETE: 'Tournament is already complete',
+      MIN_TEAMS_ADVANCE: 'Need at least {count} teams to advance'
+    }
+  },
+
+  // Button Labels
+  BUTTONS: {
+    START: 'Start',
+    PAUSE: 'Pause',
+    RESUME: 'Resume',
+    END: 'End',
+    RESET: 'Reset',
+    LOGOUT: 'Logout',
+    SIGN_IN_GOOGLE: 'Sign in with Google',
+    SIGN_IN_ANONYMOUS: 'Continue as Guest'
+  },
+
+  // Permissions
+  PERMISSIONS: {
+    ADMIN: 'admin',
+    EDITOR: 'editor',
+    VIEWER: 'viewer',
+    GUEST: 'guest'
+  },
+
+  // UI Constants
   UI: {
     TOAST_DURATION: {
       SHORT: 2000,
@@ -51,126 +188,8 @@ export const APP_CONSTANTS = {
     },
     COLORS: {
       SUCCESS: 'success',
-      WARNING: 'warning',
       DANGER: 'danger',
-      PRIMARY: 'primary',
-      MEDIUM: 'medium'
-    }
-  },
-
-  // Mock data
-  MOCK_DATA: {
-    TOURNAMENT_NAME: 'Mock Championship 2024',
-    SPORT: 'football',
-    PLAYERS: [
-      { name: 'John Doe', gender: 'Male', remarks: 'Captain' },
-      { name: 'Jane Smith', gender: 'Female', remarks: 'Striker' },
-      { name: 'Mike Johnson', gender: 'Male', remarks: 'Defender' },
-      { name: 'Sarah Wilson', gender: 'Female', remarks: 'Midfielder' },
-      { name: 'Tom Brown', gender: 'Male', remarks: 'Goalkeeper' },
-      { name: 'Lisa Davis', gender: 'Female', remarks: 'Winger' },
-      { name: 'Chris Lee', gender: 'Male', remarks: 'Forward' },
-      { name: 'Amy Taylor', gender: 'Female', remarks: 'Defender' }
-    ],
-    TEAMS: [
-      { name: 'Team Alpha', players: [{ name: 'John Doe' }, { name: 'Jane Smith' }] },
-      { name: 'Team Beta', players: [{ name: 'Mike Johnson' }, { name: 'Sarah Wilson' }] },
-      { name: 'Team Gamma', players: [{ name: 'Tom Brown' }, { name: 'Lisa Davis' }] },
-      { name: 'Team Delta', players: [{ name: 'Chris Lee' }, { name: 'Amy Taylor' }] }
-    ],
-    MATCHES: [
-      { team1: 'Team Alpha', team2: 'Team Beta', status: 'finished', score1: 3, score2: 1, stage: 'group' },
-      { team1: 'Team Gamma', team2: 'Team Delta', status: 'finished', score1: 2, score2: 2, stage: 'group' },
-      { team1: 'Team Alpha', team2: 'Team Gamma', status: 'started', score1: 1, score2: 0, stage: 'group' },
-      { team1: 'Team Beta', team2: 'Team Delta', status: 'pending', score1: 0, score2: 0, stage: 'group' }
-    ]
-  },
-
-  // Messages
-  MESSAGES: {
-    SUCCESS: {
-      TOURNAMENT_CREATED: 'Tournament created successfully!',
-      TOURNAMENT_UPDATED: 'Tournament updated successfully!',
-      TOURNAMENT_DELETED: 'Tournament deleted successfully!',
-      ASK_EDIT_TOURNAMENT: 'Tournament edit request sent successfully!',
-      EDITOR_REMOVED: 'Editor removed successfully!',
-      EDIT_ACCESS_APPROVED: 'Edit access approved successfully!',
-      SPORT_SAVED: 'Sport saved successfully!',
-      SPORT_DELETED: 'Sport deleted successfully!',
-      MATCH_STARTED: 'Match started successfully!',
-      MATCH_PAUSED: 'Match paused successfully!',
-      MATCH_ENDED: 'Match ended successfully!',
-      MATCH_RESET: 'Match reset successfully!',
-      MATCHES_GENERATED: 'Matches generated successfully!',
-      MOCK_DATA_CREATED: 'Mock tournament created successfully!'
-    },
-    ERROR: {
-      TOURNAMENT_CREATE: 'Error creating tournament',
-      TOURNAMENT_UPDATE: 'Error updating tournament',
-      TOURNAMENT_DELETE: 'Error deleting tournament',
-      EDIT_ACCESS_APPROVE: 'Error approving edit access',
-      REMOVE_EDITOR: 'Error removing editor access',
-      ASK_EDIT_TOURNAMENT: 'Error sending edit tournament request',
-      ASK_EDIT_TOURNAMENT_EXISTS: 'You have already requested edit access for this tournament',
-      SPORT_SAVE: 'Error saving sport',
-      SPORT_DELETE: 'Error deleting sport',
-      MATCH_START: 'Error starting match',
-      MATCH_PAUSE: 'Error pausing match',
-      MATCH_END: 'Error ending match',
-      MATCH_RESET: 'Error resetting match',
-      MATCH_LOAD: 'Error loading match',
-      MATCH_UPDATE: 'Error updating score',
-      MATCHES_GENERATE: 'Error generating matches',
-      ADVANCE_ROUND: 'Error advancing to next round',
-      MOCK_DATA_CREATE: 'Error creating mock data'
-    },
-    LOADING: {
-      CREATING_TOURNAMENT: 'Creating tournament...',
-      UPDATING_TOURNAMENT: 'Updating tournament...',
-      DELETING_TOURNAMENT: 'Deleting tournament...',
-      ASK_EDIT_TOURNAMENT: 'Sending edit tournament request...',
-      REMOVING_EDITOR: 'Removing editor access...',
-      APPROVING_EDIT_ACCESS: 'Approving edit access...',
-      SAVING_SPORT: 'Saving sport...',
-      DELETING_SPORT: 'Deleting sport...',
-      LOADING_MATCH: 'Loading match...',
-      STARTING_MATCH: 'Starting match...',
-      PAUSING_MATCH: 'Pausing match...',
-      ENDING_MATCH: 'Ending match...',
-      RESETTING_MATCH: 'Resetting match...',
-      UPDATING_SCORE: 'Updating score...',
-      GENERATING_MATCHES: 'Generating matches...',
-      ADVANCING_ROUND: 'Advancing to next round...',
-      CREATING_MOCK_DATA: 'Creating mock data...'
-    },
-    CONFIRM: {
-      DELETE_TOURNAMENT: 'Are you sure you want to delete "{name}"? This will delete all players, teams, and matches.',
-      ASK_EDIT_TOURNAMENT: 'Are you sure you want to send edit "{name} tournament request"? This will send a request to the tournament owner.',
-      REMOVE_EDITOR: 'Are you sure you want to remove this editor access?',
-      DELETE_SPORT: 'Delete sport "{name}"?',
-      RESET_MATCH: 'Are you sure you want to reset this match? All progress will be lost.',
-      CREATE_MOCK_DATA: 'Create mock tournament with players, teams, and matches?',
-      REMOVE_PLAYER: 'Remove this player?',
-      REMOVE_TEAM: 'Remove this team?'
-    },
-    VALIDATION: {
-      MIN_TEAMS: 'Need at least 2 teams to generate matches',
-      MIN_TEAMS_ADVANCE: 'Need at least 2 teams to advance from {stage}',
-      MIN_WINNERS: 'Need at least 2 winners from {stage}',
-      DIFFERENT_TEAMS: 'Please select different teams',
-      DUPLICATE_PLAYER: 'Player name already exists!',
-      SAVE_TOURNAMENT_FIRST: 'Please save the tournament first',
-      TOURNAMENT_COMPLETE: 'Tournament is already complete!'
+      WARNING: 'warning'
     }
   }
-};
-
-export const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
-
-export const STEP_LABELS = {
-  1: 'Basic Details',
-  2: 'Players', 
-  3: 'Teams',
-  4: 'Matches',
-  5: 'Review'
-};
+} as const;

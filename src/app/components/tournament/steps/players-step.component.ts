@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { PlayerModalComponent } from '../player-modal.component';
+import { APP_CONSTANTS } from '../../../constants/app.constants';
 
 @Component({
   selector: 'app-players-step',
@@ -17,16 +18,16 @@ import { PlayerModalComponent } from '../player-modal.component';
             <h3>{{ player.name }}</h3>
             <p>{{ player.gender }} - {{ player.remarks }}</p>
           </ion-label>
-          <ion-button fill="clear" color="primary" (click)="onEditPlayer(player)">
+          <ion-button fill="clear" [color]="constants.COLORS.PRIMARY" (click)="onEditPlayer(player)">
             <ion-icon name="create-outline"></ion-icon>
           </ion-button>
-          <ion-button fill="clear" color="danger" (click)="onRemovePlayer(player.id)">
-            <ion-icon name="trash-outline"></ion-icon>
+          <ion-button fill="clear" [color]="constants.COLORS.DANGER" (click)="onRemovePlayer(player.id)">
+            <ion-icon [name]="constants.ICONS.TRASH"></ion-icon>
           </ion-button>
         </ion-item>
         }
         <ion-button expand="block" fill="outline" (click)="onAddPlayer()">
-          <ion-icon name="add-outline" slot="start"></ion-icon>
+          <ion-icon [name]="constants.ICONS.ADD" slot="start"></ion-icon>
           Add Player
         </ion-button>
       </ion-card-content>
@@ -52,6 +53,7 @@ export class PlayersStepComponent {
   showPlayerModal = false;
   editingPlayer = false;
   currentPlayer = { id: '', name: '', gender: '', remarks: '' };
+  constants = APP_CONSTANTS;
 
   onAddPlayer() {
     this.currentPlayer = { id: '', name: '', gender: '', remarks: '' };

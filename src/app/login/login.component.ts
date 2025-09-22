@@ -8,6 +8,7 @@ import {
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { APP_CONSTANTS } from '../constants/app.constants';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent implements OnInit {
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
+  constants = APP_CONSTANTS;
 
   constructor() {}
 
@@ -33,7 +35,7 @@ export class LoginComponent implements OnInit {
   async signInWithGoogle() {
     try {
       await this.authService.signInWithGoogle();
-      this.router.navigate(['/tournaments']);
+      this.router.navigate([this.constants.ROUTES.TOURNAMENTS]);
     } catch (error) {
       console.error('Google sign-in error:', error);
     }
@@ -41,8 +43,8 @@ export class LoginComponent implements OnInit {
 
   async signInAnonymously() {
     try {
-      await this.authService.setViewAccess('guest');
-      this.router.navigate(['/tournaments']);
+      await this.authService.setViewAccess(this.constants.PERMISSIONS.GUEST);
+      this.router.navigate([this.constants.ROUTES.TOURNAMENTS]);
     } catch (error) {
       console.error('Anonymous sign-in error:', error);
     }

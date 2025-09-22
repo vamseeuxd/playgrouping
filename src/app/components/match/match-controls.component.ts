@@ -49,7 +49,7 @@ import { APP_CONSTANTS } from '../../constants/app.constants';
   imports: [CommonModule, IonButton, IonButtons],
 })
 export class MatchControlsComponent {
-  @Input() status = APP_CONSTANTS.MATCH.STATUS.PENDING;
+  @Input() status: string = APP_CONSTANTS.MATCH.STATUS.PENDING;
   @Output() start = new EventEmitter<void>();
   @Output() pause = new EventEmitter<void>();
   @Output() stop = new EventEmitter<void>();

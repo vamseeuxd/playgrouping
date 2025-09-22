@@ -6,11 +6,13 @@ import { AuthService } from '../../services/auth.service';
 import { QrCodeService } from '../../services/qr-code.service';
 import { FirestoreService } from '../../services/firestore.service';
 import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDeleteEvent } from '../../interfaces';
+import { APP_CONSTANTS } from '../../constants/app.constants';
+import { TOURNAMENT_CARD_CONSTANTS } from '../../constants/tournament-card.constants';
 
 @Component({
   selector: 'app-tournament-card',
   template: `        
-    <ion-card style="position: relative;">        
+    <ion-card [style]="constants.STYLES.ITEM">        
         <ion-card-content>
         <p style="font-size: 1.2rem;font-weight: bold;">{{ tournament.name }}</p>
         <p style="font-size: 0.9rem;">Sport: {{ tournament.sport }}</p>
@@ -18,9 +20,9 @@ import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDel
         <div style="margin-top: 8px;border: 1px solid #ccc; padding: 8px;">
           <p style="font-size: 1rem;font-weight: bold;border-bottom: 1px solid #ccc;padding-bottom: 4px;margin: 0 4px 4px 4px;">Matches: {{ matches.length }}</p>
           @if (matches.length > 0) {
-            <div style="display: flex; overflow-x: auto; gap: 4px; white-space: nowrap;padding-bottom: 8px;">
+            <div [style]="constants.STYLES.CHIPS_CONTAINER + 'padding-bottom: 8px;'">
               @for (match of matches; track $index) {
-                <ion-chip [color]="getMatchColor($index)" style="flex-shrink: 0;" (click)="onMatchClick(match.id!)">{{ getMatchDisplay(match) }}</ion-chip>
+                <ion-chip [color]="getMatchColor($index)" [style]="constants.STYLES.CHIP" (click)="onMatchClick(match.id!)">{{ getMatchDisplay(match) }}</ion-chip>
               }
             </div>
           }
@@ -32,8 +34,8 @@ import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDel
         color="medium"
         fill="clear"
         size="large"
-        style="position: absolute; top: 8px; right: 8px; z-index: 10;"
-        ><ion-icon name="ellipsis-vertical-outline"></ion-icon
+        [style]="constants.STYLES.BUTTON"
+        ><ion-icon [name]="constants.ICONS.MENU"></ion-icon
       ></ion-button>
       <ion-popover trigger="click-trigger-{{tournament.id}}" [dismissOnSelect]="true">
         <ng-template>
@@ -44,37 +46,37 @@ import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDel
                 [button]="true"
                 [routerLink]="'/scoreboard/' + tournament.id"
               >
-                <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.STATS"></ion-icon>
                 <ion-label> Scoreboard </ion-label>
               </ion-item>
               <ion-item
                 [button]="true"
                 [routerLink]="'/knockout/' + tournament.id"
               >
-                <ion-icon slot="start" name="trophy-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.TROPHY"></ion-icon>
                 <ion-label> Knockout </ion-label>
               </ion-item>
               } @if (canEdit) {
               <ion-item [button]="true" (click)="onEdit()">
-                <ion-icon slot="start" name="settings-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.SETTINGS"></ion-icon>
                 <ion-label> Edit </ion-label>
               </ion-item>
               <ion-item [button]="true" (click)="onPrintQR()">
-                <ion-icon slot="start" name="qr-code-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.QR_CODE"></ion-icon>
                 <ion-label>Print QR </ion-label>
               </ion-item>
               } @if (canDelete) {
               <ion-item [button]="true" (click)="onDelete()">
-                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.TRASH"></ion-icon>
                 <ion-label> Delete </ion-label>
               </ion-item>
               <ion-item [button]="true" (click)="openEditorsModal()">
-                <ion-icon slot="start" name="list-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.LIST"></ion-icon>
                 <ion-label> Editors List </ion-label>
               </ion-item>
               } @if (canAskEdit) {
               <ion-item [button]="true" (click)="onAskEdit()">
-                <ion-icon slot="start" name="albums-outline"></ion-icon>
+                <ion-icon slot="start" [name]="constants.ICONS.ALBUMS"></ion-icon>
                 <ion-label> Ask Edit </ion-label>
               </ion-item>
               } @if (canRegisterAsPlayer) {
@@ -120,7 +122,7 @@ import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDel
                  <ion-item-sliding>
                    <ion-item>
                      <ion-avatar slot="start">
-                       <ion-img [src]="item.photoURL || 'https://i.pravatar.cc/300?u=' + item.email"></ion-img>
+                       <ion-img [src]="getAvatarUrl(item)"></ion-img>
                      </ion-avatar>
                      <ion-label> 
                        <h2>{{ item.displayName }}</h2>
@@ -152,8 +154,6 @@ import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDel
     IonContent,
     IonHeader,
     IonImg,
-    IonItem,
-    IonLabel,
     IonList,
     IonModal,
     IonTitle,
@@ -169,9 +169,10 @@ import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDel
 })
 export class TournamentCardComponent {
   @ViewChild('editorsListModal') editorsListModal!: IonModal;
-  editorsListModalOpen = false;
   @Input() tournament!: TournamentWithId;
   matches: MatchWithTeams[] = [];
+  constants = APP_CONSTANTS;
+  tournamentConstants = TOURNAMENT_CARD_CONSTANTS;
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<TournamentDeleteEvent>();
   @Output() askEdit = new EventEmitter<EditAccessEvent>();
@@ -201,9 +202,9 @@ export class TournamentCardComponent {
   }
 
   authService = inject(AuthService);
-  qrService = inject(QrCodeService);
-  firestoreService = inject(FirestoreService);
-  router = inject(Router);
+  private qrService = inject(QrCodeService);
+  private firestoreService = inject(FirestoreService);
+  private router = inject(Router);
 
   get canDelete() {
     return this.authService.hasPermission('admin', this.tournament);
@@ -262,17 +263,25 @@ export class TournamentCardComponent {
   }
 
   getMatchColor(index: number): string {
-    const colors = ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'medium', 'dark'];
-    return colors[index % colors.length];
+    return this.constants.CHIP_COLORS[index % this.constants.CHIP_COLORS.length];
+  }
+
+  getAvatarUrl(item: any): string {
+    return item.photoURL || `${this.constants.ASSETS.PRAVATAR_BASE}${item.email}`;
   }
 
   getMatchDisplay(match: MatchWithTeams): string {
-    return match.team1Name && match.team2Name ? `${match.team1Name} vs ${match.team2Name}` : 
-           `Match ${match.id || 'Unknown'}`;
+    const { TEAM1, TEAM2, TEAM_A, TEAM_B, HOME_TEAM, AWAY_TEAM } = this.tournamentConstants.MATCH_PROPERTIES;
+    
+    if (match.team1Name && match.team2Name) return `${match.team1Name} vs ${match.team2Name}`;
+    
+    return `Match ${match.id || this.constants.MESSAGES.UNKNOWN}`;
   }
 
   onMatchClick(matchId: string) {
-    this.router.navigate(['/match-control', matchId], { queryParams: { tournamentId: this.tournament.id } });
+    this.router.navigate([this.constants.ROUTES.MATCH_CONTROL, matchId], { 
+      queryParams: { tournamentId: this.tournament.id } 
+    });
   }
 
   onRegisterAsPlayer() {
