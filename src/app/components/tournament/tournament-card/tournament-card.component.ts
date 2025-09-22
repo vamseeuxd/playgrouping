@@ -51,6 +51,7 @@ export class TournamentCardComponent {
   teams: any[] = [];
   teamPlayers: { [teamId: string]: any[] } = {};
   constants = APP_CONSTANTS;
+  isMatchesExpanded = false;
 
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<TournamentDeleteEvent>();
@@ -243,6 +244,10 @@ export class TournamentCardComponent {
 
   navigateToKnockout() {
     this.router.navigate(['/knockout', this.tournament.id]);
+  }
+
+  toggleMatches() {
+    this.isMatchesExpanded = !this.isMatchesExpanded;
   }
 
   getTeamPlayerPhoto(match: MatchWithTeams, teamNumber: 1 | 2): string {

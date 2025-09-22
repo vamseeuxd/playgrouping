@@ -53,12 +53,26 @@
   }
 }
 
-.matches-section {
+/* .matches-section {
   margin-bottom: var(--app-space-5);
-}
+} */
 
 .matches-header {
-  margin-bottom: var(--app-space-4);
+  /* margin-bottom: var(--app-space-4); */
+  cursor: pointer;
+  padding: var(--app-space-2);
+  border-radius: var(--app-radius-md);
+  transition: all var(--app-transition-fast);
+
+  &:hover {
+    background: var(--app-gray-50);
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
 
   ion-badge {
     --background: var(--app-gray-200);
@@ -67,9 +81,27 @@
   }
 }
 
+.expand-icon {
+  font-size: var(--app-font-size-base);
+  color: var(--app-gray-500);
+  transition: transform var(--app-transition-fast);
+}
+
 .matches-grid {
   display: grid;
   gap: var(--app-space-3);
+  animation: slideDown var(--app-transition-normal) ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .match-card {

@@ -25,57 +25,65 @@
 
     <!-- Matches Section -->
     <div class="matches-section">
-      <div class="matches-header flex-between">
+      <div class="matches-header flex-between" (click)="toggleMatches()">
         <span class="text-subtitle">Matches</span>
-        <ion-badge color="medium">{{ matches.length }}</ion-badge>
+        <div class="header-actions">
+          <ion-badge color="medium">{{ matches.length }}</ion-badge>
+          <ion-icon 
+            [name]="isMatchesExpanded ? 'chevron-up-outline' : 'chevron-down-outline'"
+            class="expand-icon">
+          </ion-icon>
+        </div>
       </div>
       
-      @if (matches.length > 0) {
-        <div class="matches-grid">
-          @for (match of matches.slice(0, 4); track $index) {
-            <div class="match-card" (click)="onMatchClick(match.id!)">
-              <div class="match-teams">
-                <div class="team">
-                  <ion-avatar class="team-avatar modern-avatar" size="small">
-                    <img [src]="getTeamPlayerPhoto(match, 1)" [alt]="match.team1Name" />
-                  </ion-avatar>
-                  <span class="team-name">{{ getShortTeamName(match.team1Name) }}</span>
+      @if (isMatchesExpanded) {
+        @if (matches.length > 0) {
+          <div class="matches-grid">
+            @for (match of matches.slice(0, 4); track $index) {
+              <div class="match-card" (click)="onMatchClick(match.id!)">
+                <div class="match-teams">
+                  <div class="team">
+                    <ion-avatar class="team-avatar modern-avatar" size="small">
+                      <img [src]="getTeamPlayerPhoto(match, 1)" [alt]="match.team1Name" />
+                    </ion-avatar>
+                    <span class="team-name">{{ getShortTeamName(match.team1Name) }}</span>
+                  </div>
+                  
+                  <div class="vs-separator">
+                    <span class="vs-text">VS</span>
+                  </div>
+                  
+                  <div class="team">
+                    <ion-avatar class="team-avatar modern-avatar" size="small">
+                      <img [src]="getTeamPlayerPhoto(match, 2)" [alt]="match.team2Name" />
+                    </ion-avatar>
+                    <span class="team-name">{{ getShortTeamName(match.team2Name) }}</span>
+                  </div>
                 </div>
                 
-                <div class="vs-separator">
-                  <span class="vs-text">VS</span>
-                </div>
-                
-                <div class="team">
-                  <ion-avatar class="team-avatar modern-avatar" size="small">
-                    <img [src]="getTeamPlayerPhoto(match, 2)" [alt]="match.team2Name" />
-                  </ion-avatar>
-                  <span class="team-name">{{ getShortTeamName(match.team2Name) }}</span>
+                <div class="match-status">
+                  <span class="status-badge" [ngClass]="getStatusClass(match.status)">
+                    {{ getStatusText(match.status) }}
+                  </span>
                 </div>
               </div>
-              
-              <div class="match-status">
-                <span class="status-badge" [ngClass]="getStatusClass(match.status)">
-                  {{ getStatusText(match.status) }}
-                </span>
+            }
+            
+            @if (matches.length > 4) {
+              <div class="more-matches">
+                <ion-button fill="clear" size="small" class="view-all-btn">
+                  <ion-icon name="add-outline"></ion-icon>
+                  <ion-label>{{ matches.length - 4 }} more</ion-label>
+                </ion-button>
               </div>
-            </div>
-          }
-          
-          @if (matches.length > 4) {
-            <div class="more-matches">
-              <ion-button fill="clear" size="small" class="view-all-btn">
-                <ion-icon name="add-outline"></ion-icon>
-                <ion-label>{{ matches.length - 4 }} more</ion-label>
-              </ion-button>
-            </div>
-          }
-        </div>
-      } @else {
-        <div class="no-matches">
-          <ion-icon name="calendar-outline" class="no-matches-icon"></ion-icon>
-          <span class="text-body">No matches scheduled</span>
-        </div>
+            }
+          </div>
+        } @else {
+          <div class="no-matches">
+            <ion-icon name="calendar-outline" class="no-matches-icon"></ion-icon>
+            <span class="text-body">No matches scheduled</span>
+          </div>
+        }
       }
     </div>
 
