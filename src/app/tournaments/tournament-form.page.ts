@@ -35,7 +35,7 @@ import {
 @Component({
   selector: 'app-tournament-form',
   templateUrl: './tournament-form.page.html',
-  styleUrls: ['./tournament-form.page.scss'],
+
   imports: [
     CommonModule,
     FormsModule,

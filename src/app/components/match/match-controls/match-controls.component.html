@@ -1,24 +1,24 @@
-<ion-buttons class="ion-justify-content-between">
+<ion-buttons class="ion-justify-content-between" style="width: var(--app-width-full);">
   @if (status === statusTypes.PENDING) {
-    <ion-button color="success" (click)="onStart()">
+    <ion-button color="success" (click)="onStart()" style="margin: 0 var(--app-margin-xs);">
       Start
     </ion-button>
   } @if (status === statusTypes.STARTED) {
-    <ion-button color="medium" (click)="onPause()">
+    <ion-button color="medium" (click)="onPause()" style="margin: 0 var(--app-margin-xs);">
       Pause
     </ion-button>
-    <ion-button fill="clear" color="danger" (click)="onStop()">
+    <ion-button fill="clear" color="danger" (click)="onStop()" style="margin: 0 var(--app-margin-xs);">
       End
     </ion-button>
   } @if (status === statusTypes.PAUSED) {
-    <ion-button fill="clear" color="success" (click)="onStart()">
+    <ion-button fill="clear" color="success" (click)="onStart()" style="margin: 0 var(--app-margin-xs);">
       Resume
     </ion-button>
-    <ion-button fill="clear" color="danger" (click)="onStop()">
+    <ion-button fill="clear" color="danger" (click)="onStop()" style="margin: 0 var(--app-margin-xs);">
       End
     </ion-button>
   } @if (status !== statusTypes.PENDING) {
-    <ion-button fill="clear" color="secondary" (click)="onReset()">
+    <ion-button fill="clear" color="secondary" (click)="onReset()" style="margin: 0 var(--app-margin-xs);">
       Reset
     </ion-button>
   }

@@ -29,7 +29,7 @@ import { Match, MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '..
 @Component({
   selector: 'app-scoreboard',
   templateUrl: './scoreboard.page.html',
-  styleUrls: ['./scoreboard.page.scss'],
+
   imports: [
     CommonModule,
     IonHeader,

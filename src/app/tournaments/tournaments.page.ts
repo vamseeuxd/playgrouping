@@ -34,7 +34,7 @@ import { TournamentWithId } from '../interfaces';
 @Component({
   selector: 'app-tournaments',
   templateUrl: './tournaments.page.html',
-  styleUrls: ['./tournaments.page.scss'],
+
   imports: [IonButtons, 
     CommonModule,
     IonHeader,

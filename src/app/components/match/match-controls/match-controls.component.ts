@@ -6,7 +6,6 @@ import { APP_CONSTANTS } from '../../../constants/app.constants';
 @Component({
   selector: 'app-match-controls',
   templateUrl: './match-controls.component.html',
-  styleUrls: ['./match-controls.component.scss'],
   imports: [CommonModule, IonButton, IonButtons],
 })
 export class MatchControlsComponent {

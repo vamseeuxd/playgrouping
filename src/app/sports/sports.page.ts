@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-sports',
   templateUrl: './sports.page.html',
-  styleUrls: ['./sports.page.scss'],
+
   imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFab, IonFabButton, IonModal, IonInput, IonButtons, IonBackButton]
 })
 export class SportsPage {

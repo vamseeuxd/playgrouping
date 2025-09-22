@@ -1,20 +1,20 @@
-<ion-card>
+<ion-card style="margin-bottom: var(--app-margin-md);">
   <ion-card-header>
     <ion-card-subtitle>{{ team1 }} vs {{ team2 }}</ion-card-subtitle>
   </ion-card-header>
   <ion-card-content>
     <ion-grid>
       <ion-row>
-        <ion-col size="12" class="ion-text-center" [style]="constants.STYLES.BORDER">
-          <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
+        <ion-col size="12" class="ion-text-center" style="border: var(--app-border-width) solid var(--app-border-color); padding: var(--app-padding-md);">
+          <div style="display: var(--app-display-flex); justify-content: space-between; align-items: var(--app-align-items-center);">
             <h3><b>Team {{ team1 }} </b></h3>
             <h2><b>Score {{ score1 }}</b></h2>
           </div>
           @if (team1Players && team1Players.length > 0) { 
             @for (player of team1Players; track player.userId) {
-              <ion-card>
+              <ion-card style="margin-bottom: var(--app-margin-md);">
                 <ion-card-content>
-                  <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
+                  <div style="display: var(--app-display-flex); justify-content: space-between; align-items: var(--app-align-items-center);">
                     <ion-chip>
                       <ion-avatar>
                         <img [src]="getPlayerAvatar(player)" alt="" />
@@ -22,15 +22,15 @@
                       <ion-label>{{ player?.name || constants.MESSAGES.UNKNOWN }}</ion-label>
                     </ion-chip>
                     @if (!canEdit) {
-                      <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
+                      <h1 style="margin: 0 var(--app-margin-md); font-size: var(--app-font-size-xxxl); color: var(--ion-color-primary);">{{ player?.score || 0 }}</h1>
                     }
                   </div>
                   @if (canEdit) {
-                    <div [style]="constants.STYLES.FLEX_ROW_CENTER">
+                    <div style="display: var(--app-display-flex); justify-content: center; align-items: var(--app-align-items-center);">
                       <ion-button size="small" (click)="onPlayerScoreChange(1, player.userId, true)">
                         <ion-icon [name]="constants.ICONS.ADD"></ion-icon>
                       </ion-button>
-                      <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
+                      <h1 style="margin: 0 var(--app-margin-md); font-size: var(--app-font-size-xxxl); color: var(--ion-color-primary);">{{ player?.score || 0 }}</h1>
                       <ion-button size="small" (click)="onPlayerScoreChange(1, player.userId, false)">
                         <ion-icon [name]="constants.ICONS.REMOVE"></ion-icon>
                       </ion-button>
@@ -43,19 +43,19 @@
             <p>{{ constants.MESSAGES.NO_PLAYERS_FOUND }} {{ team1 }}</p>
           }
         </ion-col>
-        <ion-col size="12" class="ion-text-center" [style]="constants.STYLES.FLEX_CENTER">
-          <img [src]="constants.ASSETS.VS_IMAGE" alt="vs" [style]="constants.STYLES.MAX_WIDTH_50" />
+        <ion-col size="12" class="ion-text-center" style="display: var(--app-display-flex); justify-content: center; align-items: var(--app-align-items-center); padding: var(--app-padding-md);">
+          <img [src]="constants.ASSETS.VS_IMAGE" alt="vs" style="max-width: 50%;" />
         </ion-col>
-        <ion-col size="12" class="ion-text-center" [style]="constants.STYLES.BORDER">
-          <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
+        <ion-col size="12" class="ion-text-center" style="border: var(--app-border-width) solid var(--app-border-color); padding: var(--app-padding-md);">
+          <div style="display: var(--app-display-flex); justify-content: space-between; align-items: var(--app-align-items-center);">
             <h3><b>Team {{ team2 }} </b></h3>
             <h2><b>Score {{ score2 }}</b></h2>
           </div>
           @if (team2Players && team2Players.length > 0) { 
             @for (player of team2Players; track player.userId) {
-              <ion-card>
+              <ion-card style="margin-bottom: var(--app-margin-md);">
                 <ion-card-content>
-                  <div [style]="constants.STYLES.FLEX_ROW_BETWEEN">
+                  <div style="display: var(--app-display-flex); justify-content: space-between; align-items: var(--app-align-items-center);">
                     <ion-chip>
                       <ion-avatar>
                         <img [src]="getPlayerAvatar(player)" alt="" />
@@ -63,15 +63,15 @@
                       <ion-label>{{ player?.name || constants.MESSAGES.UNKNOWN }}</ion-label>
                     </ion-chip>
                     @if (!canEdit) {
-                      <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
+                      <h1 style="margin: 0 var(--app-margin-md); font-size: var(--app-font-size-xxxl); color: var(--ion-color-primary);">{{ player?.score || 0 }}</h1>
                     }
                   </div>
                   @if (canEdit) {
-                    <div [style]="constants.STYLES.FLEX_ROW_CENTER">
+                    <div style="display: var(--app-display-flex); justify-content: center; align-items: var(--app-align-items-center);">
                       <ion-button size="small" (click)="onPlayerScoreChange(2, player.userId, true)">
                         <ion-icon [name]="constants.ICONS.ADD"></ion-icon>
                       </ion-button>
-                      <h1 [style]="constants.STYLES.MARGIN_SIDES">{{ player?.score || 0 }}</h1>
+                      <h1 style="margin: 0 var(--app-margin-md); font-size: var(--app-font-size-xxxl); color: var(--ion-color-primary);">{{ player?.score || 0 }}</h1>
                       <ion-button size="small" (click)="onPlayerScoreChange(2, player.userId, false)">
                         <ion-icon [name]="constants.ICONS.REMOVE"></ion-icon>
                       </ion-button>

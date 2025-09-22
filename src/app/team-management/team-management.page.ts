@@ -32,7 +32,7 @@ import { addOutline, peopleOutline } from 'ionicons/icons';
 @Component({
   selector: 'app-team-management',
   templateUrl: './team-management.page.html',
-  styleUrls: ['./team-management.page.scss'],
+
   imports: [
     CommonModule,
     FormsModule,

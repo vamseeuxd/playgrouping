@@ -1,5 +1,5 @@
 @if (user) {
-<div class="profile-container">
+<div style="font-size: var(--app-font-size-md); display: var(--app-display-flex); margin-bottom: var(--app-margin-sm); border-bottom: var(--app-border-width) solid var(--app-border-color); padding-bottom: var(--app-padding-sm); flex-direction: var(--app-flex-direction-column); width: var(--app-width-full); align-items: var(--app-align-items-center);">
   @if (user.photoURL) {
   <ion-avatar class="ion-margin-end">
     <img [src]="user.photoURL" alt="Profile" />
@@ -8,16 +8,16 @@
   <ion-text class="ion-no-margin">
     <h2 class="ion-no-margin">{{ user.displayName | titlecase }}</h2>
   </ion-text>
-  <ion-note color="tertiary" class="user-email">{{ user.email }}</ion-note>
+  <ion-note color="tertiary" style="margin-bottom: 0;">{{ user.email }}</ion-note>
   <ion-button fill="clear" routerLink="/profile">Edit Profile</ion-button>
   <ion-button fill="clear" (click)="logout()">Logout</ion-button>
 </div>
 } @else {
-<div class="profile-container">
+<div style="font-size: var(--app-font-size-md); display: var(--app-display-flex); margin-bottom: var(--app-margin-sm); border-bottom: var(--app-border-width) solid var(--app-border-color); padding-bottom: var(--app-padding-sm); flex-direction: var(--app-flex-direction-column); width: var(--app-width-full); align-items: var(--app-align-items-center);">
   <ion-text class="ion-no-margin">
     <h2 class="ion-no-margin">Welcome, Guest!</h2>
   </ion-text>
-  <ion-note class="user-email">Please log in to access more features.</ion-note>
+  <ion-note style="margin-bottom: 0;">Please log in to access more features.</ion-note>
   <ion-button fill="clear" routerLink="/login">Login</ion-button>
 </div>
 }

@@ -25,7 +25,7 @@ import { UserProfile } from '../interfaces';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss'],
+
   imports: [
     CommonModule,
     FormsModule,

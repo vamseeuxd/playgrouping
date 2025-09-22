@@ -6,7 +6,6 @@ import { APP_CONSTANTS } from '../../../constants/app.constants';
 @Component({
   selector: 'app-loading-wrapper',
   templateUrl: './loading-wrapper.component.html',
-  styleUrls: ['./loading-wrapper.component.scss'],
   imports: [CommonModule]
 })
 export class LoadingWrapperComponent {

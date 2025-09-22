@@ -36,9 +36,237 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+:root {
+  /* Layout & Spacing */
+  --app-padding-xs: 4px;
+  --app-padding-sm: 8px;
+  --app-padding-md: 16px;
+  --app-padding-lg: 20px;
+  --app-padding-xl: 30px;
+  --app-margin-xs: 4px;
+  --app-margin-sm: 8px;
+  --app-margin-md: 16px;
+  --app-margin-lg: 20px;
+  --app-margin-xl: 30px;
+  
+  /* Typography */
+  --app-font-size-xs: 12px;
+  --app-font-size-sm: 14px;
+  --app-font-size-md: 16px;
+  --app-font-size-lg: 18px;
+  --app-font-size-xl: 22px;
+  --app-font-size-xxl: 3rem;
+  --app-font-size-xxxl: 4rem;
+  --app-font-weight-normal: 400;
+  --app-font-weight-medium: 500;
+  --app-font-weight-semibold: 600;
+  --app-font-weight-bold: 700;
+  --app-line-height-normal: 24px;
+  
+  /* Borders */
+  --app-border-width: 1px;
+  --app-border-radius: 4px;
+  --app-border-color: var(--ion-color-primary);
+  --app-border-color-step: var(--ion-background-color-step-150, #d7d8da);
+  
+  /* Layout */
+  --app-width-full: 100%;
+  --app-height-min: 20px;
+  --app-height-md: 26px;
+  --app-height-lg: 50px;
+  
+  /* Colors */
+  --app-color-text-medium: #616e7e;
+  --app-color-text-secondary: #73849a;
+  --app-color-text-tertiary: #757575;
+  --app-background-selected: rgba(var(--ion-color-primary-rgb), 0.14);
+  --app-background-item: var(--ion-item-background, var(--ion-background-color, #fff));
+  
+  /* Display */
+  --app-display-block: block;
+  --app-display-flex: flex;
+  --app-display-inline-block: inline-block;
+  
+  /* Flex */
+  --app-flex-direction-column: column;
+  --app-align-items-center: center;
+  
+  /* Text Alignment */
+  --app-text-align-center: center;
+}
+
 * {
-  user-select: text; /* Allows text selection */
-  -webkit-user-select: text; /* For older WebKit browsers */
-  -moz-user-select: text; /* For older Firefox browsers */
-  -ms-user-select: text; /* For older Internet Explorer/Edge */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Global Component Styles */
+ion-item {
+  --padding-start: var(--app-padding-md);
+  --padding-end: var(--app-padding-md);
+}
+
+ion-fab-button {
+  --background: var(--ion-color-primary);
+}
+
+ion-card {
+  margin-bottom: var(--app-margin-md);
+}
+
+.score-display {
+  font-size: var(--app-font-size-xxl);
+  font-weight: var(--app-font-weight-bold);
+  text-align: var(--app-text-align-center);
+}
+
+ion-col {
+  padding: var(--app-padding-md);
+}
+
+h1 {
+  font-size: var(--app-font-size-xxxl);
+  margin: var(--app-margin-md) 0;
+  color: var(--ion-color-primary);
+}
+
+.profile-container {
+  font-size: var(--app-font-size-md);
+  display: var(--app-display-flex);
+  margin-bottom: var(--app-margin-sm);
+  border-bottom: var(--app-border-width) solid var(--app-border-color);
+  padding-bottom: var(--app-padding-sm);
+  flex-direction: var(--app-flex-direction-column);
+  width: var(--app-width-full);
+  align-items: var(--app-align-items-center);
+}
+
+.user-email {
+  margin-bottom: 0;
+}
+
+ion-buttons {
+  width: var(--app-width-full);
+}
+
+ion-buttons ion-button {
+  margin: 0 var(--app-margin-xs);
+}
+
+/* Menu Styles */
+ion-menu ion-content {
+  --background: var(--app-background-item);
+}
+
+ion-menu.md ion-content {
+  --padding-start: var(--app-padding-sm);
+  --padding-end: var(--app-padding-sm);
+  --padding-top: var(--app-padding-lg);
+  --padding-bottom: var(--app-padding-lg);
+}
+
+ion-menu.md ion-list {
+  padding: var(--app-padding-lg) 0;
+}
+
+ion-menu.md ion-note {
+  margin-bottom: var(--app-margin-xl);
+}
+
+ion-menu.md ion-list-header,
+ion-menu.md ion-note {
+  padding-left: 10px;
+}
+
+ion-menu.md ion-list#inbox-list {
+  border-bottom: var(--app-border-width) solid var(--app-border-color-step);
+}
+
+ion-menu.md ion-list#inbox-list ion-list-header {
+  font-size: var(--app-font-size-xl);
+  font-weight: var(--app-font-weight-semibold);
+  min-height: var(--app-height-min);
+}
+
+ion-menu.md ion-list#labels-list ion-list-header {
+  font-size: var(--app-font-size-md);
+  margin-bottom: 18px;
+  color: var(--app-color-text-tertiary);
+  min-height: var(--app-height-md);
+}
+
+ion-menu.md ion-item {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  border-radius: var(--app-border-radius);
+}
+
+ion-menu.md ion-item.selected {
+  --background: var(--app-background-selected);
+}
+
+ion-menu.md ion-item.selected ion-icon {
+  color: var(--ion-color-primary);
+}
+
+ion-menu.md ion-item ion-icon {
+  color: var(--app-color-text-medium);
+}
+
+ion-menu.md ion-item ion-label {
+  font-weight: var(--app-font-weight-medium);
+}
+
+ion-menu.ios ion-content {
+  --padding-bottom: var(--app-padding-lg);
+}
+
+ion-menu.ios ion-list {
+  padding: var(--app-padding-lg) 0 0 0;
+}
+
+ion-menu.ios ion-note {
+  line-height: var(--app-line-height-normal);
+  margin-bottom: var(--app-margin-lg);
+}
+
+ion-menu.ios ion-item {
+  --padding-start: var(--app-padding-md);
+  --padding-end: var(--app-padding-md);
+  --min-height: var(--app-height-lg);
+}
+
+ion-menu.ios ion-item.selected ion-icon {
+  color: var(--ion-color-primary);
+}
+
+ion-menu.ios ion-item ion-icon {
+  font-size: 24px;
+  color: var(--app-color-text-secondary);
+}
+
+ion-menu.ios ion-list#labels-list ion-list-header {
+  margin-bottom: var(--app-margin-sm);
+}
+
+ion-menu.ios ion-list-header,
+ion-menu.ios ion-note {
+  padding-left: var(--app-padding-md);
+  padding-right: var(--app-padding-md);
+}
+
+ion-menu.ios ion-note {
+  margin-bottom: var(--app-margin-sm);
+}
+
+ion-note {
+  display: var(--app-display-inline-block);
+  font-size: var(--app-font-size-md);
+  color: var(--ion-color-medium-shade);
+}
+
+ion-item.selected {
+  --color: var(--ion-color-primary);
 }

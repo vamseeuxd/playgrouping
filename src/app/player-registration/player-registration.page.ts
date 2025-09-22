@@ -24,7 +24,6 @@ import { PlayerRegistration } from '../interfaces';
 @Component({
   selector: 'app-player-registration',
   templateUrl: './player-registration.page.html',
-  styleUrls: ['./player-registration.page.scss'],
   imports: [
     CommonModule,
     FormsModule,

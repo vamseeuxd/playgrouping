@@ -56,7 +56,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
+
   imports: [
     CommonModule,
     RouterLink,

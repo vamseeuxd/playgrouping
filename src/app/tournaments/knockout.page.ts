@@ -12,7 +12,7 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-knockout',
   templateUrl: './knockout.page.html',
-  styleUrls: ['./knockout.page.scss'],
+
   imports: [IonList, CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip]
 })
 export class KnockoutPage {

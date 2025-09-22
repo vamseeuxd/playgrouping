@@ -13,7 +13,7 @@ import { APP_CONSTANTS } from '../constants/app.constants';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+
   imports: [
     IonButton,
     IonToolbar,

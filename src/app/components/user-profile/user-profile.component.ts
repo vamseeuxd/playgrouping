@@ -7,7 +7,6 @@ import { APP_CONSTANTS } from '../../constants/app.constants';
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss'],
   imports: [RouterLink, IonAvatar, IonText, IonNote, IonButton, TitleCasePipe]
 })
 export class UserProfileComponent {

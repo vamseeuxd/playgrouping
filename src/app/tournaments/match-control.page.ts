@@ -37,7 +37,6 @@ import { Match, MatchWithTeams, TournamentWithId, Team, TeamPlayerWithUser, Matc
 @Component({
   selector: 'app-match-control',
   templateUrl: './match-control.page.html',
-  styleUrls: ['./match-control.page.scss'],
   imports: [IonFooter,
     CommonModule,
     FormsModule,
