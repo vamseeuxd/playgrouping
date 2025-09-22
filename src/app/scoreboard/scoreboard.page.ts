@@ -5,18 +5,12 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonItem,
-  IonLabel,
   IonBackButton,
   IonButtons,
-  IonGrid,
-  IonRow,
-  IonCol,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { trophyOutline, timeOutline, calendarOutline, footballOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
@@ -24,7 +18,7 @@ import { TeamStandingsComponent } from '../components/scoreboard/team-standings/
 import { PlayerStandingsComponent } from '../components/scoreboard/player-standings/player-standings.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { Match, MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '../interfaces';
+import { MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '../interfaces';
 
 @Component({
   selector: 'app-scoreboard',
@@ -36,17 +30,12 @@ import { Match, MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '..
     IonToolbar,
     IonTitle,
     IonContent,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonItem,
-    IonLabel,
     IonBackButton,
     IonButtons,
+    IonIcon,
     TeamStandingsComponent,
-    PlayerStandingsComponent,
-  ],
+    PlayerStandingsComponent
+],
 })
 export class ScoreboardPage {
   private route = inject(ActivatedRoute);
@@ -61,14 +50,16 @@ export class ScoreboardPage {
   playerStats: any[] = [];
 
   constructor() {
+    addIcons({ trophyOutline, timeOutline, calendarOutline, footballOutline });
+
     this.tournamentId = this.route.snapshot.params['id'];
-    
+
     // Check for view access via QR code
     const accessParam = this.route.snapshot.queryParams['access'];
     if (accessParam === 'view') {
       this.authService.setViewAccess(this.tournamentId);
     }
-    
+
     // Allow access to scoreboard for all users (authenticated or not)
     this.loadData();
   }
@@ -155,7 +146,7 @@ export class ScoreboardPage {
   }
 
   calculatePlayerStats() {
-    const playerStatsMap = new Map<string, { name: string; team: string; goals: number; played: number }>();
+    const playerStatsMap = new Map<string, { name: string; team: string; goals: number; played: number; photoURL?: string }>();
 
     // Initialize all players
     this.teams.forEach(team => {
@@ -164,7 +155,8 @@ export class ScoreboardPage {
           name: player.name,
           team: team.name,
           goals: 0,
-          played: 0
+          played: 0,
+          photoURL: player.photoURL
         });
       });
     });
@@ -206,5 +198,11 @@ export class ScoreboardPage {
     if (timestamp.toDate) return timestamp.toDate();
     if (timestamp instanceof Date) return timestamp;
     return new Date(timestamp);
+  }
+
+  getRecentMatches() {
+    return this.matches
+      .filter(match => match.status === APP_CONSTANTS.MATCH.STATUS.FINISHED)
+      .slice(0, 5);
   }
 }
