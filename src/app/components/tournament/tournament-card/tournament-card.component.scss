@@ -1,0 +1,337 @@
+.tournament-card {
+  margin: var(--app-space-4) var(--app-space-4) var(--app-space-6);
+  border-radius: var(--app-radius-xl);
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--app-shadow-xl);
+  }
+}
+
+.tournament-content {
+  padding: var(--app-space-6);
+}
+
+.tournament-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--app-space-6);
+}
+
+.tournament-info {
+  flex: 1;
+}
+
+.tournament-name {
+  margin: 0 0 var(--app-space-3) 0;
+  color: var(--app-gray-900);
+}
+
+.tournament-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-3);
+  flex-wrap: wrap;
+}
+
+.sport-chip {
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  --color: var(--ion-color-primary);
+  font-size: var(--app-font-size-xs);
+  height: 28px;
+}
+
+.menu-button {
+  --color: var(--app-gray-500);
+  --padding-start: var(--app-space-2);
+  --padding-end: var(--app-space-2);
+
+  &:hover {
+    --color: var(--app-gray-700);
+  }
+}
+
+.matches-section {
+  margin-bottom: var(--app-space-5);
+}
+
+.matches-header {
+  margin-bottom: var(--app-space-4);
+
+  ion-badge {
+    --background: var(--app-gray-200);
+    --color: var(--app-gray-700);
+    font-weight: var(--app-font-weight-medium);
+  }
+}
+
+.matches-grid {
+  display: grid;
+  gap: var(--app-space-3);
+}
+
+.match-card {
+  background: var(--app-gray-50);
+  border-radius: var(--app-radius-md);
+  padding: var(--app-space-4);
+  cursor: pointer;
+  transition: all var(--app-transition-fast);
+  border: 1px solid var(--app-gray-200);
+
+  &:hover {
+    background: white;
+    box-shadow: var(--app-shadow-md);
+    transform: translateY(-1px);
+  }
+}
+
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--app-space-3);
+  flex-direction: column;
+}
+
+.team {
+  display: flex;
+  gap: var(--app-space-2);
+  flex: 1;
+  min-width: 0;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+}
+
+.team-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.team-initial {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--app-primary),
+    var(--app-primary-light)
+  );
+  color: white;
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-bold);
+}
+
+.team-name {
+  font-size: var(--app-font-size-md);
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.vs-separator {
+  margin: 0 var(--app-space-2);
+  flex-shrink: 0;
+}
+
+.vs-text {
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-bold);
+  color: var(--app-gray-400);
+  background: var(--app-gray-200);
+  padding: var(--app-space-1) var(--app-space-2);
+  border-radius: var(--app-radius-sm);
+}
+
+.match-status {
+  display: flex;
+  justify-content: center;
+}
+
+.more-matches {
+  display: flex;
+  justify-content: center;
+  padding: var(--app-space-3);
+  background: var(--app-gray-50);
+  border-radius: var(--app-radius-md);
+  border: 1px dashed var(--app-gray-300);
+}
+
+.view-all-btn {
+  --color: var(--app-gray-600);
+  font-size: var(--app-font-size-sm);
+}
+
+.no-matches {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--app-space-8) var(--app-space-4);
+  color: var(--app-gray-500);
+}
+
+.no-matches-icon {
+  font-size: 48px;
+  margin-bottom: var(--app-space-3);
+  opacity: 0.5;
+}
+
+.registration-status {
+  border-top: 1px solid var(--app-gray-200);
+  padding-top: var(--app-space-4);
+}
+
+.registration-chip {
+  --background: rgba(var(--ion-color-success-rgb), 0.1);
+  --color: var(--ion-color-success);
+  font-size: var(--app-font-size-xs);
+}
+
+// Popover Styles
+.popover-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: var(--app-space-2);
+  --padding-bottom: var(--app-space-2);
+}
+
+.action-list {
+  padding: 0;
+
+  ion-item {
+    --padding-start: var(--app-space-4);
+    --padding-end: var(--app-space-4);
+    --min-height: 48px;
+    font-size: var(--app-font-size-base);
+
+    &:hover {
+      --background: var(--app-gray-50);
+    }
+
+    &.delete-item:hover {
+      --background: rgba(var(--ion-color-danger-rgb), 0.05);
+    }
+  }
+
+  ion-icon {
+    margin-right: var(--app-space-3);
+  }
+}
+
+// Modal Styles
+.editors-content {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--app-space-16) var(--app-space-8);
+  text-align: center;
+  color: var(--app-gray-500);
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: var(--app-space-4);
+    opacity: 0.5;
+  }
+
+  h3 {
+    margin: 0 0 var(--app-space-2) 0;
+    color: var(--app-gray-700);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--app-font-size-sm);
+  }
+}
+
+.editors-list {
+  padding: var(--app-space-2) 0;
+}
+
+.editor-item {
+  --padding-start: var(--app-space-4);
+  --padding-end: var(--app-space-4);
+  --min-height: 72px;
+}
+
+.editor-name {
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-gray-900);
+  margin: 0 0 var(--app-space-1) 0;
+}
+
+.editor-email {
+  color: var(--app-gray-600);
+  font-size: var(--app-font-size-sm);
+  margin: 0 0 var(--app-space-2) 0;
+}
+
+.approval-chip {
+  font-size: var(--app-font-size-xs);
+  height: 24px;
+
+  &[color="success"] {
+    --background: rgba(var(--ion-color-success-rgb), 0.1);
+    --color: var(--ion-color-success);
+  }
+
+  &[color="warning"] {
+    --background: rgba(var(--ion-color-warning-rgb), 0.1);
+    --color: var(--ion-color-warning);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .tournament-card {
+    margin: var(--app-space-3) var(--app-space-3) var(--app-space-4);
+  }
+
+  .tournament-content {
+    padding: var(--app-space-4);
+  }
+
+  .tournament-header {
+    margin-bottom: var(--app-space-4);
+  }
+
+  .match-teams {
+    flex-direction: column;
+    gap: var(--app-space-2);
+  }
+
+  .team {
+    justify-content: center;
+  }
+
+  .vs-separator {
+    margin: var(--app-space-1) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .tournament-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--app-space-2);
+  }
+
+  .team-name {
+    font-size: var(--app-font-size-md);
+  }
+}

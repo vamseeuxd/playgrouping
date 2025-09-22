@@ -37,62 +37,89 @@
 @import '@ionic/angular/css/palettes/dark.system.css';
 
 :root {
-  /* Layout & Spacing */
-  --app-padding-xs: 4px;
-  --app-padding-sm: 8px;
-  --app-padding-md: 16px;
-  --app-padding-lg: 20px;
-  --app-padding-xl: 30px;
-  --app-margin-xs: 4px;
-  --app-margin-sm: 8px;
-  --app-margin-md: 16px;
-  --app-margin-lg: 20px;
-  --app-margin-xl: 30px;
+  /* Modern Color Palette */
+  --app-primary: #1a73e8;
+  --app-primary-light: #4285f4;
+  --app-primary-dark: #1557b0;
+  --app-secondary: #34a853;
+  --app-accent: #ff6d01;
+  --app-warning: #fbbc04;
+  --app-danger: #ea4335;
+  --app-success: #34a853;
+  
+  /* Status Colors */
+  --app-status-ongoing: #34a853;
+  --app-status-scheduled: #1a73e8;
+  --app-status-completed: #fbbc04;
+  --app-status-cancelled: #ea4335;
+  
+  /* Neutral Colors */
+  --app-gray-50: #f8f9fa;
+  --app-gray-100: #f1f3f4;
+  --app-gray-200: #e8eaed;
+  --app-gray-300: #dadce0;
+  --app-gray-400: #bdc1c6;
+  --app-gray-500: #9aa0a6;
+  --app-gray-600: #80868b;
+  --app-gray-700: #5f6368;
+  --app-gray-800: #3c4043;
+  --app-gray-900: #202124;
   
   /* Typography */
-  --app-font-size-xs: 12px;
-  --app-font-size-sm: 14px;
+  --app-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --app-font-size-xs: 11px;
+  --app-font-size-sm: 13px;
+  --app-font-size-base: 14px;
   --app-font-size-md: 16px;
   --app-font-size-lg: 18px;
-  --app-font-size-xl: 22px;
-  --app-font-size-xxl: 3rem;
-  --app-font-size-xxxl: 4rem;
+  --app-font-size-xl: 20px;
+  --app-font-size-2xl: 24px;
+  --app-font-size-3xl: 32px;
+  --app-font-weight-light: 300;
   --app-font-weight-normal: 400;
   --app-font-weight-medium: 500;
   --app-font-weight-semibold: 600;
   --app-font-weight-bold: 700;
-  --app-line-height-normal: 24px;
+  --app-line-height-tight: 1.25;
+  --app-line-height-normal: 1.5;
+  --app-line-height-relaxed: 1.75;
   
-  /* Borders */
-  --app-border-width: 1px;
-  --app-border-radius: 4px;
-  --app-border-color: var(--ion-color-primary);
-  --app-border-color-step: var(--ion-background-color-step-150, #d7d8da);
+  /* Spacing */
+  --app-space-1: 4px;
+  --app-space-2: 8px;
+  --app-space-3: 12px;
+  --app-space-4: 16px;
+  --app-space-5: 20px;
+  --app-space-6: 24px;
+  --app-space-8: 32px;
+  --app-space-10: 40px;
+  --app-space-12: 48px;
+  --app-space-16: 64px;
+  
+  /* Border Radius */
+  --app-radius-sm: 6px;
+  --app-radius-md: 8px;
+  --app-radius-lg: 12px;
+  --app-radius-xl: 16px;
+  --app-radius-2xl: 24px;
+  --app-radius-full: 9999px;
+  
+  /* Shadows */
+  --app-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --app-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --app-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --app-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   
   /* Layout */
-  --app-width-full: 100%;
-  --app-height-min: 20px;
-  --app-height-md: 26px;
-  --app-height-lg: 50px;
+  --app-max-width-sm: 640px;
+  --app-max-width-md: 768px;
+  --app-max-width-lg: 1024px;
+  --app-max-width-xl: 1280px;
   
-  /* Colors */
-  --app-color-text-medium: #616e7e;
-  --app-color-text-secondary: #73849a;
-  --app-color-text-tertiary: #757575;
-  --app-background-selected: rgba(var(--ion-color-primary-rgb), 0.14);
-  --app-background-item: var(--ion-item-background, var(--ion-background-color, #fff));
-  
-  /* Display */
-  --app-display-block: block;
-  --app-display-flex: flex;
-  --app-display-inline-block: inline-block;
-  
-  /* Flex */
-  --app-flex-direction-column: column;
-  --app-align-items-center: center;
-  
-  /* Text Alignment */
-  --app-text-align-center: center;
+  /* Animation */
+  --app-transition-fast: 150ms ease-in-out;
+  --app-transition-normal: 250ms ease-in-out;
+  --app-transition-slow: 350ms ease-in-out;
 }
 
 * {
@@ -100,6 +127,160 @@
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
+}
+
+body {
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size-base);
+  line-height: var(--app-line-height-normal);
+  color: var(--app-gray-800);
+}
+
+/* Modern Card Styles */
+.modern-card {
+  background: white;
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-md);
+  border: 1px solid var(--app-gray-200);
+  overflow: hidden;
+  transition: all var(--app-transition-normal);
+}
+
+.modern-card:hover {
+  box-shadow: var(--app-shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--app-space-1) var(--app-space-3);
+  border-radius: var(--app-radius-full);
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-ongoing {
+  background: rgba(52, 168, 83, 0.1);
+  color: var(--app-status-ongoing);
+}
+
+.status-scheduled {
+  background: rgba(26, 115, 232, 0.1);
+  color: var(--app-status-scheduled);
+}
+
+.status-completed {
+  background: rgba(251, 188, 4, 0.1);
+  color: var(--app-status-completed);
+}
+
+.status-cancelled {
+  background: rgba(234, 67, 53, 0.1);
+  color: var(--app-status-cancelled);
+}
+
+/* Modern Button Styles */
+.btn-modern {
+  border-radius: var(--app-radius-md);
+  font-weight: var(--app-font-weight-medium);
+  transition: all var(--app-transition-fast);
+  box-shadow: var(--app-shadow-sm);
+}
+
+.btn-modern:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--app-shadow-md);
+}
+
+/* Search Bar */
+.search-container {
+  background: var(--app-gray-50);
+  border-radius: var(--app-radius-lg);
+  padding: var(--app-space-4);
+  margin: var(--app-space-4);
+  box-shadow: var(--app-shadow-sm);
+}
+
+/* Chip Styles */
+.modern-chip {
+  border-radius: var(--app-radius-full);
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-medium);
+  padding: var(--app-space-1) var(--app-space-3);
+  margin: var(--app-space-1);
+  transition: all var(--app-transition-fast);
+}
+
+.modern-chip:hover {
+  transform: scale(1.05);
+}
+
+/* Avatar Styles */
+.modern-avatar {
+  border: 2px solid white;
+  box-shadow: var(--app-shadow-md);
+}
+
+/* Typography */
+.text-title {
+  font-size: var(--app-font-size-lg);
+  font-weight: var(--app-font-weight-semibold);
+  color: var(--app-gray-900);
+  line-height: var(--app-line-height-tight);
+}
+
+.text-subtitle {
+  font-size: var(--app-font-size-base);
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-gray-700);
+}
+
+.text-body {
+  font-size: var(--app-font-size-sm);
+  color: var(--app-gray-600);
+}
+
+.text-caption {
+  font-size: var(--app-font-size-xs);
+  color: var(--app-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--app-font-weight-medium);
+}
+
+/* Layout Utilities */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-start {
+  display: flex;
+  align-items: center;
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--app-space-4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Global Component Styles */

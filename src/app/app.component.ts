@@ -45,6 +45,7 @@ import {
   lockClosedOutline,
   checkmarkOutline,
   closeOutline,
+  createOutline,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -115,6 +116,7 @@ export class AppComponent {
       lockClosedOutline,
       checkmarkOutline,
       closeOutline,
+      createOutline,
     });
   }
 

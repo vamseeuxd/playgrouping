@@ -1,35 +1,131 @@
-<ion-header>
+<ion-header class="modern-header">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-    </ion-buttons>      
-    <ion-title>Manage Tournaments</ion-title>
+    </ion-buttons>
+    <ion-title class="header-title">
+      <div class="title-content">
+        <ion-icon name="trophy-outline" class="title-icon"></ion-icon>
+        <span>Tournaments</span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="toggleSearchMode()">
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
+  
+  <!-- Search and Filter Bar -->
+  @if (showSearch) {
+    <ion-toolbar class="search-toolbar">
+      <div class="search-container">
+        <ion-searchbar 
+          [(ngModel)]="searchTerm"
+          (ionInput)="onSearchChange($event)"
+          placeholder="Search tournaments..."
+          show-clear-button="focus"
+          class="modern-searchbar">
+        </ion-searchbar>
+        
+        <div class="filter-chips">
+          <ion-chip 
+            [color]="selectedSport === 'all' ? 'primary' : 'medium'"
+            (click)="filterBySport('all')"
+            class="filter-chip">
+            <ion-label>All Sports</ion-label>
+          </ion-chip>
+          @for (sport of availableSports; track sport) {
+            <ion-chip 
+              [color]="selectedSport === sport ? 'primary' : 'medium'"
+              (click)="filterBySport(sport)"
+              class="filter-chip">
+              <ion-label>{{ sport }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+      </div>
+    </ion-toolbar>
+  }
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    @for (tournament of tournaments$ | async; track tournament.id) {
-    <app-tournament-card
-      [tournament]="tournament"
-      (edit)="editTournament($event)"
-      (delete)="deleteTournament($event.id, $event.name)"
-      (removeEditAccess)="removeEditAccess($event.id, $event.tournament, $event.email)"
-      (approveEditAccess)="approveEditAccess($event.id, $event.tournament, $event.email)"
-      (askEdit)="askEditTournament($event.id, $event.tournament, $event.email, $event.displayName, $event.photoURL)"
-      (registerAsPlayer)="registerAsPlayer($event.tournamentId, $event.tournamentName)"
-      (toggleRegistration)="toggleRegistration($event)"
-      (manageTeams)="manageTeams($event)">
-    </app-tournament-card>
-    }
-  </ion-list>
+<ion-content class="tournaments-content">
+  <!-- Stats Overview -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <ion-icon name="trophy-outline" class="stat-icon primary"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-number">{{ totalTournaments }}</span>
+          <span class="stat-label">Total Tournaments</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <ion-icon name="play-circle-outline" class="stat-icon success"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-number">{{ activeTournaments }}</span>
+          <span class="stat-label">Active</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <ion-icon name="people-outline" class="stat-icon secondary"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-number">{{ openRegistrations }}</span>
+          <span class="stat-label">Open Registration</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  @if (canCreateTournament) {
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="addTournament()">
+  <!-- Tournaments Grid -->
+  <div class="tournaments-section">
+    @if ((filteredTournaments$ | async)?.length === 0 && !isLoading) {
+      <div class="empty-state">
+        <ion-icon name="trophy-outline" class="empty-icon"></ion-icon>
+        <h2>No Tournaments Found</h2>
+        <p>{{ searchTerm ? 'Try adjusting your search criteria' : 'Create your first tournament to get started' }}</p>
+        @if (canCreateTournament && !searchTerm) {
+          <ion-button (click)="addTournament()" class="btn-modern">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Create Tournament
+          </ion-button>
+        }
+      </div>
+    } @else {
+      <div class="tournaments-grid">
+        @for (tournament of filteredTournaments$ | async; track tournament.id) {
+          <app-tournament-card
+            [tournament]="tournament"
+            (edit)="editTournament($event)"
+            (delete)="deleteTournament($event.id, $event.name)"
+            (removeEditAccess)="removeEditAccess($event.id, $event.tournament, $event.email)"
+            (approveEditAccess)="approveEditAccess($event.id, $event.tournament, $event.email)"
+            (askEdit)="askEditTournament($event.id, $event.tournament, $event.email, $event.displayName, $event.photoURL)"
+            (registerAsPlayer)="registerAsPlayer($event.tournamentId, $event.tournamentName)"
+            (toggleRegistration)="toggleRegistration($event)"
+            (manageTeams)="manageTeams($event)">
+          </app-tournament-card>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Loading tournaments...</p>
+    </div>
+  }
+</ion-content>
+
+<!-- Floating Action Button -->
+@if (canCreateTournament) {
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="modern-fab">
+    <ion-fab-button (click)="addTournament()" class="fab-button">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  }
-
-</ion-content>
+}

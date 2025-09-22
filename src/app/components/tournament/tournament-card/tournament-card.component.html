@@ -1,0 +1,231 @@
+<ion-card class="modern-card tournament-card">
+  <ion-card-content class="tournament-content">
+    <!-- Header Section -->
+    <div class="tournament-header">
+      <div class="tournament-info">
+        <h2 class="text-title tournament-name">{{ tournament.name }}</h2>
+        <div class="tournament-meta">
+          <ion-chip class="sport-chip" color="primary" outline="true">
+            <ion-icon name="trophy-outline"></ion-icon>
+            <ion-label>{{ tournament.sport }}</ion-label>
+          </ion-chip>
+          <span class="text-caption">{{ tournament.startDate | date : 'MMM dd, yyyy' }}</span>
+        </div>
+      </div>
+      
+      <!-- Action Menu -->
+      <ion-button 
+        id="tournament-menu-{{ tournament.id }}" 
+        fill="clear" 
+        size="small"
+        class="menu-button">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Matches Section -->
+    <div class="matches-section">
+      <div class="matches-header flex-between">
+        <span class="text-subtitle">Matches</span>
+        <ion-badge color="medium">{{ matches.length }}</ion-badge>
+      </div>
+      
+      @if (matches.length > 0) {
+        <div class="matches-grid">
+          @for (match of matches.slice(0, 4); track $index) {
+            <div class="match-card" (click)="onMatchClick(match.id!)">
+              <div class="match-teams">
+                <div class="team">
+                  <ion-avatar class="team-avatar modern-avatar" size="small">
+                    <img [src]="getTeamPlayerPhoto(match, 1)" [alt]="match.team1Name" />
+                  </ion-avatar>
+                  <span class="team-name">{{ getShortTeamName(match.team1Name) }}</span>
+                </div>
+                
+                <div class="vs-separator">
+                  <span class="vs-text">VS</span>
+                </div>
+                
+                <div class="team">
+                  <ion-avatar class="team-avatar modern-avatar" size="small">
+                    <img [src]="getTeamPlayerPhoto(match, 2)" [alt]="match.team2Name" />
+                  </ion-avatar>
+                  <span class="team-name">{{ getShortTeamName(match.team2Name) }}</span>
+                </div>
+              </div>
+              
+              <div class="match-status">
+                <span class="status-badge" [ngClass]="getStatusClass(match.status)">
+                  {{ getStatusText(match.status) }}
+                </span>
+              </div>
+            </div>
+          }
+          
+          @if (matches.length > 4) {
+            <div class="more-matches">
+              <ion-button fill="clear" size="small" class="view-all-btn">
+                <ion-icon name="add-outline"></ion-icon>
+                <ion-label>{{ matches.length - 4 }} more</ion-label>
+              </ion-button>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="no-matches">
+          <ion-icon name="calendar-outline" class="no-matches-icon"></ion-icon>
+          <span class="text-body">No matches scheduled</span>
+        </div>
+      }
+    </div>
+
+    <!-- Registration Status -->
+    @if (tournament.registrationOpen) {
+      <div class="registration-status">
+        <ion-chip color="success" class="registration-chip">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <ion-label>Registration Open</ion-label>
+        </ion-chip>
+      </div>
+    }
+  </ion-card-content>
+
+  <!-- Action Menu Popover -->
+  <ion-popover trigger="tournament-menu-{{ tournament.id }}" [dismissOnSelect]="true">
+    <ng-template>
+      <ion-content class="popover-content">
+        <ion-list class="action-list">
+          @if (canView) {
+            <ion-item button (click)="navigateToScoreboard()">
+              <ion-icon slot="start" name="stats-chart-outline" color="primary"></ion-icon>
+              <ion-label>Scoreboard</ion-label>
+            </ion-item>
+            <ion-item button (click)="navigateToKnockout()">
+              <ion-icon slot="start" name="trophy-outline" color="warning"></ion-icon>
+              <ion-label>Knockout</ion-label>
+            </ion-item>
+          }
+          
+          @if (canEdit) {
+            <ion-item button (click)="onEdit()">
+              <ion-icon slot="start" name="create-outline" color="medium"></ion-icon>
+              <ion-label>Edit Tournament</ion-label>
+            </ion-item>
+            <ion-item button (click)="onPrintQR()">
+              <ion-icon slot="start" name="qr-code-outline" color="dark"></ion-icon>
+              <ion-label>Print QR Code</ion-label>
+            </ion-item>
+          }
+          
+          @if (canManageRegistration) {
+            <ion-item button (click)="onToggleRegistration()">
+              <ion-icon 
+                slot="start" 
+                [name]="tournament.registrationOpen ? 'lock-closed-outline' : 'lock-open-outline'"
+                [color]="tournament.registrationOpen ? 'danger' : 'success'">
+              </ion-icon>
+              <ion-label>{{ tournament.registrationOpen ? 'Close' : 'Open' }} Registration</ion-label>
+            </ion-item>
+            <ion-item button (click)="onManageTeams()">
+              <ion-icon slot="start" name="people-outline" color="tertiary"></ion-icon>
+              <ion-label>Manage Teams</ion-label>
+            </ion-item>
+          }
+          
+          @if (canRegisterAsPlayer) {
+            <ion-item button (click)="onRegisterAsPlayer()">
+              <ion-icon slot="start" name="person-add-outline" color="success"></ion-icon>
+              <ion-label>Register as Player</ion-label>
+            </ion-item>
+          }
+          
+          @if (canAskEdit) {
+            <ion-item button (click)="onAskEdit()">
+              <ion-icon slot="start" name="mail-outline" color="secondary"></ion-icon>
+              <ion-label>Request Edit Access</ion-label>
+            </ion-item>
+          }
+          
+          @if (canDelete) {
+            <ion-item button (click)="openEditorsModal()">
+              <ion-icon slot="start" name="people-circle-outline" color="medium"></ion-icon>
+              <ion-label>Manage Editors</ion-label>
+            </ion-item>
+            <ion-item button (click)="onDelete()" class="delete-item">
+              <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
+              <ion-label color="danger">Delete Tournament</ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+
+  <!-- Editors Modal -->
+  <ion-modal #editorsListModal [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Tournament Editors</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="editorsListModal.dismiss()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      
+      <ion-content class="editors-content">
+        @if (tournament.editors.length === 0) {
+          <div class="empty-state">
+            <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+            <h3>No Editors</h3>
+            <p>No editors have been assigned to this tournament yet.</p>
+          </div>
+        } @else {
+          <ion-list class="editors-list">
+            @for (editor of tournament.editors; track $index) {
+              <ion-item-sliding>
+                <ion-item class="editor-item">
+                  <ion-avatar slot="start" class="modern-avatar">
+                    <img [src]="getAvatarUrl(editor)" [alt]="editor.displayName">
+                  </ion-avatar>
+                  <ion-label>
+                    <h2 class="editor-name">{{ editor.displayName }}</h2>
+                    <p class="editor-email">{{ editor.email }}</p>
+                    @if (editor.approved) {
+                      <ion-chip color="success" class="approval-chip">
+                        <ion-icon name="checkmark-outline"></ion-icon>
+                        <ion-label>Approved</ion-label>
+                      </ion-chip>
+                    } @else {
+                      <ion-chip color="warning" class="approval-chip">
+                        <ion-icon name="time-outline"></ion-icon>
+                        <ion-label>Pending</ion-label>
+                      </ion-chip>
+                    }
+                  </ion-label>
+                </ion-item>
+                
+                @if (editor.email !== authService.user?.email) {
+                  <ion-item-options side="end">
+                    @if (!editor.approved) {
+                      <ion-item-option color="success" (click)="onApproveEditAccess(editor.email)">
+                        <ion-icon name="checkmark-outline"></ion-icon>
+                        Approve
+                      </ion-item-option>
+                    }
+                    <ion-item-option color="danger" (click)="onRemoveEditor(editor.email)">
+                      <ion-icon name="trash-outline"></ion-icon>
+                      Remove
+                    </ion-item-option>
+                  </ion-item-options>
+                }
+              </ion-item-sliding>
+            }
+          </ion-list>
+        }
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-card>
