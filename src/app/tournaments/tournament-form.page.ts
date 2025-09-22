@@ -20,7 +20,7 @@ import { inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline, addOutline } from 'ionicons/icons';
-import { BasicDetailsStepComponent } from '../components/tournament/steps/basic-details-step.component';
+import { BasicDetailsStepComponent } from '../components/tournament/steps/basic-details-step/basic-details-step.component';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { Auth } from '@angular/fire/auth';
 import {

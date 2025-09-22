@@ -2,12 +2,12 @@ import { Component, Input, Output, EventEmitter, inject, ViewChild } from '@angu
 import { IonItem, IonLabel, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonModal, IonHeader, IonToolbar, IonTitle, IonPopover, IonItemSliding, IonItemOptions, IonItemOption, IonChip, IonCard, IonCardContent } from '@ionic/angular/standalone';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
-import { QrCodeService } from '../../services/qr-code.service';
-import { FirestoreService } from '../../services/firestore.service';
-import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDeleteEvent } from '../../interfaces';
-import { APP_CONSTANTS } from '../../constants/app.constants';
-import { TOURNAMENT_CARD_CONSTANTS } from '../../constants/tournament-card.constants';
+import { AuthService } from '../../../services/auth.service';
+import { QrCodeService } from '../../../services/qr-code.service';
+import { FirestoreService } from '../../../services/firestore.service';
+import { TournamentWithId, Match, MatchWithTeams, EditAccessEvent, TournamentDeleteEvent } from '../../../interfaces';
+import { APP_CONSTANTS } from '../../../constants/app.constants';
+import { TOURNAMENT_CARD_CONSTANTS } from '../../../constants/tournament-card.constants';
 
 @Component({
   selector: 'app-tournament-card',

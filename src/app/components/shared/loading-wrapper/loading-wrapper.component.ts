@@ -1,11 +1,12 @@
 import { Component, Input, inject } from '@angular/core';
 import { LoadingController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { APP_CONSTANTS } from '../../constants/app.constants';
+import { APP_CONSTANTS } from '../../../constants/app.constants';
 
 @Component({
   selector: 'app-loading-wrapper',
-  template: `<ng-content></ng-content>`,
+  templateUrl: './loading-wrapper.component.html',
+  styleUrls: ['./loading-wrapper.component.scss'],
   imports: [CommonModule]
 })
 export class LoadingWrapperComponent {

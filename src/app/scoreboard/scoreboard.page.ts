@@ -20,8 +20,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
-import { TeamStandingsComponent } from '../components/scoreboard/team-standings.component';
-import { PlayerStandingsComponent } from '../components/scoreboard/player-standings.component';
+import { TeamStandingsComponent } from '../components/scoreboard/team-standings/team-standings.component';
+import { PlayerStandingsComponent } from '../components/scoreboard/player-standings/player-standings.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Match, MatchWithTeams, Team, TeamPlayerWithUser, MatchPlayer } from '../interfaces';

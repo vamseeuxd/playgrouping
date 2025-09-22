@@ -17,8 +17,8 @@ import {
   LoadingController,
   AlertController,
   ToastController, IonFooter } from '@ionic/angular/standalone';
-import { MatchControlsComponent } from '../components/match/match-controls.component';
-import { ScoreBoardComponent } from '../components/match/score-board.component';
+import { MatchControlsComponent } from '../components/match/match-controls/match-controls.component';
+import { ScoreBoardComponent } from '../components/match/score-board/score-board.component';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import {

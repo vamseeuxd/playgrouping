@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { PlayerModalComponent } from '../player-modal.component';
-import { APP_CONSTANTS } from '../../../constants/app.constants';
+import { PlayerModalComponent } from '../../player-modal/player-modal.component';
+import { APP_CONSTANTS } from '../../../../constants/app.constants';
 
 @Component({
   selector: 'app-players-step',

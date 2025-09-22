@@ -51,7 +51,7 @@ import { InstallPromptService } from './services/install-prompt.service';
 import { Observable } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { CommonModule } from '@angular/common';
-import { UserProfileComponent } from './components/user-profile.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 @Component({
   selector: 'app-root',
