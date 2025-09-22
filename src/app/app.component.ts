@@ -59,6 +59,11 @@ import {
   chevronDownOutline,
   chevronUpOutline,
   heart,
+  woman,
+  man,
+  warning,
+  chevronForward,
+  checkmarkCircleOutline,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -142,7 +147,11 @@ export class AppComponent {
       downloadOutline,
       chevronDownOutline,
       chevronUpOutline,
-      heart,
+      woman,
+      man,
+      warning,
+      chevronForward,
+      checkmarkCircleOutline,
     });
   }
 
