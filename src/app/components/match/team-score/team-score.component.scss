@@ -1,0 +1,239 @@
+.team-score-container {
+  background: white;
+  border-radius: var(--app-radius-xl);
+  box-shadow: var(--app-shadow-md);
+  overflow: hidden;
+  border: 1px solid var(--app-gray-200);
+  transition: all var(--app-transition-normal);
+
+  &:hover {
+    box-shadow: var(--app-shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+.team-header {
+  background: linear-gradient(
+    135deg,
+    var(--app-primary),
+    var(--app-primary-light)
+  );
+  color: white;
+  padding: var(--app-space-6);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.1;
+  }
+}
+
+.team-name {
+  margin: 0 var(--app-space-3) 0 0;
+  font-size: var(--app-font-size-xl);
+  font-weight: var(--app-font-weight-bold);
+  position: relative;
+  z-index: 1;
+}
+
+.team-total-score {
+  font-size: 3rem;
+  font-weight: var(--app-font-weight-bold);
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.players-list {
+  padding: var(--app-space-4);
+}
+
+.player-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--app-space-4);
+  margin-bottom: var(--app-space-3);
+  background: var(--app-gray-50);
+  border-radius: var(--app-radius-lg);
+  border: 1px solid var(--app-gray-200);
+  transition: all var(--app-transition-fast);
+
+  &:hover {
+    background: white;
+    box-shadow: var(--app-shadow-sm);
+    transform: translateX(4px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-3);
+  flex: 1;
+}
+
+.player-avatar {
+  --size: 48px;
+  border: 2px solid white;
+  box-shadow: var(--app-shadow-sm);
+}
+
+.avatar-initial {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--app-secondary), var(--app-accent));
+  color: white;
+  font-size: var(--app-font-size-base);
+  font-weight: var(--app-font-weight-bold);
+}
+
+.player-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-1);
+}
+
+.player-name {
+  font-size: var(--app-font-size-base);
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-gray-900);
+}
+
+.player-score {
+  font-size: var(--app-font-size-sm);
+  color: var(--app-gray-600);
+}
+
+.score-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+  background: white;
+  border-radius: var(--app-radius-lg);
+  padding: var(--app-space-1);
+  box-shadow: var(--app-shadow-sm);
+}
+
+.score-controls ion-button {
+  --border-radius: var(--app-radius-md);
+  --padding-start: var(--app-space-2);
+  --padding-end: var(--app-space-2);
+  --padding-top: var(--app-space-2);
+  --padding-bottom: var(--app-space-2);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.score-value {
+  font-size: var(--app-font-size-lg);
+  font-weight: var(--app-font-weight-bold);
+  color: var(--app-gray-900);
+  min-width: 32px;
+  text-align: center;
+
+  &.readonly {
+    font-size: var(--app-font-size-xl);
+    color: var(--app-primary);
+  }
+}
+
+.score-display {
+  background: var(--app-gray-100);
+  border-radius: var(--app-radius-lg);
+  padding: var(--app-space-3) var(--app-space-4);
+}
+
+.no-players {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--app-space-8);
+  color: var(--app-gray-500);
+  text-align: center;
+}
+
+.no-players-icon {
+  font-size: 48px;
+  margin-bottom: var(--app-space-3);
+  opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .team-header {
+    padding: var(--app-space-1);
+  }
+
+  .team-name {
+    font-size: var(--app-font-size-lg);
+  }
+
+  .team-total-score {
+    font-size: 2rem;
+  }
+
+  .players-list {
+    padding: var(--app-space-3);
+  }
+
+  .player-card {
+    padding: var(--app-space-3);
+    flex-direction: column;
+    gap: var(--app-space-3);
+    align-items: stretch;
+  }
+
+  .player-info {
+    justify-content: center;
+  }
+
+  .score-controls {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-name {
+    font-size: var(--app-font-size-lg);
+  }
+
+  .team-total-score {
+    font-size: 1.5rem;
+  }
+
+  .player-avatar {
+    --size: 40px;
+  }
+
+  .player-name {
+    font-size: var(--app-font-size-sm);
+  }
+
+  .player-score {
+    font-size: var(--app-font-size-xs);
+  }
+}

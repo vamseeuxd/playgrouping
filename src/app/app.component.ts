@@ -46,6 +46,15 @@ import {
   checkmarkOutline,
   closeOutline,
   createOutline,
+  apertureOutline,
+  stopCircleOutline,
+  pauseCircleOutline,
+  refreshCircleOutline,
+  checkmarkCircle,
+  timeOutline,
+  timerOutline,
+  radioButtonOn,
+  pauseCircle,
 } from 'ionicons/icons';
 import { UpdateService } from './services/update.service';
 import { InstallPromptService } from './services/install-prompt.service';
@@ -117,6 +126,15 @@ export class AppComponent {
       checkmarkOutline,
       closeOutline,
       createOutline,
+      apertureOutline,
+      stopCircleOutline,
+      pauseCircleOutline,
+      refreshCircleOutline,
+      checkmarkCircle,
+      timeOutline,
+      timerOutline,
+      radioButtonOn,
+      pauseCircle,
     });
   }
 

@@ -1,0 +1,87 @@
+ion-fab {
+  --ion-fab-button-margin: var(--app-space-2);
+}
+
+.action-fab {
+  --box-shadow: var(--app-shadow-md);
+  --transition: all var(--app-transition-fast);
+  margin: var(--app-space-2);
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.1);
+    --box-shadow: var(--app-shadow-lg);
+  }
+  
+  &.primary-action {
+    --box-shadow: var(--app-shadow-lg);
+    transform: scale(1.2);
+    
+    &:hover {
+      transform: translateY(-4px) scale(1.3);
+      --box-shadow: var(--app-shadow-xl);
+    }
+  }
+  
+  &.reset-fab {
+    --background: var(--app-gray-200);
+    --color: var(--app-gray-600);
+    
+    &:hover {
+      --background: var(--app-gray-300);
+      --color: var(--app-gray-800);
+    }
+  }
+}
+
+/* FAB specific styling */
+ion-fab-button[color="success"] {
+  --background: var(--app-success);
+  --color: white;
+  
+  &:hover {
+    --background: #2dd55b;
+  }
+}
+
+ion-fab-button[color="danger"] {
+  --background: var(--app-danger);
+  --color: white;
+  
+  &:hover {
+    --background: #f24c58;
+  }
+}
+
+ion-fab-button[color="warning"] {
+  --background: var(--app-warning);
+  --color: white;
+  
+  &:hover {
+    --background: #e0ac08;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .action-fab {
+    margin: var(--app-space-1);
+    
+    &.primary-action {
+      transform: scale(1.1);
+      
+      &:hover {
+        transform: translateY(-3px) scale(1.2);
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .action-fab {
+    margin: var(--app-space-2);
+    
+    &.primary-action {
+      transform: scale(1.1);
+    }
+  }
+}

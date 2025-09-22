@@ -1,77 +1,109 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tournaments"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Live Score ( {{match.status}} )</ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- Match Header -->
+<app-match-header
+  [team1Name]="match.team1Name"
+  [team2Name]="match.team2Name"
+  [status]="match.status"
+  [elapsedTime]="elapsedTime">
+</app-match-header>
 
-<ion-content class="ion-padding">
+<ion-content class="match-content">
   @if (match.status !== 'pending') {
-  <app-score-board
-    [team1]="match.team1Name"
-    [team2]="match.team2Name"
-    [score1]="match.score1"
-    [score2]="match.score2"
-    [status]="match.status"
-    [canEdit]="match.status !== 'finished' && canEdit"
-    [team1Players]="team1PlayersWithUser"
-    [team2Players]="team2PlayersWithUser"
-    (scoreChange)="updateScore($event.team, $event.increment)"
-    (playerScoreChange)="updatePlayerScore($event.team, $event.playerId, $event.increment)"
-  >
-  </app-score-board>
-  }@else {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Match Setup</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      @if (canEdit) {
-      <p>
-        This match is currently pending. Please start the match to begin
-        tracking scores and time.
-      </p>
-      }@else {
-      <p>
-        This match is currently pending. Please wait for an administrator to
-        start the match.
-      </p>
-      }
-    </ion-card-content>
-  </ion-card>
-  }
+    <!-- Teams Side by Side Layout -->
+    <div class="teams-container">
+      <!-- Team 1 -->
+      <app-team-score
+        [teamName]="match.team1Name"
+        [teamScore]="match.score1"
+        [players]="team1PlayersWithUser"
+        [canEdit]="match.status !== 'finished' && canEdit"
+        [teamNumber]="1"
+        (playerScoreChange)="updatePlayerScore($event.team, $event.playerId, $event.increment)">
+      </app-team-score>
 
-  <!-- Match Controls -->
-  @if (match.status === 'finished') {
-  <ion-card>
-    <ion-card-content>
-      <ion-item>
-        <ion-label>
-          <h2>Match Completed</h2>
-          <p>Duration: {{ formatTime(match.duration) }}</p>
-          <p>
-            Winner: {{ match.score1 > match.score2 ? match.team1Name :
-            match.team2Name }}
-          </p>
-        </ion-label>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
+      <!-- VS Separator -->
+      <div class="vs-separator">
+        <div class="vs-circle">
+          <span class="vs-text">
+            <img src="../../assets/vs.png" alt="">
+          </span>
+        </div>
+        <div class="match-info">
+          <div class="score-display">
+            <span class="score team1-score">{{ match.score1 }}</span>
+            <span class="separator">:</span>
+            <span class="score team2-score">{{ match.score2 }}</span>
+          </div>
+          @if (match.status === 'started') {
+            <div class="timer">{{ formatTime(elapsedTime) }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- Team 2 -->
+      <app-team-score
+        [teamName]="match.team2Name"
+        [teamScore]="match.score2"
+        [players]="team2PlayersWithUser"
+        [canEdit]="match.status !== 'finished' && canEdit"
+        [teamNumber]="2"
+        (playerScoreChange)="updatePlayerScore($event.team, $event.playerId, $event.increment)">
+      </app-team-score>
+    </div>
+
+    <!-- Match Completed Card -->
+    @if (match.status === 'finished') {
+      <ion-card class="completion-card">
+        <ion-card-content>
+          <div class="completion-content">
+            <ion-icon name="trophy-outline" class="trophy-icon"></ion-icon>
+            <h2>Match Completed!</h2>
+            <div class="match-stats">
+              <div class="stat">
+                <span class="label">Duration</span>
+                <span class="value">{{ formatTime(match.duration) }}</span>
+              </div>
+              <div class="stat">
+                <span class="label">Winner</span>
+                <span class="value winner">{{ getWinner() }}</span>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
+  } @else {
+    <!-- Pending Match Setup -->
+    <div class="pending-setup">
+      <ion-icon name="timer-outline" class="setup-icon"></ion-icon>
+      <h2>Match Setup</h2>
+      <p class="setup-message">
+        @if (canEdit) {
+          This match is ready to begin. Tap "Start Match" to begin tracking scores and time.
+        } @else {
+          This match is pending. Please wait for an administrator to start the match.
+        }
+      </p>
+      @if (canEdit) {
+        <ion-button
+          (click)="startMatch()"
+          color="success"
+          size="large"
+          class="start-button">
+          <ion-icon name="play-outline" slot="start"></ion-icon>
+          Start Match
+        </ion-button>
+      }
+    </div>
   }
 </ion-content>
-@if (canEdit) {
-<ion-footer [translucent]="true">
-  <ion-toolbar>
-    <app-match-controls
-      [status]="match.status"
-      (start)="startMatch()"
-      (pause)="pauseMatch()"
-      (stop)="stopMatch()"
-      (reset)="resetMatch()"
-    >
-    </app-match-controls>
-  </ion-toolbar>
-</ion-footer>
+
+<!-- Match Actions Footer -->
+@if (canEdit && match.status !== 'pending') {
+  <app-match-actions
+    [status]="match.status"
+    (start)="startMatch()"
+    (pause)="pauseMatch()"
+    (stop)="stopMatch()"
+    (reset)="resetMatch()">
+  </app-match-actions>
 }

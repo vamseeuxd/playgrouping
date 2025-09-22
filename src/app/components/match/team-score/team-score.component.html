@@ -1,0 +1,60 @@
+<div class="team-score-container">
+  <div class="team-header">
+    <h2 class="team-name">{{ teamName }}</h2>
+    <div class="team-total-score">{{ teamScore }}</div>
+  </div>
+  
+  <div class="players-list">
+    @if (players && players.length > 0) {
+      @for (player of players; track player.userId) {
+        <div class="player-card">
+          <div class="player-info">
+            <ion-avatar class="player-avatar">
+              @if (player.photoURL) {
+                <img [src]="player.photoURL" [alt]="player.name" />
+              } @else {
+                <div class="avatar-initial">{{ getPlayerInitial(player.name) }}</div>
+              }
+            </ion-avatar>
+            <div class="player-details">
+              <span class="player-name">{{ player.name }}</span>
+              <span class="player-score">{{ player.score || 0 }} points</span>
+            </div>
+          </div>
+          
+          @if (canEdit) {
+            <div class="score-controls">
+              <ion-button 
+                size="small" 
+                fill="clear" 
+                color="medium"
+                (click)="onScoreChange(player.userId, false)"
+                [disabled]="(player.score || 0) <= 0">
+                <ion-icon name="remove-outline"></ion-icon>
+              </ion-button>
+              
+              <span class="score-value">{{ player.score || 0 }}</span>
+              
+              <ion-button 
+                size="small" 
+                fill="clear" 
+                color="primary"
+                (click)="onScoreChange(player.userId, true)">
+                <ion-icon name="add-outline"></ion-icon>
+              </ion-button>
+            </div>
+          } @else {
+            <div class="score-display">
+              <span class="score-value readonly">{{ player.score || 0 }}</span>
+            </div>
+          }
+        </div>
+      }
+    } @else {
+      <div class="no-players">
+        <ion-icon name="people-outline" class="no-players-icon"></ion-icon>
+        <span>No players assigned</span>
+      </div>
+    }
+  </div>
+</div>

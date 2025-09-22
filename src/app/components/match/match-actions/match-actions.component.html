@@ -1,0 +1,62 @@
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button>
+      <ion-icon name="aperture-outline"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    @if (status === 'pending') {
+      <ion-fab-button
+        (click)="onStart()"
+        color="success"
+        size="small"
+        class="action-fab primary-action">
+        <ion-icon name="play-outline"></ion-icon>
+      </ion-fab-button>
+    }
+
+    @if (status === 'started') {
+      <ion-fab-button
+        (click)="onPause()"
+        color="warning"
+        size="small"
+        class="action-fab">
+        <ion-icon name="pause-circle-outline"></ion-icon>
+      </ion-fab-button>
+
+      <ion-fab-button
+        (click)="onStop()"
+        color="danger"
+        size="small"
+        class="action-fab primary-action">
+        <ion-icon name="stop-circle-outline"></ion-icon>
+      </ion-fab-button>
+    }
+
+    @if (status === 'paused') {
+      <ion-fab-button
+        (click)="onStart()"
+        color="success"
+        size="small"
+        class="action-fab">
+        <ion-icon name="play-outline"></ion-icon>
+      </ion-fab-button>
+
+      <ion-fab-button
+        (click)="onStop()"
+        color="danger"
+        size="small"
+        class="action-fab primary-action">
+        <ion-icon name="stop-circle-outline"></ion-icon>
+      </ion-fab-button>
+    }
+
+    <!-- @if (status !== 'pending' && status !== 'finished') { -->
+      <ion-fab-button
+        (click)="onReset()"
+        color="medium"
+        size="small"
+        class="action-fab reset-fab">
+        <ion-icon name="refresh-circle-outline"></ion-icon>
+      </ion-fab-button>
+    <!-- } -->
+  </ion-fab-list>
+</ion-fab>

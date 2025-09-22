@@ -1,0 +1,30 @@
+<ion-header class="match-header">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tournaments"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title class="header-title">
+      <div class="title-content">
+        <span class="match-title">{{ team1Name }} vs {{ team2Name }}</span>
+      </div>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <div class="status-badge" [ngClass]="getStatusClass()">
+        <ion-icon [name]="getStatusIcon()" class="status-icon"></ion-icon>
+        <span class="status-text">{{ getStatusText() }}</span>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+
+  @if (status === 'started' && elapsedTime > 0) {
+    <ion-toolbar class="timer-toolbar">
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span class="live-text">LIVE</span>
+        <span class="elapsed-time">{{ formatTime(elapsedTime) }}</span>
+      </div>
+    </ion-toolbar>
+  }
+</ion-header>

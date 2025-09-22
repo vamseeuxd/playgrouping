@@ -2,23 +2,18 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
-  IonItem,
-  IonLabel,
-  IonBackButton,
-  IonButtons,
+  IonButton,
+  IonIcon,
   LoadingController,
   AlertController,
-  ToastController, IonFooter } from '@ionic/angular/standalone';
-import { MatchControlsComponent } from '../components/match/match-controls/match-controls.component';
-import { ScoreBoardComponent } from '../components/match/score-board/score-board.component';
+  ToastController
+} from '@ionic/angular/standalone';
+import { MatchHeaderComponent } from '../components/match/match-header/match-header.component';
+import { TeamScoreComponent } from '../components/match/team-score/team-score.component';
+import { MatchActionsComponent } from '../components/match/match-actions/match-actions.component';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import {
@@ -37,23 +32,19 @@ import { Match, MatchWithTeams, TournamentWithId, Team, TeamPlayerWithUser, Matc
 @Component({
   selector: 'app-match-control',
   templateUrl: './match-control.page.html',
-  imports: [IonFooter,
+  styleUrls: ['./match-control.page.scss'],
+  imports: [
     CommonModule,
     FormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
     IonCardContent,
-    IonItem,
-    IonLabel,
-    IonBackButton,
-    IonButtons,
-    MatchControlsComponent,
-    ScoreBoardComponent],
+    IonButton,
+    IonIcon,
+    MatchHeaderComponent,
+    TeamScoreComponent,
+    MatchActionsComponent
+  ],
 })
 export class MatchControlPage {
   private route = inject(ActivatedRoute);
@@ -407,8 +398,16 @@ export class MatchControlPage {
   formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs
-      .toString()
-      .padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  getWinner(): string {
+    if (this.match.score1 > this.match.score2) {
+      return this.match.team1Name;
+    } else if (this.match.score2 > this.match.score1) {
+      return this.match.team2Name;
+    } else {
+      return 'Draw';
+    }
   }
 }
