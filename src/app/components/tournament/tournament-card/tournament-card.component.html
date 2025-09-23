@@ -1,167 +1,252 @@
-<ion-card class="modern-card tournament-card">
-  <ion-card-content class="tournament-content">
-    <!-- Header Section -->
-    <div class="tournament-header">
-      <div class="tournament-info">
-        <h2 class="text-title tournament-name">{{ tournament.name }}</h2>
-        <div class="tournament-meta">
-          <ion-chip class="sport-chip" color="primary" outline="true">
-            <ion-icon name="trophy-outline"></ion-icon>
+<!-- Tournament Card Component -->
+<ion-card [class]="'modern-card ' + CONSTANTS.CSS_CLASSES.TOURNAMENT_CARD">
+  <ion-card-content [class]="CONSTANTS.CSS_CLASSES.TOURNAMENT_CONTENT">
+    <!-- Tournament Header Section -->
+    <div [class]="CONSTANTS.CSS_CLASSES.TOURNAMENT_HEADER">
+      <div [class]="CONSTANTS.CSS_CLASSES.TOURNAMENT_INFO">
+        <h2 [class]="'text-title ' + CONSTANTS.CSS_CLASSES.TOURNAMENT_NAME">
+          {{ tournament.name }}
+        </h2>
+        <div [class]="CONSTANTS.CSS_CLASSES.TOURNAMENT_META">
+          <ion-chip [class]="CONSTANTS.CSS_CLASSES.SPORT_CHIP" color="primary" outline="true">
+            <ion-icon [name]="CONSTANTS.ICONS.TROPHY"></ion-icon>
             <ion-label>{{ tournament.sport }}</ion-label>
           </ion-chip>
-          <span class="text-caption">{{ tournament.startDate | date : 'MMM dd, yyyy' }}</span>
+          <span class="text-caption">
+            {{ formatTournamentDate(tournament.startDate) }}
+          </span>
         </div>
       </div>
       
-      <!-- Action Menu -->
+      <!-- Action Menu Button -->
       <ion-button 
-        id="tournament-menu-{{ tournament.id }}" 
+        [id]="getTournamentMenuId()"
         fill="clear" 
         size="small"
-        class="menu-button">
-        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+        [class]="CONSTANTS.CSS_CLASSES.MENU_BUTTON"
+      >
+        <ion-icon [name]="CONSTANTS.ICONS.MENU"></ion-icon>
       </ion-button>
     </div>
 
     <!-- Matches Section -->
-    <div class="matches-section">
-      <div class="matches-header flex-between" (click)="toggleMatches()">
-        <span class="text-subtitle">Matches</span>
-        <div class="header-actions">
+    <div [class]="CONSTANTS.CSS_CLASSES.MATCHES_SECTION">
+      <div 
+        [class]="CONSTANTS.CSS_CLASSES.MATCHES_HEADER + ' flex-between'" 
+        (click)="toggleMatches()"
+      >
+        <span class="text-subtitle">{{ CONSTANTS.LABELS.MATCHES }}</span>
+        <div [class]="CONSTANTS.CSS_CLASSES.HEADER_ACTIONS">
           <ion-badge color="medium">{{ matches.length }}</ion-badge>
           <ion-icon 
-            [name]="isMatchesExpanded ? 'chevron-up-outline' : 'chevron-down-outline'"
-            class="expand-icon">
+            [name]="getExpandIcon()"
+            [class]="CONSTANTS.CSS_CLASSES.EXPAND_ICON"
+          >
           </ion-icon>
         </div>
       </div>
       
+      <!-- Expanded Matches Content -->
       @if (isMatchesExpanded) {
-        @if (matches.length > 0) {
-          <div class="matches-grid">
-            @for (match of matches.slice(0, 4); track $index) {
-              <div class="match-card" (click)="onMatchClick(match.id!)">
-                <div class="match-teams">
-                  <div class="team">
-                    <ion-avatar class="team-avatar modern-avatar" size="small">
-                      <img [src]="getTeamPlayerPhoto(match, 1)" [alt]="match.team1Name" />
+        @if (hasMatches()) {
+          <div [class]="CONSTANTS.CSS_CLASSES.MATCHES_GRID">
+            @for (match of getPreviewMatches(); track $index) {
+              <div 
+                [class]="CONSTANTS.CSS_CLASSES.MATCH_CARD" 
+                (click)="onMatchClick(match.id!)"
+              >
+                <div [class]="CONSTANTS.CSS_CLASSES.MATCH_TEAMS">
+                  <!-- Team 1 -->
+                  <div [class]="CONSTANTS.CSS_CLASSES.TEAM">
+                    <ion-avatar 
+                      [class]="CONSTANTS.CSS_CLASSES.TEAM_AVATAR + ' modern-avatar'"
+                    >
+                      <img 
+                        [src]="getTeamPlayerPhoto(match, 1)" 
+                        [alt]="match.team1Name" 
+                      />
                     </ion-avatar>
-                    <span class="team-name">{{ getShortTeamName(match.team1Name) }}</span>
+                    <span [class]="CONSTANTS.CSS_CLASSES.TEAM_NAME">
+                      {{ getShortTeamName(match.team1Name) }}
+                    </span>
                   </div>
                   
-                  <div class="vs-separator">
-                    <span class="vs-text">VS</span>
+                  <!-- VS Separator -->
+                  <div [class]="CONSTANTS.CSS_CLASSES.VS_SEPARATOR">
+                    <span [class]="CONSTANTS.CSS_CLASSES.VS_TEXT">
+                      {{ CONSTANTS.LABELS.VS }}
+                    </span>
                   </div>
                   
-                  <div class="team">
-                    <ion-avatar class="team-avatar modern-avatar" size="small">
-                      <img [src]="getTeamPlayerPhoto(match, 2)" [alt]="match.team2Name" />
+                  <!-- Team 2 -->
+                  <div [class]="CONSTANTS.CSS_CLASSES.TEAM">
+                    <span [class]="CONSTANTS.CSS_CLASSES.TEAM_NAME">
+                      {{ getShortTeamName(match.team2Name) }}
+                    </span>
+                    <ion-avatar 
+                      [class]="CONSTANTS.CSS_CLASSES.TEAM_AVATAR + ' modern-avatar'"
+                    >
+                      <img 
+                        [src]="getTeamPlayerPhoto(match, 2)" 
+                        [alt]="match.team2Name" 
+                      />
                     </ion-avatar>
-                    <span class="team-name">{{ getShortTeamName(match.team2Name) }}</span>
                   </div>
                 </div>
                 
-                <div class="match-status">
-                  <span class="status-badge" [ngClass]="getStatusClass(match.status)">
+                <!-- Match Status -->
+                <div [class]="CONSTANTS.CSS_CLASSES.MATCH_STATUS">
+                  <span 
+                    [class]="CONSTANTS.CSS_CLASSES.STATUS_BADGE" 
+                    [ngClass]="getStatusClass(match.status)"
+                  >
                     {{ getStatusText(match.status) }}
                   </span>
                 </div>
               </div>
             }
             
-            @if (matches.length > 4) {
-              <div class="more-matches">
-                <ion-button fill="clear" size="small" class="view-all-btn">
-                  <ion-icon name="add-outline"></ion-icon>
-                  <ion-label>{{ matches.length - 4 }} more</ion-label>
+            <!-- More Matches Indicator -->
+            @if (hasMoreMatches()) {
+              <div [class]="CONSTANTS.CSS_CLASSES.MORE_MATCHES">
+                <ion-button fill="clear" size="small" [class]="CONSTANTS.CSS_CLASSES.VIEW_ALL_BTN">
+                  <ion-icon [name]="CONSTANTS.ICONS.ADD"></ion-icon>
+                  <ion-label>{{ getMoreMatchesText() }}</ion-label>
                 </ion-button>
               </div>
             }
           </div>
-        } @else {
-          <div class="no-matches">
-            <ion-icon name="calendar-outline" class="no-matches-icon"></ion-icon>
-            <span class="text-body">No matches scheduled</span>
+        } 
+        <!-- No Matches State -->
+        @else {
+          <div [class]="CONSTANTS.CSS_CLASSES.NO_MATCHES">
+            <ion-icon 
+              [name]="CONSTANTS.ICONS.CALENDAR" 
+              [class]="CONSTANTS.CSS_CLASSES.NO_MATCHES_ICON"
+            ></ion-icon>
+            <span class="text-body">{{ CONSTANTS.LABELS.NO_MATCHES }}</span>
           </div>
         }
       }
     </div>
 
     <!-- Registration Status -->
-    @if (tournament.registrationOpen) {
-      <div class="registration-status">
-        <ion-chip color="success" class="registration-chip">
-          <ion-icon name="checkmark-circle-outline"></ion-icon>
-          <ion-label>Registration Open</ion-label>
+    @if (isRegistrationOpen()) {
+      <div [class]="CONSTANTS.CSS_CLASSES.REGISTRATION_STATUS">
+        <ion-chip color="success" [class]="CONSTANTS.CSS_CLASSES.REGISTRATION_CHIP">
+          <ion-icon [name]="CONSTANTS.ICONS.CHECKMARK_CIRCLE"></ion-icon>
+          <ion-label>{{ CONSTANTS.LABELS.REGISTRATION_OPEN }}</ion-label>
         </ion-chip>
       </div>
     }
   </ion-card-content>
 
   <!-- Action Menu Popover -->
-  <ion-popover trigger="tournament-menu-{{ tournament.id }}" [dismissOnSelect]="true">
+  <ion-popover [trigger]="getTournamentMenuId()" [dismissOnSelect]="true">
     <ng-template>
-      <ion-content class="popover-content">
-        <ion-list class="action-list">
+      <ion-content [class]="CONSTANTS.CSS_CLASSES.POPOVER_CONTENT">
+        <ion-list [class]="CONSTANTS.CSS_CLASSES.ACTION_LIST">
+          <!-- View Actions -->
           @if (canView) {
             <ion-item button (click)="navigateToScoreboard()">
-              <ion-icon slot="start" name="stats-chart-outline" color="primary"></ion-icon>
-              <ion-label>Scoreboard</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.STATS_CHART" 
+                color="primary"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.SCOREBOARD }}</ion-label>
             </ion-item>
             <ion-item button (click)="navigateToKnockout()">
-              <ion-icon slot="start" name="trophy-outline" color="warning"></ion-icon>
-              <ion-label>Knockout</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.TROPHY" 
+                color="warning"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.KNOCKOUT }}</ion-label>
             </ion-item>
           }
           
+          <!-- Edit Actions -->
           @if (canEdit) {
             <ion-item button (click)="onEdit()">
-              <ion-icon slot="start" name="create-outline" color="medium"></ion-icon>
-              <ion-label>Edit Tournament</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.CREATE" 
+                color="medium"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.EDIT_TOURNAMENT }}</ion-label>
             </ion-item>
             <ion-item button (click)="onPrintQR()">
-              <ion-icon slot="start" name="qr-code-outline" color="dark"></ion-icon>
-              <ion-label>Print QR Code</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.QR_CODE" 
+                color="dark"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.PRINT_QR }}</ion-label>
             </ion-item>
           }
           
+          <!-- Management Actions -->
           @if (canManageRegistration) {
             <ion-item button (click)="onToggleRegistration()">
               <ion-icon 
                 slot="start" 
-                [name]="tournament.registrationOpen ? 'lock-closed-outline' : 'lock-open-outline'"
-                [color]="tournament.registrationOpen ? 'danger' : 'success'">
-              </ion-icon>
-              <ion-label>{{ tournament.registrationOpen ? 'Close' : 'Open' }} Registration</ion-label>
+                [name]="getRegistrationToggleIcon()"
+                [color]="getRegistrationToggleColor()"
+              ></ion-icon>
+              <ion-label>{{ getRegistrationToggleText() }}</ion-label>
             </ion-item>
             <ion-item button (click)="onManageTeams()">
-              <ion-icon slot="start" name="people-outline" color="tertiary"></ion-icon>
-              <ion-label>Manage Teams</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.PEOPLE" 
+                color="tertiary"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.MANAGE_TEAMS }}</ion-label>
             </ion-item>
           }
           
+          <!-- Player Actions -->
           @if (canRegisterAsPlayer) {
             <ion-item button (click)="onRegisterAsPlayer()">
-              <ion-icon slot="start" name="person-add-outline" color="success"></ion-icon>
-              <ion-label>Register as Player</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.PERSON_ADD" 
+                color="success"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.REGISTER_AS_PLAYER }}</ion-label>
             </ion-item>
           }
           
+          <!-- Access Request Actions -->
           @if (canAskEdit) {
             <ion-item button (click)="onAskEdit()">
-              <ion-icon slot="start" name="mail-outline" color="secondary"></ion-icon>
-              <ion-label>Request Edit Access</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.MAIL" 
+                color="secondary"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.REQUEST_EDIT_ACCESS }}</ion-label>
             </ion-item>
           }
           
+          <!-- Admin Actions -->
           @if (canDelete) {
             <ion-item button (click)="openEditorsModal()">
-              <ion-icon slot="start" name="people-circle-outline" color="medium"></ion-icon>
-              <ion-label>Manage Editors</ion-label>
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.PEOPLE_CIRCLE" 
+                color="medium"
+              ></ion-icon>
+              <ion-label>{{ CONSTANTS.ACTIONS.MANAGE_EDITORS }}</ion-label>
             </ion-item>
-            <ion-item button (click)="onDelete()" class="delete-item">
-              <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
-              <ion-label color="danger">Delete Tournament</ion-label>
+            <ion-item button (click)="onDelete()" [class]="CONSTANTS.CSS_CLASSES.DELETE_ITEM">
+              <ion-icon 
+                slot="start" 
+                [name]="CONSTANTS.ICONS.TRASH" 
+                color="danger"
+              ></ion-icon>
+              <ion-label color="danger">{{ CONSTANTS.ACTIONS.DELETE_TOURNAMENT }}</ion-label>
             </ion-item>
           }
         </ion-list>
@@ -169,63 +254,80 @@
     </ng-template>
   </ion-popover>
 
-  <!-- Editors Modal -->
+  <!-- Editors Management Modal -->
   <ion-modal #editorsListModal [presentingElement]="presentingElement">
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
-          <ion-title>Tournament Editors</ion-title>
+          <ion-title>{{ CONSTANTS.LABELS.TOURNAMENT_EDITORS }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="editorsListModal.dismiss()">
-              <ion-icon name="close-outline"></ion-icon>
+              <ion-icon [name]="CONSTANTS.ICONS.CLOSE"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       
-      <ion-content class="editors-content">
-        @if (tournament.editors.length === 0) {
-          <div class="empty-state">
-            <ion-icon name="people-outline" class="empty-icon"></ion-icon>
-            <h3>No Editors</h3>
-            <p>No editors have been assigned to this tournament yet.</p>
+      <ion-content [class]="CONSTANTS.CSS_CLASSES.EDITORS_CONTENT">
+        <!-- No Editors State -->
+        @if (hasNoEditors()) {
+          <div [class]="CONSTANTS.CSS_CLASSES.EMPTY_STATE">
+            <ion-icon 
+              [name]="CONSTANTS.ICONS.PEOPLE" 
+              [class]="CONSTANTS.CSS_CLASSES.EMPTY_ICON"
+            ></ion-icon>
+            <h3>{{ CONSTANTS.LABELS.NO_EDITORS }}</h3>
+            <p>{{ CONSTANTS.LABELS.NO_EDITORS_MESSAGE }}</p>
           </div>
-        } @else {
-          <ion-list class="editors-list">
+        } 
+        <!-- Editors List -->
+        @else {
+          <ion-list [class]="CONSTANTS.CSS_CLASSES.EDITORS_LIST">
             @for (editor of tournament.editors; track $index) {
-              <ion-item-sliding>
-                <ion-item class="editor-item">
+              <ion-item-sliding #slidingRef>
+                <ion-item [class]="CONSTANTS.CSS_CLASSES.EDITOR_ITEM">
                   <ion-avatar slot="start" class="modern-avatar">
                     <img [src]="getAvatarUrl(editor)" [alt]="editor.displayName">
                   </ion-avatar>
                   <ion-label>
-                    <h2 class="editor-name">{{ editor.displayName }}</h2>
-                    <p class="editor-email">{{ editor.email }}</p>
-                    @if (editor.approved) {
-                      <ion-chip color="success" class="approval-chip">
-                        <ion-icon name="checkmark-outline"></ion-icon>
-                        <ion-label>Approved</ion-label>
+                    <h2 [class]="CONSTANTS.CSS_CLASSES.EDITOR_NAME">
+                      {{ editor.displayName }}
+                    </h2>
+                    <p [class]="CONSTANTS.CSS_CLASSES.EDITOR_EMAIL">
+                      {{ editor.email }}
+                    </p>
+                    @if (isEditorApproved(editor)) {
+                      <ion-chip color="success" [class]="CONSTANTS.CSS_CLASSES.APPROVAL_CHIP">
+                        <ion-icon [name]="CONSTANTS.ICONS.CHECKMARK"></ion-icon>
+                        <ion-label>{{ CONSTANTS.LABELS.APPROVED }}</ion-label>
                       </ion-chip>
                     } @else {
-                      <ion-chip color="warning" class="approval-chip">
-                        <ion-icon name="time-outline"></ion-icon>
-                        <ion-label>Pending</ion-label>
+                      <ion-chip color="warning" [class]="CONSTANTS.CSS_CLASSES.APPROVAL_CHIP">
+                        <ion-icon [name]="CONSTANTS.ICONS.TIME"></ion-icon>
+                        <ion-label>{{ CONSTANTS.LABELS.PENDING }}</ion-label>
                       </ion-chip>
                     }
                   </ion-label>
                 </ion-item>
                 
-                @if (editor.email !== authService.user?.email) {
+                <!-- Editor Actions -->
+                @if (canManageEditor(editor)) {
                   <ion-item-options side="end">
-                    @if (!editor.approved) {
-                      <ion-item-option color="success" (click)="onApproveEditAccess(editor.email)">
-                        <ion-icon name="checkmark-outline"></ion-icon>
-                        Approve
+                    @if (canApproveEditor(editor)) {
+                      <ion-item-option 
+                        color="success" 
+                        (click)="slidingRef.close();onApproveEditAccess(editor.email)"
+                      >
+                        <ion-icon [name]="CONSTANTS.ICONS.CHECKMARK"></ion-icon>
+                        {{ CONSTANTS.LABELS.APPROVE }}
                       </ion-item-option>
                     }
-                    <ion-item-option color="danger" (click)="onRemoveEditor(editor.email)">
-                      <ion-icon name="trash-outline"></ion-icon>
-                      Remove
+                    <ion-item-option 
+                      color="danger" 
+                      (click)="slidingRef.close();onRemoveEditor(editor.email)"
+                    >
+                      <ion-icon [name]="CONSTANTS.ICONS.TRASH"></ion-icon>
+                      {{ CONSTANTS.LABELS.REMOVE }}
                     </ion-item-option>
                   </ion-item-options>
                 }

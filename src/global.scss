@@ -451,3 +451,549 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+/* ========================================
+   TEAM MANAGEMENT SPECIFIC STYLES
+   ======================================== */
+
+/* Layout Classes */
+.layout__flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout__flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.layout__flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.layout__flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.layout__flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout__flex-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
+}
+
+/* Segment Styles */
+.segment__container {
+  margin: var(--app-space-2);
+}
+
+.segment__button-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--app-space-3) 0;
+}
+
+.segment__badge {
+  margin-left: var(--app-space-2);
+  margin-top: -12px;
+}
+
+/* Team Management Styles */
+.team-management__player-avatar {
+  width: var(--app-space-8);
+  height: var(--app-space-8);
+}
+
+.team-management__status-chip {
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-medium);
+}
+
+.team-management__detail-chip {
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-medium);
+}
+
+.team-management__team-title {
+  font-size: 0.9rem;
+  margin-bottom: var(--app-space-2);
+}
+
+.team-management__player-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: var(--app-space-1);
+}
+
+.team-management__players-text {
+  font-weight: var(--app-font-weight-medium);
+}
+
+.team-management__player-name {
+  color: var(--app-gray-700);
+}
+
+.team-management__more-players {
+  color: var(--app-gray-500);
+  font-style: italic;
+}
+
+/* Modal Styles */
+.modal__container {
+  padding: var(--app-space-4);
+}
+
+.modal__content {
+  background: var(--app-gray-50);
+}
+
+.modal__actions {
+  margin-top: var(--app-space-4);
+}
+
+.modal__title-icon {
+  margin-right: var(--app-space-2);
+  vertical-align: middle;
+}
+
+.modal__section-subtitle {
+  font-size: var(--app-font-size-lg);
+  font-weight: var(--app-font-weight-semibold);
+  color: var(--app-gray-800);
+  margin: var(--app-space-4) 0 var(--app-space-2) 0;
+  display: flex;
+  align-items: center;
+}
+
+.modal__subtitle-icon {
+  margin-right: var(--app-space-2);
+  color: var(--app-primary);
+}
+
+/* Empty State Styles */
+.empty-state__container {
+  text-align: center;
+  padding: var(--app-space-6);
+}
+
+.empty-state__icon {
+  font-size: var(--app-font-size-2xl);
+  color: var(--app-gray-400);
+  margin-bottom: var(--app-space-2);
+}
+
+.empty-state__message {
+  color: var(--app-gray-600);
+  font-size: var(--app-font-size-base);
+}
+
+.empty-state__warning {
+  text-align: center;
+}
+
+/* Button Styles */
+.button__add-team {
+  margin-top: var(--app-space-4);
+}
+
+.button__save {
+  flex: 1;
+  margin-right: var(--app-space-2);
+}
+
+.button__cancel {
+  flex: 1;
+  margin-left: var(--app-space-2);
+}
+
+.button__action-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--app-space-4);
+}
+
+/* Player Selection Styles */
+.player-selection__list {
+  margin-top: var(--app-space-4);
+}
+
+.player-selection__item {
+  margin-bottom: var(--app-space-1);
+  border-radius: var(--app-radius-md);
+}
+
+.player-selection__avatar-wrapper {
+  margin-right: var(--app-space-3);
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.margin-right-sm {
+  margin-right: var(--app-space-2);
+}
+
+.margin-top-sm {
+  margin-top: var(--app-space-2);
+}
+
+.margin-bottom-sm {
+  margin-bottom: var(--app-space-2);
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .button__action-row {
+    flex-direction: column;
+    gap: var(--app-space-2);
+  }
+  
+  .button__save,
+  .button__cancel {
+    width: 100%;
+    margin: 0;
+  }
+  
+  .modal__container {
+    padding: var(--app-space-2);
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn var(--app-transition-normal) ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp var(--app-transition-normal) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   TOURNAMENT CARD SPECIFIC STYLES
+   ======================================== */
+
+.tournament-card {
+  margin-bottom: var(--app-space-4);
+  transition: all var(--app-transition-normal);
+}
+
+.tournament-content {
+  padding: var(--app-space-4);
+}
+
+.tournament-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--app-space-4);
+}
+
+.tournament-info {
+  flex: 1;
+}
+
+.tournament-name {
+  margin: 0 0 var(--app-space-2) 0;
+  color: var(--app-gray-900);
+}
+
+.tournament-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-3);
+}
+
+.sport-chip {
+  font-size: var(--app-font-size-xs);
+}
+
+.menu-button {
+  --padding-start: var(--app-space-2);
+  --padding-end: var(--app-space-2);
+}
+
+.matches-section {
+  margin-bottom: var(--app-space-4);
+}
+
+.matches-header {
+  padding: var(--app-space-3) 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--app-gray-200);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+}
+
+.expand-icon {
+  transition: transform var(--app-transition-fast);
+}
+
+.matches-grid {
+  display: grid;
+  gap: var(--app-space-3);
+  margin-top: var(--app-space-3);
+}
+
+.match-card {
+  background: var(--app-gray-50);
+  border-radius: var(--app-radius-md);
+  padding: var(--app-space-3);
+  cursor: pointer;
+  transition: all var(--app-transition-fast);
+  border: 1px solid var(--app-gray-200);
+}
+
+.match-card:hover {
+  background: white;
+  box-shadow: var(--app-shadow-md);
+  transform: translateY(-1px);
+}
+
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--app-space-2);
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+  /* flex: 1; */
+}
+
+.team-avatar {
+  width: var(--app-space-8);
+  height: var(--app-space-8);
+}
+
+.team-name {
+  font-size: var(--app-font-size-sm);
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-gray-50);
+}
+
+.vs-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 var(--app-space-2);
+}
+
+.vs-text {
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-bold);
+  color: var(--app-gray-500);
+  background: var(--app-gray-200);
+  padding: var(--app-space-1) var(--app-space-2);
+  border-radius: var(--app-radius-full);
+}
+
+
+.status-badge {
+  font-size: var(--app-font-size-xs);
+  padding: var(--app-space-1) var(--app-space-2);
+  border-radius: var(--app-radius-full);
+  font-weight: var(--app-font-weight-medium);
+}
+
+.more-matches {
+  text-align: center;
+  padding: var(--app-space-2);
+}
+
+.view-all-btn {
+  --color: var(--app-gray-600);
+}
+
+.no-matches {
+  text-align: center;
+  padding: var(--app-space-6);
+  color: var(--app-gray-500);
+}
+
+.no-matches-icon {
+  font-size: var(--app-font-size-2xl);
+  margin-bottom: var(--app-space-2);
+}
+
+.registration-status {
+  margin-top: var(--app-space-4);
+}
+
+.registration-chip {
+  font-size: var(--app-font-size-xs);
+}
+
+.popover-content {
+  --width: 250px;
+}
+
+.action-list {
+  padding: 0;
+}
+
+.delete-item {
+  --color: var(--ion-color-danger);
+}
+
+.editors-content {
+  padding: var(--app-space-4);
+}
+
+.editors-list {
+  margin: 0;
+}
+
+.editor-name {
+  font-weight: var(--app-font-weight-semibold);
+  margin: 0;
+}
+
+.editor-email {
+  color: var(--app-gray-600);
+  margin: var(--app-space-1) 0;
+}
+
+.approval-chip {
+  font-size: var(--app-font-size-xs);
+  margin-top: var(--app-space-1);
+}
+
+/* ========================================
+   KNOCKOUT PAGE SPECIFIC STYLES
+   ======================================== */
+
+.tournament-info-card {
+  margin-bottom: var(--app-space-4);
+}
+
+.tournament-info-header {
+  background: var(--app-primary);
+  color: white;
+}
+
+.tournament-info-content {
+  padding: var(--app-space-4);
+}
+
+.tournament-info-content p {
+  margin: var(--app-space-2) 0;
+  font-size: var(--app-font-size-base);
+}
+
+.stage-card {
+  margin-bottom: var(--app-space-4);
+}
+
+.stage-header {
+  padding: 0 var(--app-space-4);
+}
+
+.stage-title {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--app-gray-300);
+  padding-bottom: var(--app-space-2);
+  color: var(--color);
+}
+
+.stage-status-chip {
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-medium);
+}
+
+.stage-content {
+  padding: var(--app-space-4);
+}
+
+.matches-list {
+  padding: 0;
+  margin: 0;
+}
+
+.match-item {
+  margin-bottom: var(--app-space-2);
+  border-radius: var(--app-radius-md);
+  transition: all var(--app-transition-fast);
+}
+
+.match-item:hover {
+  background: var(--app-gray-50);
+}
+
+.match-label {
+  padding: var(--app-space-2) 0;
+}
+
+.match-score {
+  font-size: var(--app-font-size-base);
+  font-weight: var(--app-font-weight-medium);
+  margin: 0;
+}
+
+.match-winner {
+  font-size: var(--app-font-size-base);
+  font-weight: var(--app-font-weight-medium);
+  margin: var(--app-space-1) 0 0 0;
+}
+
+.generate-button {
+  margin-top: var(--app-space-4);
+}
+
+.advance-button {
+  margin-top: var(--app-space-2);
+}

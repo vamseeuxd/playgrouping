@@ -1,195 +1,270 @@
+<!-- Team Management Page Header -->
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tournaments"></ion-back-button>
+      <ion-back-button [defaultHref]="ROUTES.TOURNAMENTS"></ion-back-button>
     </ion-buttons>
-    <ion-title>Player Register</ion-title>
+    <ion-title>{{ TEXT.LABELS.PLAYER_REGISTER }}</ion-title>
   </ion-toolbar>
 </ion-header>
-<!-- prettier-ignore -->
-<ion-content color="light">
 
+<!-- Main Content Area -->
+<ion-content color="light">
+  <!-- Tab Segment for switching between Registrations and Teams -->
   <ion-segment
-      [(ngModel)]="selectedTab"
-      name="selectedTab"
-      (ngModelChange)="searchText = ''"
-      class="header-segment"
-      color="primary"
-      style="margin: 8px"
-      mode="ios"
-    >
-      <ion-segment-button value="registrations">
-        <div
-          style="
-            display: flex;
-            justify-items: center;
-            align-items: center;
-            padding: 12px 0;
-          "
+    [(ngModel)]="selectedTab"
+    name="selectedTab"
+    (ngModelChange)="onTabChange()"
+    [class]="CSS_CLASSES.SEGMENT.CONTAINER"
+    color="primary"
+    mode="ios"
+  >
+    <!-- Registrations Tab -->
+    <ion-segment-button [value]="TAB_VALUES.REGISTRATIONS">
+      <div [class]="CSS_CLASSES.SEGMENT.BUTTON_CONTENT">
+        <ion-label><h2>{{ TEXT.LABELS.REGISTRATIONS }}</h2></ion-label>
+        <ion-badge
+          color="tertiary"
+          [class]="CSS_CLASSES.SEGMENT.BADGE"
         >
-          <ion-label><h2>Registrations</h2></ion-label>
-          <ion-badge
-            color="tertiary"
-            style="margin-left: 8px; margin-top: -12px"
-            >{{ registrations.length }}</ion-badge
-          >
-        </div>
-      </ion-segment-button>
-      <ion-segment-button value="teams">
-        <div
-          style="
-            display: flex;
-            justify-items: center;
-            align-items: center;
-            padding: 12px 0;
-          "
+          {{ registrations.length }}
+        </ion-badge>
+      </div>
+    </ion-segment-button>
+    
+    <!-- Teams Tab -->
+    <ion-segment-button [value]="TAB_VALUES.TEAMS">
+      <div [class]="CSS_CLASSES.SEGMENT.BUTTON_CONTENT">
+        <ion-label><h2>{{ TEXT.LABELS.TEAMS }}</h2></ion-label>
+        <ion-badge
+          color="tertiary"
+          [class]="CSS_CLASSES.SEGMENT.BADGE"
         >
-          <ion-label><h2>Teams</h2></ion-label>
-          <ion-badge
-            color="tertiary"
-            style="margin-left: 8px; margin-top: -12px"
-            >{{ teams.length }}</ion-badge
-          >
-        </div>
-      </ion-segment-button>
+          {{ teams.length }}
+        </ion-badge>
+      </div>
+    </ion-segment-button>
   </ion-segment>
 
-  <!-- ************************************** registrations ************************************** -->
-  @if (selectedTab === 'registrations') {
-    @if (registrations.length > 0 && selectedTab === 'registrations') {
+  <!-- Registrations Tab Content -->
+  @if (isRegistrationsTab()) {
+    <!-- Search Bar for Registrations -->
+    @if (hasRegistrations()) {
       <ion-searchbar
         [(ngModel)]="searchText"
         name="searchText"
-        
-        placeholder="Search players by name or email"
+        [placeholder]="TEXT.PLACEHOLDERS.SEARCH_PLAYERS"
         show-clear-button="focus"
-        class="search-bar"
+        [class]="CSS_CLASSES.SEARCH.BAR"
       ></ion-searchbar>
     }
   
-    @if (filteredRegistrations.length === 0 && searchText) {
+    <!-- No Search Results Message -->
+    @if (isNoSearchResults()) {
       <ion-text class="ion-margin-top">
-        <h5 style="text-align: center;"> <ion-text color="warning"><ion-icon name="warning"></ion-icon></ion-text> No players found matching "{{ searchText }}" <ion-icon color="danger" name="search-outline" class="empty-icon"></ion-icon></h5>
+        <h5 [class]="CSS_CLASSES.EMPTY_STATE.WARNING">
+          <ion-text color="warning">
+            <ion-icon [name]="ICONS.WARNING"></ion-icon>
+          </ion-text>
+          {{ TEXT.MESSAGES.NO_PLAYERS_FOUND }} "{{ searchText }}"
+          <ion-icon color="danger" [name]="ICONS.SEARCH" [class]="CSS_CLASSES.EMPTY_STATE.ICON"></ion-icon>
+        </h5>
       </ion-text>
-    } @else if (registrations.length === 0) {
+    } 
+    <!-- No Registrations Message -->
+    @else if (isNoRegistrations()) {
       <ion-text class="ion-margin-top">
-        <h5 style="text-align: center;"> <ion-text color="danger"><ion-icon name="person-outline" style="margin-right: 10px;"></ion-icon></ion-text>No registration requests yet</h5>
+        <h5 [class]="CSS_CLASSES.EMPTY_STATE.WARNING">
+          <ion-text color="danger">
+            <ion-icon [name]="ICONS.PERSON" [class]="CSS_CLASSES.EMPTY_STATE.ICON"></ion-icon>
+          </ion-text>
+          {{ TEXT.MESSAGES.NO_REGISTRATIONS }}
+        </h5>
       </ion-text>
-    } @else {
+    } 
+    <!-- Registrations List -->
+    @else {
       <ion-list [inset]="true" lines="full">
-        @for (registration of filteredRegistrations; track registration.id){
-        <ion-item-sliding #slidingItem>
+        @for (registration of filteredRegistrations; track registration.id) {
+          <ion-item-sliding #slidingItem>
+            <!-- Registration Item -->
             <ion-item [button]="true" detail="false">
+              <!-- Player Avatar -->
               <div class="unread-indicator-wrapper" slot="start">
-                <ion-avatar class="player-avatar" style="width: 32px; height: 32px; ">
-                <img [src]="registration.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'" [alt]="registration.name" />
-              </ion-avatar>
+                <ion-avatar [class]="CSS_CLASSES.TEAM_MANAGEMENT.PLAYER_AVATAR">
+                  <img 
+                    [src]="getPlayerAvatarUrl(registration)" 
+                    [alt]="registration.name" 
+                  />
+                </ion-avatar>
               </div>
+              
+              <!-- Player Information -->
               <ion-label>
                 <strong>{{ registration.name }}</strong>
                 <ion-text>{{ registration.email }}</ion-text><br />
-                <ion-text style="display: flex;justify-content: flex-start;align-items: center;margin-top: 4px;"> {{ registration.gender }} </ion-text>
+                <ion-text [class]="CSS_CLASSES.TEAM_MANAGEMENT.PLAYER_INFO">
+                  {{ registration.gender }}
+                </ion-text>
                 @if (registration.remarks) {
-                  <ion-note color="medium" class="ion-text-wrap">{{ registration.remarks }} </ion-note>
+                  <ion-note color="medium" class="ion-text-wrap">
+                    {{ registration.remarks }}
+                  </ion-note>
                 }
               </ion-label>
-              <div class="metadata-end-wrapper" slot="end">
-                <ion-note color="medium"><ion-chip [color]="getStatusColor(registration.status)" class="status-chip" > <ion-icon [name]="getStatusIcon(registration.status)" ></ion-icon> <ion-label>{{ registration.status | titlecase }}</ion-label> </ion-chip></ion-note>
+              
+              <!-- Status Information -->
+              <div [class]="CSS_CLASSES.TEAM_MANAGEMENT.METADATA_WRAPPER" slot="end">
+                <ion-note color="medium">
+                  <ion-chip 
+                    [color]="getStatusColor(registration.status)" 
+                    [class]="CSS_CLASSES.TEAM_MANAGEMENT.STATUS_CHIP"
+                  >
+                    <ion-icon [name]="getStatusIcon(registration.status)"></ion-icon>
+                    <ion-label>{{ registration.status | titlecase }}</ion-label>
+                  </ion-chip>
+                </ion-note>
               </div>
             </ion-item>
+            
+            <!-- Action Options -->
             @if (canEdit) {
               <ion-item-options>
-                @if (registration.status === 'pending') {
-                  <ion-item-option (click)="slidingItem.close();approveRegistration(registration)" color="success"> 
-                    <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
-                    Approve
+                @if (isPendingStatus(registration.status)) {
+                  <ion-item-option 
+                    (click)="handleApproveRegistration(slidingItem, registration)" 
+                    color="success"
+                  >
+                    <ion-icon slot="icon-only" [name]="ICONS.CHECKMARK"></ion-icon>
+                    {{ TEXT.LABELS.APPROVE }}
                   </ion-item-option>
-                  <ion-item-option (click)="slidingItem.close();rejectRegistration(registration)" color="warning"> 
-                    <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-                    Reject
+                  <ion-item-option 
+                    (click)="handleRejectRegistration(slidingItem, registration)" 
+                    color="warning"
+                  >
+                    <ion-icon slot="icon-only" [name]="ICONS.CLOSE"></ion-icon>
+                    {{ TEXT.LABELS.REJECT }}
                   </ion-item-option>
                 }
-                <ion-item-option (click)="slidingItem.close();deleteRegistration(registration)" color="danger"> 
-                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                  Delete
+                <ion-item-option 
+                  (click)="handleDeleteRegistration(slidingItem, registration)" 
+                  color="danger"
+                >
+                  <ion-icon slot="icon-only" [name]="ICONS.TRASH"></ion-icon>
+                  {{ TEXT.LABELS.DELETE }}
                 </ion-item-option>
               </ion-item-options>
             }
-        </ion-item-sliding>
+          </ion-item-sliding>
         }
       </ion-list>
     }
   }
-  <!-- ************************************** registrations ************************************** -->
-  
-  <!-- ************************************** Teams ************************************** -->
-  @if (selectedTab === 'teams') {
-    @if (teams.length > 0 && selectedTab === 'teams') {
+
+  <!-- Teams Tab Content -->
+  @if (isTeamsTab()) {
+    <!-- Search Bar for Teams -->
+    @if (hasTeams()) {
       <ion-searchbar
         [(ngModel)]="searchText"
         name="searchText"
-        placeholder="Search teams by name"
+        [placeholder]="TEXT.PLACEHOLDERS.SEARCH_TEAMS"
         show-clear-button="focus"
-        class="search-bar"
+        [class]="CSS_CLASSES.SEARCH.BAR"
       ></ion-searchbar>
     }
   
-    @if (filteredTeams.length === 0 && searchText) {
+    <!-- No Search Results Message -->
+    @if (isNoTeamSearchResults()) {
       <ion-text class="ion-margin-top">
-        <h5 style="text-align: center;"> <ion-text color="warning"><ion-icon name="warning"></ion-icon></ion-text> No players found matching "{{ searchText }}" <ion-icon color="danger" name="search-outline" class="empty-icon"></ion-icon></h5>
+        <h5 [class]="CSS_CLASSES.EMPTY_STATE.WARNING">
+          <ion-text color="warning">
+            <ion-icon [name]="ICONS.WARNING"></ion-icon>
+          </ion-text>
+          {{ TEXT.MESSAGES.NO_TEAMS_FOUND }} "{{ searchText }}"
+          <ion-icon color="danger" [name]="ICONS.SEARCH" [class]="CSS_CLASSES.EMPTY_STATE.ICON"></ion-icon>
+        </h5>
       </ion-text>
-    } @else if (teams.length === 0) {
+    } 
+    <!-- No Teams Message -->
+    @else if (isNoTeams()) {
       <ion-text class="ion-margin-top">
-        <h5 style="text-align: center;"> <ion-text color="danger"><ion-icon name="person-outline" style="margin-right: 10px;"></ion-icon></ion-text>No registration requests yet</h5>
+        <h5 [class]="CSS_CLASSES.EMPTY_STATE.WARNING">
+          <ion-text color="danger">
+            <ion-icon [name]="ICONS.PERSON" [class]="CSS_CLASSES.EMPTY_STATE.ICON"></ion-icon>
+          </ion-text>
+          {{ TEXT.MESSAGES.NO_REGISTRATIONS }}
+        </h5>
       </ion-text>
-    } @else {
+    } 
+    <!-- Teams List -->
+    @else {
       <ion-list [inset]="true" lines="full">
-        @for (team of filteredTeams; track team.id){
+        @for (team of filteredTeams; track team.id) {
           <ion-item-sliding #slidingItem>
+            <!-- Team Item -->
             <ion-item [button]="true" detail="false">
               <ion-label>
-                <strong style="font-size: 0.9rem;margin-bottom: 10px;">Team : {{ team.name }}</strong>
-                <ion-text color="primary">
-                    <ion-label >{{ team.players.length }} {{ team.players.length === 1 ? 'player' : 'players' }}</ion-label >
-                </ion-text>
+                <!-- Team Name -->
+                <strong [class]="CSS_CLASSES.TEAM_MANAGEMENT.TEAM_TITLE">
+                  {{ TEXT.LABELS.TEAM_PREFIX }}: {{ team.name }}
+                </strong>
+                
+                <!-- Player Names Preview -->
                 @if (team.players.length > 0) {
                   <ion-note>
-                    <span class="players-text">Players: </span>                    
-                    @for (player of team.players.slice(0, 2); track player.userId; let isLast = $last) {
-                      <span class="player-name" >{{ player.name }}{{ !isLast && team.players.length > 1 ? ', ' : '' }}</span >
-                    } @if (team.players.length > 2) {
-                      <span class="more-players"> +{{ team.players.length - 2 }} more</span >
+                    <span [class]="CSS_CLASSES.TEAM_MANAGEMENT.PLAYERS_TEXT">
+                      {{ TEXT.LABELS.PLAYERS_PREFIX }}:
+                    </span>
+                    @for (player of getPreviewPlayers(team.players); track player.userId; let isLast = $last) {
+                      <span [class]="CSS_CLASSES.TEAM_MANAGEMENT.PLAYER_NAME">
+                        {{ player.name }}{{ getPlayerSeparator(isLast, team.players.length) }}
+                      </span>
+                    }
+                    @if (hasMorePlayers(team.players.length)) {
+                      <span [class]="CSS_CLASSES.TEAM_MANAGEMENT.MORE_PLAYERS">
+                        {{ getMorePlayersText(team.players.length) }}
+                      </span>
                     }
                   </ion-note>
                 }
               </ion-label>
-              <div class="metadata-end-wrapper" slot="end">
+              
+              <!-- Team Status -->
+              <div [class]="CSS_CLASSES.TEAM_MANAGEMENT.METADATA_WRAPPER" slot="end">
                 <ion-note color="medium">
-                  @if (team.players.length > 0) {
-                    <ion-chip color="success" class="detail-chip">
-                      <ion-icon name="checkmark-circle-outline"></ion-icon>
-                      <ion-label>Active</ion-label>
+                  @if (isActiveTeam(team.players.length)) {
+                    <ion-chip color="success" [class]="CSS_CLASSES.TEAM_MANAGEMENT.DETAIL_CHIP">
+                      <ion-icon [name]="ICONS.CHECKMARK_CIRCLE"></ion-icon>
+                      <ion-label>{{ TEXT.LABELS.ACTIVE }}</ion-label>
                     </ion-chip>
                   } @else {
-                    <ion-chip color="warning" class="detail-chip">
-                      <ion-icon name="time-outline"></ion-icon>
-                      <ion-label>Empty</ion-label>
+                    <ion-chip color="warning" [class]="CSS_CLASSES.TEAM_MANAGEMENT.DETAIL_CHIP">
+                      <ion-icon [name]="ICONS.TIME"></ion-icon>
+                      <ion-label>{{ TEXT.LABELS.EMPTY }}</ion-label>
                     </ion-chip>
                   }
                 </ion-note>
-                <ion-icon color="medium" name="chevron-forward"></ion-icon>
               </div>
             </ion-item>
+            
+            <!-- Team Action Options -->
             @if (canEdit) {
               <ion-item-options>
-                  <ion-item-option (click)="slidingItem.close();openTeamModal(team)" color="success"> 
-                    <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
-                    Edit Team
-                  </ion-item-option>
-                  <ion-item-option (click)="slidingItem.close();deleteTeam(team)" color="warning"> 
-                    <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-                    Delete Team
-                  </ion-item-option>
+                <ion-item-option 
+                  (click)="handleEditTeam(slidingItem, team)" 
+                  color="success"
+                >
+                  <ion-icon slot="icon-only" [name]="ICONS.CHECKMARK"></ion-icon>
+                  {{ TEXT.LABELS.EDIT_TEAM }}
+                </ion-item-option>
+                <ion-item-option 
+                  (click)="handleDeleteTeam(slidingItem, team)" 
+                  color="warning"
+                >
+                  <ion-icon slot="icon-only" [name]="ICONS.CLOSE"></ion-icon>
+                  {{ TEXT.LABELS.DELETE_TEAM }}
+                </ion-item-option>
               </ion-item-options>
             }
           </ion-item-sliding>
@@ -197,150 +272,162 @@
       </ion-list>
     }
 
+    <!-- Add Team Button -->
     @if (canEdit) {
       <ion-button
         (click)="openTeamModal()"
         color="primary"
         size="default"
         expand="block"
-        class="add-team-button ion-margin-top"
+        [class]="CSS_CLASSES.BUTTONS.ADD_TEAM + ' ion-margin-top'"
       >
-        <ion-icon name="add-outline" slot="start"></ion-icon>
-        Add Team
+        <ion-icon [name]="ICONS.ADD" slot="start"></ion-icon>
+        {{ TEXT.LABELS.ADD_TEAM }}
       </ion-button>
-      }
+    }
   }
-  <!-- ************************************** Teams ************************************** -->
 
 
-  <!-- Team Modal -->
+
+  <!-- Team Creation/Edit Modal -->
   <ion-modal
     [isOpen]="showTeamModal"
-    (didDismiss)="showTeamModal = false"
+    (didDismiss)="onModalDismiss()"
     class="team-modal"
   >
     <ng-template>
+      <!-- Modal Header -->
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>
             <ion-icon
-              name="{{ editingTeam ? 'create-outline' : 'add-outline' }}"
-              style="margin-right: 8px; vertical-align: middle"
+              [name]="getModalIcon()"
+              [class]="CSS_CLASSES.MODAL.TITLE_ICON"
             ></ion-icon>
-            {{ editingTeam ? 'Edit Team' : 'Create Team' }}
+            {{ getModalTitle() }}
           </ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="showTeamModal = false">
-              <ion-icon name="close-outline"></ion-icon>
+            <ion-button (click)="closeModal()">
+              <ion-icon [name]="ICONS.CLOSE"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
 
-      <ion-content class="modal-content">
-        <div class="modal-container ion-padding">
+      <!-- Modal Content -->
+      <ion-content [class]="CSS_CLASSES.MODAL.CONTENT">
+        <div [class]="CSS_CLASSES.MODAL.CONTAINER + ' ion-padding'">
           <form #teamForm="ngForm" (ngSubmit)="saveTeam()">
-            <!-- Team Name Input -->
-                <ion-input
-                fill="outline"
-                  [(ngModel)]="currentTeam.name"
-                  label="Team Name"
-                  name="teamName"
-                  required
-                  label-placement="floating"
-          class="ion-margin-bottom ion-margin-top"
-                  floo
-                  placeholder="Enter team name"
-                  maxlength="50"
-                ></ion-input>
-            <!-- Player Selection -->
+            <!-- Team Name Input Section -->
+            <ion-input
+              fill="outline"
+              [(ngModel)]="currentTeam.name"
+              [label]="TEXT.LABELS.TEAM_NAME"
+              name="teamName"
+              required
+              label-placement="floating"
+              class="ion-margin-bottom ion-margin-top"
+              [placeholder]="TEXT.PLACEHOLDERS.TEAM_NAME"
+              [maxlength]="UI_CONSTANTS.MODAL.MAX_LENGTH.TEAM_NAME"
+            ></ion-input>
             
-            @if (availableRegistrations.length > 0) {
-              <h3 class="section-subtitle">
+            <!-- Player Selection Section -->
+            @if (hasAvailablePlayers()) {
+              <h3 [class]="CSS_CLASSES.MODAL.SECTION_SUBTITLE">
                 <ion-icon
-                  name="person-outline"
-                  class="subtitle-icon"
+                  [name]="ICONS.PERSON"
+                  [class]="CSS_CLASSES.MODAL.SUBTITLE_ICON"
                 ></ion-icon>
-                Select Players
+                {{ TEXT.LABELS.SELECT_PLAYERS }}
               </h3>
             }
 
-              @if (availableRegistrations.length === 0) {
-              <div class="empty-state small">
+            <!-- No Available Players Message -->
+            @if (isNoAvailablePlayers()) {
+              <div [class]="CSS_CLASSES.EMPTY_STATE.CONTAINER">
                 <ion-text class="ion-margin-top">
-                  <h5 style="text-align: center;"> 
-                    <ion-text color="warning"><ion-icon name="warning"></ion-icon></ion-text> 
-                     No available players, All approved players are already assigned to teams
+                  <h5 [class]="CSS_CLASSES.EMPTY_STATE.WARNING">
+                    <ion-text color="warning">
+                      <ion-icon [name]="ICONS.WARNING"></ion-icon>
+                    </ion-text>
+                    {{ TEXT.MESSAGES.NO_AVAILABLE_PLAYERS }}
                   </h5>
                 </ion-text>
               </div>
-              } @else {
-              <ion-list class="player-selection-list ion-margin-top">
-                @for (registration of availableRegistrations; track
-                registration.id) {
-                <ion-item (click)="onPlayerSelectionChange(registration, !selectCheckRef.checked)" class="player-selection-item"  [button]="true" detail="false" lines="full">
-                  <ion-checkbox
-                    slot="end"
-                    #selectCheckRef
-                    [checked]="isPlayerSelected(registration)"
-                    color="primary"
-                    style="pointer-events: none;"
-                  ></ion-checkbox>
+            } 
+            <!-- Available Players List -->
+            @else {
+              <ion-list [class]="CSS_CLASSES.PLAYER_SELECTION.LIST + ' ion-margin-top'">
+                @for (registration of availableRegistrations; track registration.id) {
+                  <ion-item 
+                    (click)="togglePlayerSelection(registration)"
+                    [class]="CSS_CLASSES.PLAYER_SELECTION.ITEM"
+                    [button]="true" 
+                    detail="false" 
+                    lines="full"
+                  >
+                    <!-- Selection Checkbox -->
+                    <ion-checkbox
+                      slot="end"
+                      [checked]="isPlayerSelected(registration)"
+                      color="primary"
+                      [class]="'pointer-events-none'"
+                    ></ion-checkbox>
 
-                  <div class="unread-indicator-wrapper" slot="start">
-                      <ion-avatar class="player-avatar" style="width: 32px; height: 32px; ">
-                          <img [src]="registration.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'" [alt]="registration.name" />
+                    <!-- Player Avatar -->
+                    <div [class]="CSS_CLASSES.PLAYER_SELECTION.AVATAR_WRAPPER" slot="start">
+                      <ion-avatar [class]="CSS_CLASSES.TEAM_MANAGEMENT.PLAYER_AVATAR">
+                        <img 
+                          [src]="getPlayerAvatarUrl(registration)" 
+                          [alt]="registration.name" 
+                        />
                       </ion-avatar>
-                  </div>
-              <ion-label>
-                <strong>{{ registration.name }}</strong>
-                <ion-text>{{ registration.email }}</ion-text><br />
-                <ion-text style="display: flex;justify-content: flex-start;align-items: center;margin-top: 4px;"> {{ registration.gender }} </ion-text>
-                @if (registration.remarks) {
-                  <ion-note color="medium" class="ion-text-wrap">{{ registration.remarks }} </ion-note>
-                }
-              </ion-label>
-            
-                </ion-item>
+                    </div>
+                    
+                    <!-- Player Information -->
+                    <ion-label>
+                      <strong>{{ registration.name }}</strong>
+                      <ion-text>{{ registration.email }}</ion-text><br />
+                      <ion-text [class]="CSS_CLASSES.TEAM_MANAGEMENT.PLAYER_INFO">
+                        {{ registration.gender }}
+                      </ion-text>
+                      @if (registration.remarks) {
+                        <ion-note color="medium" class="ion-text-wrap">
+                          {{ registration.remarks }}
+                        </ion-note>
+                      }
+                    </ion-label>
+                  </ion-item>
                 }
               </ion-list>
-              }
-           
+            }
 
-            <!-- Action Buttons -->
-            <div class="modal-actions">
-              <div
-          class="ion-margin-top"
-          style="
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            align-content: center;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
-              <ion-button
-                type="submit"
-                [disabled]="!teamForm.valid"
-                color="primary"
-                class="save-button"
-              >
-                <ion-icon
-                  name="{{ editingTeam ? 'checkmark-outline' : 'add-outline' }}"
-                  slot="start"
-                ></ion-icon>
-                {{ editingTeam ? 'Update Team' : 'Create Team' }}
-              </ion-button>
+            <!-- Modal Action Buttons -->
+            <div [class]="CSS_CLASSES.MODAL.ACTIONS">
+              <div [class]="CSS_CLASSES.BUTTONS.ACTION_ROW">
+                <!-- Save Button -->
+                <ion-button
+                  type="submit"
+                  [disabled]="!teamForm.valid"
+                  color="primary"
+                  [class]="CSS_CLASSES.BUTTONS.SAVE"
+                >
+                  <ion-icon
+                    [name]="getSaveButtonIcon()"
+                    slot="start"
+                  ></ion-icon>
+                  {{ getSaveButtonText() }}
+                </ion-button>
 
-              <ion-button
-                fill="outline"
-                color="dark"
-                (click)="showTeamModal = false"
-                class="cancel-button"
-              >
-                Cancel
-              </ion-button>
+                <!-- Cancel Button -->
+                <ion-button
+                  fill="outline"
+                  color="dark"
+                  (click)="closeModal()"
+                  [class]="CSS_CLASSES.BUTTONS.CANCEL"
+                >
+                  {{ TEXT.LABELS.CANCEL }}
+                </ion-button>
               </div>
             </div>
           </form>
