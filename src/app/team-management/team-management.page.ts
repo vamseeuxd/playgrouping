@@ -22,7 +22,7 @@ import {
   IonAvatar,
   IonItemSliding,
   IonItemOption,
-  IonItemOptions, IonSearchbar, IonSegmentButton, IonBadge, IonSegment, IonButton, IonCheckbox, IonModal } from '@ionic/angular/standalone';
+  IonItemOptions, IonSearchbar, IonSegmentButton, IonBadge, IonSegment, IonButton, IonCheckbox, IonModal, IonInput } from '@ionic/angular/standalone';
 import { FirestoreService } from '../services/firestore.service';
 import {
   TournamentWithId,
@@ -47,7 +47,7 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-team-management',
   templateUrl: './team-management.page.html',
   styleUrls: ['./team-management.page.scss'],
-  imports: [IonModal, IonCheckbox, IonButton, IonSegment, IonBadge, IonSegmentButton, IonSearchbar, 
+  imports: [IonInput, IonModal, IonCheckbox, IonButton, IonSegment, IonBadge, IonSegmentButton, IonSearchbar, 
     IonItemOptions,
     IonItemOption,
     IonItemSliding,
