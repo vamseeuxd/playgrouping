@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController, ToastController, IonList } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip, LoadingController, ToastController, IonList, IonItemDivider } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -8,25 +8,28 @@ import { playOutline, stopOutline, trophyOutline, refreshOutline } from 'ionicon
 import { FirestoreService } from '../services/firestore.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
 import { AuthService } from '../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-knockout',
   templateUrl: './knockout.page.html',
 
-  imports: [IonList, CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip]
+  imports: [IonItemDivider, IonList, CommonModule, TitleCasePipe, RouterLink, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonIcon, IonBackButton, IonButtons, IonChip]
 })
-export class KnockoutPage {
+export class KnockoutPage implements OnDestroy {
   private route = inject(ActivatedRoute);
   private firestoreService = inject(FirestoreService);
   private loadingController = inject(LoadingController);
   private toastController = inject(ToastController);
-    private authService = inject(AuthService);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
   tournamentId = '';
   tournament: any = null;
   
   knockoutStages: any[] = APP_CONSTANTS.TOURNAMENT.STAGE_NAMES.map(name => ({ name, matches: [] }));
 
   teams: any[] = [];
+  private matchesSubscription?: Subscription;
 
   constructor() {
     addIcons({ playOutline, stopOutline, trophyOutline, refreshOutline });
@@ -39,10 +42,16 @@ export class KnockoutPage {
     if (this.tournamentId) {
       this.teams = await this.firestoreService.getTeamsWithPlayers(this.tournamentId);
       
-      this.firestoreService.getMatches(this.tournamentId).subscribe(async matches => {
-        const matchesWithTeams = await this.firestoreService.getMatchesWithTeams(this.tournamentId);
+      this.matchesSubscription = this.firestoreService.getMatchesWithTeamsLive(this.tournamentId).subscribe(matchesWithTeams => {
         this.organizeMatches(matchesWithTeams);
+        this.cdr.detectChanges();
       });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.matchesSubscription) {
+      this.matchesSubscription.unsubscribe();
     }
   }
 

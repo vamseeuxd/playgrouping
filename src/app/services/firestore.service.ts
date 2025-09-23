@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, setDoc, docData } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, getDoc, getDocs, setDoc, docData, onSnapshot } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Tournament, TournamentWithId, Player, Team, Match, MatchWithTeams, Sport, PlayerRegistration, UserProfile, TeamPlayer, TeamPlayerWithUser } from '../interfaces';
 
@@ -201,6 +201,35 @@ export class FirestoreService {
       team1Name: teamsMap.get(match.team1Id) || 'Unknown Team',
       team2Name: teamsMap.get(match.team2Id) || 'Unknown Team'
     } as MatchWithTeams));
+  }
+
+  getMatchesWithTeamsLive(tournamentId: string): Observable<MatchWithTeams[]> {
+    return new Observable(observer => {
+      const unsubscribe = onSnapshot(collection(this.firestore, `tournaments/${tournamentId}/matches`), async (snapshot) => {
+        const matches = snapshot.docs.map(doc => ({ 
+          ...doc.data(), 
+          id: doc.id 
+        } as Match));
+        
+        const teamsSnapshot = await getDocs(collection(this.firestore, `tournaments/${tournamentId}/teams`));
+        const teams = teamsSnapshot.docs.map(doc => ({ 
+          ...doc.data(), 
+          id: doc.id 
+        } as Team));
+        
+        const teamsMap = new Map(teams.map(team => [team.id!, team.name]));
+        
+        const matchesWithTeams = matches.map(match => ({
+          ...match,
+          team1Name: teamsMap.get(match.team1Id) || 'Unknown Team',
+          team2Name: teamsMap.get(match.team2Id) || 'Unknown Team'
+        } as MatchWithTeams));
+        
+        observer.next(matchesWithTeams);
+      });
+      
+      return () => unsubscribe();
+    });
   }
 
   getLiveMatchData(tournamentId: string, matchId: string): Observable<Match> {

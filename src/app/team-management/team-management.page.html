@@ -95,7 +95,6 @@
               </ion-label>
               <div class="metadata-end-wrapper" slot="end">
                 <ion-note color="medium"><ion-chip [color]="getStatusColor(registration.status)" class="status-chip" > <ion-icon [name]="getStatusIcon(registration.status)" ></ion-icon> <ion-label>{{ registration.status | titlecase }}</ion-label> </ion-chip></ion-note>
-                <ion-icon color="medium" name="chevron-forward"></ion-icon>
               </div>
             </ion-item>
             @if (canEdit) {

@@ -66,12 +66,14 @@ export class TournamentCardComponent {
 
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
-    this.loadMatches();
+    this.subscribeToMatches();
   }
 
-  async loadMatches() {
-    this.matches = await this.firestoreService.getMatchesWithTeams(this.tournament.id);
-    await this.loadTeamPlayers();
+  subscribeToMatches() {
+    this.firestoreService.getMatchesWithTeamsLive(this.tournament.id).subscribe(matches => {
+      this.matches = matches;
+      this.loadTeamPlayers();
+    });
   }
 
   async loadTeamPlayers() {

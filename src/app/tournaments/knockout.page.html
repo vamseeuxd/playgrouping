@@ -38,8 +38,8 @@
   @for (stage of knockoutStages; track stage.name) { @if (stage.matches.length >
   0) {
   <ion-card>
-    <ion-card-header>
-      <ion-card-title>
+    <ion-card-header style="padding: 0 16px;">
+      <ion-card-title style=" display: flex ; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: space-between;border-bottom: 1px solid #dedede;">
         {{ stage.name }}
         <ion-chip
           color="{{ getStageStatus(stage.matches) === 'Complete' ? 'success' : getStageStatus(stage.matches) === 'In Progress' ? 'warning' : 'medium' }}"
@@ -49,7 +49,7 @@
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
+      <ion-list style="padding: 0;">
         @for (match of stage.matches; track match.id) {
         <ion-item lines="full" detail="true" [routerLink]="['/match-control', match.id]" [queryParams]="{tournamentId: tournamentId}">
           <ion-label>
