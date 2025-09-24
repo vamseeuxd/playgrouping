@@ -1,0 +1,152 @@
+.login-page {
+  --background: linear-gradient(to bottom, #0066cc4a, #ffffff);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  padding: 20px;
+
+  .illustration-container {
+    margin-top: 40px;
+
+    img {
+      max-width: 260px;
+      margin: auto;
+      display: block;
+    }
+  }
+
+  .welcome-text {
+    margin-top: 24px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0d1b2a;
+
+      span {
+        color: #0066cc;
+      }
+    }
+
+    p {
+      font-size: 16px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+  }
+
+  .login-buttons {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    ion-button {
+      font-weight: 600;
+      font-size: 16px;
+      height: 48px;
+      border-radius: 8px;
+      --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .google-btn {
+      --background: #ea4335;
+      --color: #fff;
+    }
+
+    .guest-btn {
+      --border-color: #111;
+      --color: #111;
+      font-weight: 500;
+    }
+  }
+
+  .footer-text {
+    margin-top: 40px;
+    font-size: 13px;
+    color: #6b7280;
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: 500;
+    }
+  }
+}
+
+// Terms Modal Styling
+ion-modal {
+  .terms-header {
+    text-align: center;
+    margin-bottom: 0;
+    
+    ion-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    h2 {
+      margin: 0 0 8px 0;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+  }
+  
+  ion-item-group {
+    margin-bottom: 8px;
+  }
+  
+  ion-item-divider {
+    font-weight: 600;
+    --background: var(--ion-color-light);
+    
+    ion-label {
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+  
+  ion-item {
+    --padding-start: 16px;
+    --inner-padding-end: 16px;
+    
+    ion-icon[slot="start"] {
+      margin-right: 16px;
+      font-size: 24px;
+    }
+    
+    ion-label {
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        color: var(--ion-color-dark);
+      }
+      
+      p {
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+    
+    &[button]:hover {
+      --background: var(--ion-color-light-tint);
+    }
+  }
+  
+  ion-button[expand="block"] {
+    margin: 16px 0;
+    height: 48px;
+    font-weight: 600;
+    --border-radius: 8px;
+  }
+}

@@ -1,31 +1,235 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Login</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
-  <!-- <ion-input
-    label="Email"
-    label-placement="floating"
-    fill="outline"
-    class="ion-margin-bottom"
-    placeholder="Enter text"
-  ></ion-input>
-  <ion-input
-    label="Password"
-    label-placement="floating"
-    fill="outline"
-    class="ion-margin-bottom"
-    placeholder="Enter text"
-  ></ion-input> -->
-
-  <!-- <ion-button class="ion-margin-bottom" expand="block">Login</ion-button> -->
-  <ion-button color="danger" expand="block" (click)="signInWithGoogle()"
-    >Login with Google</ion-button
-  >
+<!-- <ion-content class="ion-padding">
   
-  <ion-button fill="outline" expand="block" (click)="signInAnonymously()" class="ion-margin-top"
-    >Continue as Guest</ion-button
-  >
+  <div class="longin-page-content">
+    <img src="../../assets/login-bg.png" alt="Login Page">
+    <ion-button color="danger" (click)="signInWithGoogle()">
+      <div class="ion-button-content">
+        <ion-icon size="large" name="logo-google"></ion-icon>
+        Login with
+        Google
+      </div>
+    </ion-button>
+
+    <ion-button
+      color="warning"
+      (click)="signInAnonymously()"
+      class="ion-margin-top"
+    >
+      <div class="ion-button-content">
+        <ion-icon size="large" name="person-outline"></ion-icon>
+        Continue as
+        Guest
+      </div>
+    </ion-button>
+  </div>
+</ion-content>
+ -->
+
+ <ion-content class="login-page">
+
+  <!-- Illustration -->
+  <div class="illustration-container">
+    <img src="../../assets/login-bg.png" alt="Login Page">
+  </div>
+
+  <!-- Welcome Text -->
+  <div class="welcome-text">
+    <h2>Welcome to <span>Play Grouping!</span></h2>
+    <p>Pick your way to play</p>
+  </div>
+
+  <!-- Login Buttons -->
+  <div class="login-buttons ion-margin-horizontal">
+    <ion-button expand="block" class="google-btn" (click)="signInWithGoogle()">
+      <ion-icon name="logo-google" slot="start"></ion-icon>
+      Login with Google
+    </ion-button>
+
+    <ion-button expand="block" class="guest-btn" fill="outline"(click)="signInAnonymously()">
+      <ion-icon name="person-outline" slot="start"></ion-icon>
+      Continue as Guest
+    </ion-button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-text" (click)="openTermsModal()">
+    <p>By continuing, you agree to our <a>Terms</a> &amp; <a>Privacy</a>.</p>
+  </div>
+
+
+  <!-- Terms & Privacy Modal -->
+  <ion-modal [isOpen]="isTermsOpen" (didDismiss)="closeTermsModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Terms & Privacy Policy</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeTermsModal()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <div class="terms-header ion-padding">
+          <ion-icon name="shield-checkmark" size="large"></ion-icon>
+          <h2>Terms & Privacy Policy</h2>
+          <p class="ion-text-center ion-color-medium">
+            Welcome to Play Grouping! Please review our terms and privacy policy.
+          </p>
+        </div>
+
+        <ion-list>
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-icon name="document-text" color="primary" slot="start"></ion-icon>
+              <ion-label color="primary">Terms of Service</ion-label>
+            </ion-item-divider>
+            
+            <ion-item>
+              <ion-icon name="trophy" slot="start" color="warning"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Tournament Management</h3>
+                <p>Create and manage tournaments, register players, organize teams, control matches, and view live scoreboards.</p>
+              </ion-label>
+            </ion-item>
+          </ion-item-group>
+
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-icon name="people" slot="start" color="secondary"></ion-icon>
+              <ion-label color="secondary">User Registration & Participation</ion-label>
+            </ion-item-divider>
+            
+            <ion-item>
+              <ion-icon name="logo-google" slot="start" color="danger"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Authentication</h3>
+                <p>Sign in with Google or continue as guest with limited access</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Admin Approval</h3>
+                <p>Tournament registration requires admin approval for participation</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="settings" slot="start" color="medium"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Admin Rights</h3>
+                <p>Admins may approve, reject, or remove players at their discretion</p>
+              </ion-label>
+            </ion-item>
+          </ion-item-group>
+
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-icon name="lock-closed" color="tertiary" slot="start"></ion-icon>
+              <ion-label color="tertiary">Privacy Policy</ion-label>
+            </ion-item-divider>
+            
+            <ion-item>
+              <ion-icon name="information-circle" slot="start" color="primary"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Data Collection</h3>
+                <p>We collect only necessary information: name, email, and tournament data</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="shield" slot="start" color="success"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Data Usage</h3>
+                <p>Your data is used solely for tournament management purposes</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="ban" slot="start" color="danger"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>No Third-Party Sharing</h3>
+                <p>We do not share personal information without your consent</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="eye-off" slot="start" color="medium"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Guest Privacy</h3>
+                <p>Guest users have minimal data collection and limited access</p>
+              </ion-label>
+            </ion-item>
+          </ion-item-group>
+
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-icon name="person-circle" color="medium" slot="start"></ion-icon>
+              <ion-label color="medium">User Responsibilities</ion-label>
+            </ion-item-divider>
+            
+            <ion-item>
+              <ion-icon name="checkmark-done" slot="start" color="success"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Accurate Information</h3>
+                <p>Provide truthful and accurate information during registration</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="heart" slot="start" color="danger"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Fair Play</h3>
+                <p>Respect other players and maintain sportsmanship</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="list" slot="start" color="primary"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Follow Rules</h3>
+                <p>Adhere to tournament rules and guidelines</p>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="chatbubble-ellipses" slot="start" color="tertiary"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Report Issues</h3>
+                <p>Contact administrators for any concerns or problems</p>
+              </ion-label>
+            </ion-item>
+          </ion-item-group>
+
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-icon color="dark" name="mail" slot="start"></ion-icon>
+              <ion-label color="dark">Contact Support</ion-label>
+            </ion-item-divider>
+            
+            <ion-item button>
+              <ion-icon name="help-circle" slot="start" color="primary"></ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h3>Need Help?</h3>
+                <p>Contact our support team for questions about terms or privacy</p>
+              </ion-label>
+              <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+            </ion-item>
+          </ion-item-group>
+        </ion-list>
+
+        <div class="ion-padding">
+          <ion-button expand="block" fill="outline" color="primary" (click)="closeTermsModal()">
+            <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+            I Understand & Agree
+          </ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

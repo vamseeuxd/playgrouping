@@ -48,7 +48,29 @@ export class AuthService {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 
-  setViewAccess(tournamentId: string) {}
+  setViewAccess(permission: string) {
+    // Set guest/viewer permissions in localStorage or session
+    localStorage.setItem('guestAccess', permission);
+    localStorage.setItem('guestTimestamp', Date.now().toString());
+  }
+
+  hasGuestAccess(): boolean {
+    const guestAccess = localStorage.getItem('guestAccess');
+    const timestamp = localStorage.getItem('guestTimestamp');
+    
+    if (!guestAccess || !timestamp) return false;
+    
+    // Check if guest session is still valid (24 hours)
+    const sessionAge = Date.now() - parseInt(timestamp);
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+    
+    return sessionAge < maxAge;
+  }
+
+  clearGuestAccess() {
+    localStorage.removeItem('guestAccess');
+    localStorage.removeItem('guestTimestamp');
+  }
 
   async signup(email: string, password: string) {
     return createUserWithEmailAndPassword(this.auth, email, password);

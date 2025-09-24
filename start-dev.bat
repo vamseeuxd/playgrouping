@@ -1,0 +1,3 @@
+@echo off
+echo Starting Angular development server with live reload...
+ng serve --configuration development --live-reload --watch --poll=2000 --host=0.0.0.0 --port=4200

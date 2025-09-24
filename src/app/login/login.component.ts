@@ -1,10 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {
-  IonHeader,
   IonContent,
-  IonTitle,
-  IonToolbar,
   IonButton,
+  IonIcon, 
+  IonModal, 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonButtons,
+  IonList,
+  IonItem,
+  IonItemGroup,
+  IonItemDivider,
+  IonLabel
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,20 +21,38 @@ import { APP_CONSTANTS } from '../constants/app.constants';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-
+  styleUrls: ['./login.component.scss'],
   imports: [
-    IonButton,
-    IonToolbar,
-    IonTitle,
+    IonButtons, 
+    IonTitle, 
+    IonToolbar, 
+    IonHeader, 
+    IonModal, 
+    IonIcon, 
+    IonButton, 
     IonContent,
-    IonHeader
-],
+    IonList,
+    IonItem,
+    IonItemGroup,
+    IonItemDivider,
+    IonLabel
+  ],
   standalone: true,
 })
 export class LoginComponent implements OnInit {
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
   constants = APP_CONSTANTS;
+
+  isTermsOpen = false;
+
+  openTermsModal() {
+    this.isTermsOpen = true;
+  }
+
+  closeTermsModal() {
+    this.isTermsOpen = false;
+  }
 
   constructor() {}
 

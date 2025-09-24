@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonInput, IonSelect, IonSelectOption, IonTextarea } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { GENDER_OPTIONS } from '../../constants/app.constants';
+import { IonIcon } from "../../../../../node_modules/@ionic/angular/standalone/directives/icon";
 
 @Component({
   selector: 'app-player-modal',
@@ -22,12 +22,14 @@ import { GENDER_OPTIONS } from '../../constants/app.constants';
             <ion-input
               label="Player Name"
               class="ion-margin-bottom"
-              label-placement="floating"
+              label-placement="stacked"
               fill="outline"
               [(ngModel)]="player.name"
               name="playerName"
               required
-            ></ion-input>
+            >
+            <ion-icon slot="start" name="lock-closed" aria-hidden="true"></ion-icon>
+          </ion-input>
 
             <ion-select
               label="Gender"
@@ -60,7 +62,7 @@ import { GENDER_OPTIONS } from '../../constants/app.constants';
       </ng-template>
     </ion-modal>
   `,
-  imports: [CommonModule, FormsModule, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonInput, IonSelect, IonSelectOption, IonTextarea]
+  imports: [CommonModule, FormsModule, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonInput, IonSelect, IonSelectOption, IonTextarea, IonIcon]
 })
 export class PlayerModalComponent {
   @Input() isOpen = false;
@@ -69,7 +71,6 @@ export class PlayerModalComponent {
   @Output() save = new EventEmitter<any>();
   @Output() close = new EventEmitter<void>();
   
-  genderOptions = GENDER_OPTIONS;
 
   onSave() {
     this.save.emit(this.player);
