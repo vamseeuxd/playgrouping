@@ -19,20 +19,6 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
         return true;
       }
       
-      // Check for guest access
-      if (authService.hasGuestAccess()) {
-        const path = route.routeConfig?.path;
-        // Restrict guest access to certain routes
-        const guestAllowedRoutes = ['tournaments', 'scoreboard/:id'];
-        const isGuestAllowed = guestAllowedRoutes.some(allowedPath => 
-          path?.includes(allowedPath.split('/:')[0])
-        );
-        
-        if (isGuestAllowed) {
-          return true;
-        }
-      }
-      
       // Redirect to login if no valid authentication
       router.navigate(['/login']);
       return false;

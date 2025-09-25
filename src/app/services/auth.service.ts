@@ -9,6 +9,7 @@ import {
   signInWithPopup,
   User,
   updateProfile,
+  signInAnonymously,
 } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { TournamentWithId } from '../interfaces';
@@ -78,6 +79,10 @@ export class AuthService {
 
   async logout() {
     return signOut(this.auth);
+  }
+
+  async signInAnonymously() {
+    return signInAnonymously(this.auth);
   }
 
   async signInWithGoogle() {

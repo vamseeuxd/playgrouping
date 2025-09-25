@@ -2,40 +2,41 @@ import { Component, inject, OnInit } from '@angular/core';
 import {
   IonContent,
   IonButton,
-  IonIcon, 
-  IonModal, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
+  IonIcon,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonButtons,
   IonList,
   IonItem,
   IonItemGroup,
   IonItemDivider,
-  IonLabel
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { APP_CONSTANTS } from '../constants/app.constants';
+import { UserCredential } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   imports: [
-    IonButtons, 
-    IonTitle, 
-    IonToolbar, 
-    IonHeader, 
-    IonModal, 
-    IonIcon, 
-    IonButton, 
+    IonButtons,
+    IonTitle,
+    IonToolbar,
+    IonHeader,
+    IonModal,
+    IonIcon,
+    IonButton,
     IonContent,
     IonList,
     IonItem,
     IonItemGroup,
     IonItemDivider,
-    IonLabel
+    IonLabel,
   ],
   standalone: true,
 })
@@ -56,7 +57,13 @@ export class LoginComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.authService.user$.subscribe((user) => {
+      if (user) {
+        this.router.navigate([this.constants.ROUTES.TOURNAMENTS]);
+      }
+    });
+  }
 
   async signInWithGoogle() {
     try {
@@ -69,6 +76,8 @@ export class LoginComponent implements OnInit {
 
   async signInAnonymously() {
     try {
+      const x: UserCredential = await this.authService.signInAnonymously();
+      console.log(x);
       await this.authService.setViewAccess(this.constants.PERMISSIONS.GUEST);
       this.router.navigate([this.constants.ROUTES.TOURNAMENTS]);
     } catch (error) {

@@ -1,12 +1,16 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
+    <ion-menu [disabled]="!(user$ | async)" contentId="main-content" #menuRef type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>
+          <ion-list-header
+            class="ion-no-margin ion-no-padding"
+            style="padding-left: 0"
+          >
             <app-user-profile
               [user]="user$ | async"
-              (logoutClick)="logout()"
+              (logoutClick)="logout();"
+              (closeMenu)="menuRef.setOpen(false)"
             ></app-user-profile>
           </ion-list-header>
           @for (p of appPages; track p; let i = $index) {

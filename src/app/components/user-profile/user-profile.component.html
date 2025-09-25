@@ -1,4 +1,4 @@
-@if (user) {
+<!-- @if (user) {
 <div style="font-size: var(--app-font-size-md); display: var(--app-display-flex); margin-bottom: var(--app-margin-sm); border-bottom: var(--app-border-width) solid var(--app-border-color); padding-bottom: var(--app-padding-sm); flex-direction: var(--app-flex-direction-column); width: var(--app-width-full); align-items: var(--app-align-items-center);">
   @if (user.photoURL) {
   <ion-avatar class="ion-margin-end">
@@ -20,4 +20,40 @@
   <ion-note style="margin-bottom: 0;">Please log in to access more features.</ion-note>
   <ion-button fill="clear" routerLink="/login">Login</ion-button>
 </div>
+} -->
+@if (user) { @if (user.isAnonymous) {
+<ion-avatar class="ion-no-margin">
+  <ion-img src="../../../assets/anonymous-user.png" alt="Profile" />
+</ion-avatar>
+}@else { @if (user.photoURL) {
+<ion-avatar class="ion-no-margin">
+  <ion-img [src]="user.photoURL" alt="Profile" />
+</ion-avatar>
+}
+<div class="profile-info">
+  <ion-label class="name">
+    {{ user.displayName | titlecase }}
+  </ion-label>
+  <ion-label class="email" color="tertiary">
+    {{ user.email }}
+  </ion-label>
+</div>
+
+}
+
+<div class="action-bar">
+  @if (!user.isAnonymous) {
+  <ion-button fill="clear" color="success" shape="round" (click)="closeMenu.emit()" routerLink="/profile"
+    >Profile</ion-button
+  >
+  }
+  <ion-button fill="clear" color="danger" shape="round" (click)="closeMenu.emit();logout()"
+    >Logout</ion-button
+  >
+</div>
+}@else {
+
+<ion-button fill="clear" color="danger" shape="round" (click)="closeMenu.emit()" routerLink="/login"
+  >Login</ion-button
+>
 }
